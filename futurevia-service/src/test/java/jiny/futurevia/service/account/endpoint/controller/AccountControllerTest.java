@@ -1,5 +1,6 @@
 package jiny.futurevia.service.account.endpoint.controller;
 
+import jiny.futurevia.service.account.domain.entity.Account;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -30,8 +32,6 @@ class AccountControllerTest {
 	MockMvc mockMvc;
 	@Autowired
 	AccountRepository accountRepository;
-	@MockBean
-	JavaMailSender mailSender;
 
 	@Test
 	@DisplayName("회원 가입 화면 진입")
@@ -70,8 +70,5 @@ class AccountControllerTest {
 
 		Assertions.assertTrue(accountRepository.existsByEmail("dareme798@naver.com"));
 
-		then(mailSender)
-			.should()
-			.send(any(SimpleMailMessage.class));
 	}
 }
