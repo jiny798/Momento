@@ -28,47 +28,51 @@ import jiny.futurevia.service.account.repository.AccountRepository;
 @SpringBootTest
 @AutoConfigureMockMvc
 class AccountControllerTest {
-	@Autowired
-	MockMvc mockMvc;
-	@Autowired
-	AccountRepository accountRepository;
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    AccountRepository accountRepository;
 
-	@Test
-	@DisplayName("회원 가입 화면 진입")
-	void signUpForm() throws Exception {
-		mockMvc.perform(get("/sign-up"))
-			.andDo(print())
-			.andExpect(status().isOk())
-			.andExpect(view().name("account/sign-up"))
-			.andExpect(model().attributeExists("signUpForm"));
-	}
+    @Test
+    @DisplayName("회원 가입 화면 진입")
+    void signUpForm() throws Exception {
+        mockMvc.perform(get("/sign-up"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/sign-up"))
+                .andExpect(model().attributeExists("signUpForm"));
+    }
 
-	@Test
-	@DisplayName("회원 가입 오류")
-	void signUpSubmitWithError() throws Exception {
-		mockMvc.perform(post("/sign-up")
-				.param("nickname", "nickname")
-				.param("email", "email@email") // 이메일 오류
-				.param("password", "1234!67") // 비밀번호 8자리 미만
-				.with(csrf()))
-			.andDo(print())
-			.andExpect(status().isOk())
-			.andExpect(view().name("account/sign-up"));
-	}
+    @Test
+    @DisplayName("회원 가입 오류")
+    void signUpSubmitWithError() throws Exception {
+        mockMvc.perform(post("/sign-up")
+                        .param("nickname", "nickname")
+                        .param("email", "email@email") // 이메일 오류
+                        .param("password", "1234!67") // 비밀번호 8자리 미만
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("account/sign-up"));
+    }
 
-	@Test
-	@DisplayName("회원 가입 정상 처리 : 회원 저장")
-	void signUpSubmit() throws Exception {
-		mockMvc.perform(post("/sign-up")
-			.param("nickname", "nickname")
-			.param("email", "dareme798@naver.com")
-			.param("password", "1234!@#$")
-			.with(csrf()))
-			.andDo(print())
-			.andExpect(status().is3xxRedirection())
-			.andExpect(view().name("redirect:/"));
+    @Test
+    @DisplayName("회원 가입 정상 처리 : 회원 저장")
+    void signUpSubmit() throws Exception {
 
-		Assertions.assertTrue(accountRepository.existsByEmail("dareme798@naver.com"));
+        String password = "abcd1234!@";
+        mockMvc.perform(post("/sign-up")
+                        .param("nickname", "nickname")
+                        .param("email", "dareme798@naver.com")
+                        .param("password", password)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/"));
 
-	}
+        Assertions.assertTrue(accountRepository.existsByEmail("dareme798@naver.com"));
+
+        Account account = accountRepository.findByEmail("dareme798@naver.com");
+        Assertions.assertNotEquals(account.getPassword(), password);
+    }
 }
