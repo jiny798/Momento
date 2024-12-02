@@ -24,6 +24,7 @@ public class AccountController {
     private final AccountService accountService;
     private final SignUpFormValidator signUpFormValidator;
     private final JavaMailSender javaMailSender;
+    private final AccountRepository accountRepository;
 
     @InitBinder("signUpForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -41,7 +42,26 @@ public class AccountController {
         if (errors.hasErrors()) {
             return "account/sign-up";
         }
-        accountService.signUp(signUpForm);
+        Account account = accountService.signUp(signUpForm);
+        accountService.login(account);
         return "redirect:/";
+    }
+
+    @GetMapping("/check-email-token")
+    public String verifyEmail(String token, String email, Model model) {
+        Account account = accountService.findAccountByEmail(email);
+        if (account == null) {
+            model.addAttribute("error", "wrong.email");
+            return "account/email-verification";
+        }
+        if (!token.equals(account.getEmailToken())) {
+            model.addAttribute("error", "wrong.token");
+            return "account/email-verification";
+        }
+        account.verified();
+        accountService.login(account);
+        model.addAttribute("numberOfUsers", accountRepository.count());
+        model.addAttribute("nickname", account.getNickname());
+        return "account/email-verification";
     }
 }
