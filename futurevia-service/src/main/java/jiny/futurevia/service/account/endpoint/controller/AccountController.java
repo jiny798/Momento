@@ -1,5 +1,7 @@
 package jiny.futurevia.service.account.endpoint.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jiny.futurevia.service.account.application.AccountService;
 import jiny.futurevia.service.account.domain.entity.Account;
@@ -38,17 +40,17 @@ public class AccountController {
     }
 
     @PostMapping("/sign-up")
-    public String signUpSubmit(@Valid @ModelAttribute SignUpForm signUpForm, Errors errors) {
+    public String signUpSubmit(@Valid @ModelAttribute SignUpForm signUpForm, Errors errors, HttpServletRequest request, HttpServletResponse response) {
         if (errors.hasErrors()) {
             return "account/sign-up";
         }
-        Account account = accountService.signUp(signUpForm);
-        accountService.login(account);
+        accountService.signUp(signUpForm);
+        accountService.login(signUpForm.getEmail(), signUpForm.getPassword(), request, response);
         return "redirect:/";
     }
 
     @GetMapping("/check-email-token")
-    public String verifyEmail(String token, String email, Model model) {
+    public String verifyEmail(String token, String email, Model model, HttpServletRequest request, HttpServletResponse response) {
         Account account = accountService.findAccountByEmail(email);
         if (account == null) {
             model.addAttribute("error", "wrong.email");
@@ -59,7 +61,7 @@ public class AccountController {
             return "account/email-verification";
         }
         account.verified();
-        accountService.login(account);
+//        accountService.login(account, request, response);
         model.addAttribute("numberOfUsers", accountRepository.count());
         model.addAttribute("nickname", account.getNickname());
         return "account/email-verification";
