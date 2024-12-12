@@ -3,8 +3,10 @@ package jiny.futurevia.service.account.application;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jiny.futurevia.service.account.domain.entity.Account;
+import jiny.futurevia.service.account.domain.entity.Role;
 import jiny.futurevia.service.account.endpoint.controller.SignUpForm;
 import jiny.futurevia.service.account.repository.AccountRepository;
+import jiny.futurevia.service.admin.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,12 +22,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final RoleRepository roleRepository;
     private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
 
@@ -42,6 +47,10 @@ public class AccountService {
     }
 
     private Account saveNewAccount(SignUpForm signUpForm) {
+        Role role = roleRepository.findByRoleName("ROLE_USER");
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+
         Account account = Account.builder()
                 .email(signUpForm.getEmail())
                 .nickname(signUpForm.getNickname())
@@ -51,6 +60,7 @@ public class AccountService {
                         .studyUpdatedByWeb(true)
                         .studyRegistrationResultByWeb(true)
                         .build())
+                .userRoles(roles)
                 .build();
         return accountRepository.save(account);
     }

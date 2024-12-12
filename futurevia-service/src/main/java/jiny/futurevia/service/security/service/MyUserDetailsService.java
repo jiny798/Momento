@@ -33,13 +33,12 @@ public class MyUserDetailsService implements UserDetailsService {
         if (account == null) {
             throw new UsernameNotFoundException("No user found with email: " + email);
         }
-//        List<GrantedAuthority> authorities = account.getUserRoles()
-//                .stream()
-//                .map(Role::getRoleName)
-//                .collect(Collectors.toSet())
-//                .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        List<GrantedAuthority> authorities = account.getUserRoles()
+                .stream()
+                .map(Role::getRoleName)
+                .collect(Collectors.toSet())
+                .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
         ModelMapper mapper = new ModelMapper();
         AccountDto accountDto = mapper.map(account, AccountDto.class);
 
