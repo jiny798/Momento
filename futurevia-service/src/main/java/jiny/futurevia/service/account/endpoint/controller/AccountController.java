@@ -7,6 +7,7 @@ import jiny.futurevia.service.account.application.AccountService;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.endpoint.controller.validator.SignUpFormValidator;
 import jiny.futurevia.service.account.repository.AccountRepository;
+import jiny.futurevia.service.account.support.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -65,5 +66,22 @@ public class AccountController {
         model.addAttribute("numberOfUsers", accountRepository.count());
         model.addAttribute("nickname", account.getNickname());
         return "account/email-verification";
+    }
+
+    @GetMapping("/check-email")
+    public String checkMail(@CurrentUser Account account, Model model) { // (1)
+        model.addAttribute("email", account.getEmail());
+        return "account/check-email";
+    }
+
+    @GetMapping("/resend-email")
+    public String resendEmail(@CurrentUser Account account, Model model) { // (2)
+        if (!account.enableToSendEmail()) {
+            model.addAttribute("error", "인증 이메일은 5분에 한 번만 전송할 수 있습니다.");
+            model.addAttribute("email", account.getEmail());
+            return "account/check-email";
+        }
+        accountService.sendVerificationEmail(account);
+        return "redirect:/";
     }
 }
