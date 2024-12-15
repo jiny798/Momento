@@ -1,5 +1,6 @@
 package jiny.futurevia.service.account.domain.dto;
 
+import jiny.futurevia.service.account.domain.entity.Account;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,11 +10,11 @@ import java.util.List;
 
 @Data
 public class AccountContext implements UserDetails {
-    private AccountDto accountDto;
+    private Account account;
     private final List<GrantedAuthority> roles;
 
-    public AccountContext(AccountDto accountDto, List<GrantedAuthority> roles) {
-      this.accountDto = accountDto;
+    public AccountContext(Account account, List<GrantedAuthority> roles) {
+      this.account = account;
       this.roles = roles;
     }
     @Override
@@ -22,11 +23,11 @@ public class AccountContext implements UserDetails {
     }
     @Override
     public String getPassword() {
-        return accountDto.getPassword();
+        return account.getPassword();
     }
     @Override
     public String getUsername() {
-        return accountDto.getUsername();
+        return account.getNickname();
     }
     @Override
     public boolean isAccountNonExpired() {

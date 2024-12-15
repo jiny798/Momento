@@ -1,7 +1,6 @@
 package jiny.futurevia.service.security.service;
 
 import jiny.futurevia.service.account.domain.dto.AccountContext;
-import jiny.futurevia.service.account.domain.dto.AccountDto;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Role;
 import jiny.futurevia.service.account.repository.AccountRepository;
@@ -15,7 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,8 +38,7 @@ public class MyUserDetailsService implements UserDetailsService {
                 .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
         ModelMapper mapper = new ModelMapper();
-        AccountDto accountDto = mapper.map(account, AccountDto.class);
 
-        return new AccountContext(accountDto, authorities);
+        return new AccountContext(account, authorities);
     }
 }
