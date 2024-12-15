@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("userDetailsService")
@@ -27,7 +28,8 @@ public class MyUserDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Account account = accountRepository.findByEmail(email);
+        Account account = Optional.ofNullable(accountRepository.findByEmail(email))
+            .orElse(accountRepository.findByNickname(email));
         if (account == null) {
             throw new UsernameNotFoundException("No user found with email: " + email);
         }
