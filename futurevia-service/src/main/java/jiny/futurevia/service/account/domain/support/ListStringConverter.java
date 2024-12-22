@@ -10,16 +10,17 @@ import java.util.stream.Stream;
 
 @Converter
 public class ListStringConverter implements AttributeConverter<List<String>, String> {
-    @Override
-    public String convertToDatabaseColumn(List<String> attribute) {
-        return Optional.ofNullable(attribute)
-                .map(a -> String.join(",", a))
-                .orElse("");
-    }
+	@Override
+	public String convertToDatabaseColumn(List<String> attribute) {
+		return Optional.ofNullable(attribute)
+			.filter(list -> !list.isEmpty())
+			.map(a -> String.join(",", a))
+			.orElse(null);
+	}
 
-    @Override
-    public List<String> convertToEntityAttribute(String dbData) {
-        return Stream.of(dbData.split(","))
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<String> convertToEntityAttribute(String dbData) {
+		return Stream.of(dbData.split(","))
+			.collect(Collectors.toList());
+	}
 }

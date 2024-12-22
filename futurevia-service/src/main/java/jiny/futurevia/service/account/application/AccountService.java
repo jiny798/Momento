@@ -36,17 +36,33 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Service
-public class AccountService {
+@Service("userDetailsService")
+public class AccountService implements UserDetailsService{
 
 	private final AccountRepository accountRepository;
 	private final RoleRepository roleRepository;
 	private final JavaMailSender mailSender;
 	private final PasswordEncoder passwordEncoder;
 
-	/*** Authenticate ***/
-	private final AuthenticationManager authenticationManager;
-	private final HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+	@Override
+	@Transactional
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+		Account account = Optional.ofNullable(accountRepository.findByEmail(email))
+			.orElse(accountRepository.findByNickname(email));
+		if (account == null) {
+			throw new UsernameNotFoundException("No user found with email: " + email);
+		}
+		List<GrantedAuthority> authorities = account.getUserRoles()
+			.stream()
+			.map(Role::getRoleName)
+			.collect(Collectors.toSet())
+			.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+		ModelMapper mapper = new ModelMapper();
+
+		return new AccountContext(account, authorities);
+	}
 
 	@Transactional
 	public Account signUp(SignUpForm signUpForm) {
@@ -88,23 +104,12 @@ public class AccountService {
 		return accountRepository.findByEmail(email);
 	}
 
-	public void login(String email, String password, HttpServletRequest request, HttpServletResponse response) {
-		//        UsernamePasswordAuthenticationToken unAuthenticationToken = new UsernamePasswordAuthenticationToken(
-		//                account.getNickname(),
-		//                account.getPassword(),
-		//                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
-		// Security 에서 제공하는 DaoAuthenticationProvider 는 email, password 평문으로 전달해야함
-		UsernamePasswordAuthenticationToken unAuthenticationToken = UsernamePasswordAuthenticationToken.unauthenticated(
-			email,
-			password);
 
-		Authentication authentication = authenticationManager.authenticate(unAuthenticationToken);
-		SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().createEmptyContext();
-		securityContext.setAuthentication(authentication);
-		// Save in ThreadLocal
-		SecurityContextHolder.getContextHolderStrategy().setContext(securityContext);
-
-		securityContextRepository.saveContext(securityContext, request, response);
-
+	@Transactional
+	public void verify(Account account) {
+		account.verified();
 	}
+
+
+
 }

@@ -7,8 +7,11 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
+import org.hibernate.Hibernate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,6 +30,7 @@ public class Account extends AuditingEntity {
     private String password;
     private LocalDateTime joinedAt;
 
+    /*** 프로필 ***/
     @Embedded
     private Profile profile;
     @Embeddable
@@ -44,6 +48,7 @@ public class Account extends AuditingEntity {
         private String image;
     }
 
+    /*** 알림 ***/
     @Embedded
     private NotificationSetting notificationSetting;
 
@@ -85,4 +90,21 @@ public class Account extends AuditingEntity {
             @JoinColumn(name = "role_id") })
     @ToString.Exclude
     private Set<Role> userRoles = new HashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+        Account account = (Account) o;
+        return id != null && Objects.equals(id, account.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
