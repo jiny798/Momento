@@ -30,6 +30,16 @@ public class Account extends AuditingEntity {
     private String password;
     private LocalDateTime joinedAt;
 
+    @PostLoad
+    private void init() {
+        if (profile == null) {
+            profile = new Profile();
+        }
+        if (notificationSetting == null) {
+            notificationSetting = new NotificationSetting();
+        }
+    }
+
     /*** 프로필 ***/
     @Embedded
     private Profile profile;
@@ -38,8 +48,7 @@ public class Account extends AuditingEntity {
     @Builder @Getter @ToString
     public static class Profile {
         private String bio;
-        @Convert(converter = ListStringConverter.class)
-        private List<String> url;
+        private String url;
         private String job;
         private String location;
         private String company;
