@@ -2,6 +2,7 @@ package jiny.futurevia.service.account.domain.entity;
 
 import jakarta.persistence.*;
 import jiny.futurevia.service.account.domain.support.ListStringConverter;
+import jiny.futurevia.service.settings.controller.Profile;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -55,6 +56,16 @@ public class Account extends AuditingEntity {
         @Lob
         @Basic(fetch = FetchType.EAGER)
         private String image;
+    }
+
+    public void updateProfile(jiny.futurevia.service.settings.controller.Profile profile) {
+        if (this.profile == null) {
+            this.profile = new Profile();
+        }
+        this.profile.bio = profile.getBio();
+        this.profile.url = profile.getUrl();
+        this.profile.job = profile.getJob();
+        this.profile.location = profile.getLocation();
     }
 
     /*** 알림 ***/

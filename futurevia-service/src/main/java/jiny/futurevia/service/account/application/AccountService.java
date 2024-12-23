@@ -8,6 +8,7 @@ import jiny.futurevia.service.account.domain.entity.Role;
 import jiny.futurevia.service.account.endpoint.controller.SignUpForm;
 import jiny.futurevia.service.account.repository.AccountRepository;
 import jiny.futurevia.service.admin.repository.RoleRepository;
+import jiny.futurevia.service.settings.controller.Profile;
 import lombok.RequiredArgsConstructor;
 
 import org.modelmapper.ModelMapper;
@@ -111,5 +112,10 @@ public class AccountService implements UserDetailsService{
 	}
 
 
+	@Transactional
+	public void updateProfile(Account account, Profile profile) {
+		account.updateProfile(profile);
+		accountRepository.save(account);
+	}
 
 }
