@@ -82,6 +82,7 @@ public class AccountController {
 		return "account/check-email";
 	}
 
+
 	@GetMapping("/resend-email")
 	public String resendEmail(@CurrentUser Account account, Model model) {
 		if (!account.enableToSendEmail()) {
@@ -103,4 +104,6 @@ public class AccountController {
 		model.addAttribute("isOwner", byNickname.equals(account));
 		return "account/profile";
 	}
+
+
 }

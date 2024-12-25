@@ -1,9 +1,9 @@
 package jiny.futurevia.service.account.domain.entity;
 
 import jakarta.persistence.*;
-import jiny.futurevia.service.account.domain.support.ListStringConverter;
-import jiny.futurevia.service.settings.controller.Profile;
+
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.*;
 
 import org.hibernate.Hibernate;
 

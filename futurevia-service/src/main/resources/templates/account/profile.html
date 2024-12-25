@@ -32,20 +32,20 @@
                 <div class="tab-content" id="v-pills-tabContent">
                     <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel"
                          aria-labelledby="v-pills-home-tab">
-                        <p th:if="${!#strings.isEmpty(account.profile.url)}">
-                            <span style="...">
+                        <p th:if="${!#lists.isEmpty(account.profile.url)}">
+                            <span style="">
                                 <i class="fa fa-link col-1"></i>
                             </span>
                             <span th:text="${account.profile.url}" class="col-11"></span>
                         </p>
                         <p th:if="${!#strings.isEmpty(account.profile.job)}">
-                            <span style="...">
+                            <span style="">
                                 <i class="fa fa-briefcase col-1"></i>
                             </span>
                             <span th:text="${account.profile.job}" class="col-9"></span>
                         </p>
                         <p th:if="${!#strings.isEmpty(account.profile.location)}">
-                            <span style="...">
+                            <span style="">
                                 <i class="fa fa-location-arrow col-1"></i>
                             </span>
                             <span th:text="${account.profile.location}" class="col-9"></span>
@@ -57,12 +57,11 @@
                             <span th:text="${account.email}" class="col-9"></span>
                         </p>
                         <p th:if="${isOwner || account.valid}">
-                            <span style="...">
+                            <span style="font-size: 20px">
                                 <i class="fa fa-calendar-o col-1"></i>
                             </span>
                             <span th:if="${isOwner && !account.valid}" class="col-9">
-                                <a href="#"
-                                   th:href="@{'/check-email?email=' + ${account.email}}">가입을 완료하려면 이메일을 확인하세요.</a>
+                                <a href="#" th:href="@{'/check-email?email=' + ${account.email}}">가입을 완료하려면 이메일을 확인하세요.</a>
                             </span>
                             <span th:text="${#temporals.format(account.joinedAt, 'yyyy년 M월 가입')}" class="col-9"></span>
                         </p>
