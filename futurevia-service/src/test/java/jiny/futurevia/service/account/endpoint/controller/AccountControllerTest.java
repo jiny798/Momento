@@ -112,18 +112,7 @@ class AccountControllerTest {
 	@Test
 	@Transactional
 	void verifyEmail() throws Exception {
-		Account account = Account.builder()
-			.email("email@email.com")
-			.password("1234!@#$")
-			.nickname("nickname")
-			.notificationSetting(Account.NotificationSetting.builder()
-				.studyCreatedByWeb(true)
-				.studyUpdatedByWeb(true)
-				.studyRegistrationResultByWeb(true)
-				.build())
-			.build();
-		Account newAccount = accountRepository.save(account);
-		newAccount.generateToken();
+		Account newAccount = accountRepository.findByEmail("jiny1234@jiny.com");
 		mockMvc.perform(get("/check-email-token")
 				.param("token", newAccount.getEmailToken())
 				.param("email", newAccount.getEmail()))

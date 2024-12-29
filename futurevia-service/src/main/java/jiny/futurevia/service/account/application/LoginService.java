@@ -38,13 +38,13 @@ public class LoginService {
 			authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 		}
 
-		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+		UsernamePasswordAuthenticationToken authenticatedToken = new UsernamePasswordAuthenticationToken(
 			accountService.loadUserByUsername(loginAccount.getEmail()),
 			null,
 			authorities);
 
 		SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().createEmptyContext();
-		securityContext.setAuthentication(token);
+		securityContext.setAuthentication(authenticatedToken);
 
 		// Save in ThreadLocal
 		SecurityContextHolder.getContextHolderStrategy().setContext(securityContext);
