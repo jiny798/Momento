@@ -1,5 +1,6 @@
 package jiny.futurevia.service.account.endpoint.controller;
 
+import jiny.futurevia.service.WithAccount;
 import jiny.futurevia.service.account.application.AccountService;
 import jiny.futurevia.service.account.domain.entity.Account;
 
@@ -169,4 +170,5 @@ class AccountControllerTest {
 			.andExpect(redirectedUrl("/login?logout"))
 			.andExpect(unauthenticated());
 	}
+
 }
