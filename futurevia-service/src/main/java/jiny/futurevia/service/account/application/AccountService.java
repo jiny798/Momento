@@ -3,6 +3,7 @@ package jiny.futurevia.service.account.application;
 import jiny.futurevia.service.account.domain.dto.AccountContext;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Role;
+import jiny.futurevia.service.account.endpoint.controller.dto.NotificationForm;
 import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
 import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
 import jiny.futurevia.service.account.repository.AccountRepository;
@@ -112,4 +113,8 @@ public class AccountService implements UserDetailsService{
 		accountRepository.save(account);
 	}
 
+	public void updateNotification(Account account, NotificationForm notificationForm) {
+		account.updateNotification(notificationForm);
+		accountRepository.save(account);
+	}
 }

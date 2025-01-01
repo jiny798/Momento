@@ -2,6 +2,7 @@ package jiny.futurevia.service.account.domain.entity;
 
 import jakarta.persistence.*;
 
+import jiny.futurevia.service.account.endpoint.controller.dto.NotificationForm;
 import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -81,12 +82,21 @@ public class Account extends AuditingEntity {
     @Builder @Getter
     @ToString
     public static class NotificationSetting {
-        private boolean studyCreatedByEmail;
-        private boolean studyCreatedByWeb;
-        private boolean studyRegistrationResultByEmail;
-        private boolean studyRegistrationResultByWeb;
-        private boolean studyUpdatedByEmail;
-        private boolean studyUpdatedByWeb;
+        private boolean studyCreatedByEmail = false;
+        private boolean studyCreatedByWeb = true;
+        private boolean studyRegistrationResultByEmail = false;
+        private boolean studyRegistrationResultByWeb = true;
+        private boolean studyUpdatedByEmail = false;
+        private boolean studyUpdatedByWeb = true;
+    }
+
+    public void updateNotification(NotificationForm notificationForm) {
+        this.notificationSetting.studyCreatedByEmail = notificationForm.isStudyCreatedByEmail();
+        this.notificationSetting.studyCreatedByWeb = notificationForm.isStudyCreatedByWeb();
+        this.notificationSetting.studyUpdatedByWeb = notificationForm.isStudyUpdatedByWeb();
+        this.notificationSetting.studyUpdatedByEmail = notificationForm.isStudyUpdatedByEmail();
+        this.notificationSetting.studyRegistrationResultByEmail = notificationForm.isStudyRegistrationResultByEmail();
+        this.notificationSetting.studyRegistrationResultByWeb = notificationForm.isStudyRegistrationResultByWeb();
     }
 
     /*** 인증 관련 ***/
