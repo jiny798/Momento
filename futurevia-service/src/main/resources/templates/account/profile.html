@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments.html :: head"></head>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments.html::head"></head>
 <body class="bg-light">
-<div th:replace="fragments.html :: navigation-bar"></div>
+<div th:replace="fragments.html::navigation-bar"></div>
 <div class="container">
     <div class="row mt-5 justify-content-center">
-        <div class="col-2">
+        <div class="col-2" style="text-align:center; align-content: center;">
             <!-- avatar -->
-            <svg th:if="${#strings.isEmpty(account.profile.image)}" class="img-fluid float-left rounded img-thumbnail"
-                 th:data-jdenticon-value="${account.nickname}" width="125" height="125"></svg>
-            <svg th:if="${!#strings.isEmpty(account.profile.image)}" class="img-fluid float-left rounded img-thumbnail"
+<!--            <svg th:if="${#strings.isEmpty(account?.profile?.image)}" class="img-fluid float-left rounded img-thumbnail"-->
+<!--                 th:data-jdenticon-value="${account.nickname}" width="125" height="125"></svg>-->
+            <i th:if="${#strings.isEmpty(account?.profile?.image)}" class="fa fa-user-circle"
+               style="font-size: xxx-large;" aria-hidden="true"></i>
+            <svg th:if="${!#strings.isEmpty(account?.profile?.image)}" class="img-fluid float-left rounded img-thumbnail"
                  th:src="${account.profile.image}" width="125" height="125"></svg>
         </div>
         <div class="col-8">

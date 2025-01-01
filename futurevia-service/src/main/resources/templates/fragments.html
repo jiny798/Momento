@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:fragment="head">
     <meta charset="UTF-8">
+    <script>
+        window.jdenticon_config = {
+            replaceMode: "observe"
+        };
+    </script>
     <title>Futurevia</title>
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/node_modules/font-awesome/css/font-awesome.min.css"/>
@@ -60,9 +65,13 @@
                 </a>
             </li>
             <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"  data-bs-toggle="dropdown"
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    <svg data-jdenticon-value="user127" th:data-jdenticon-value="${#authentication.name}" width="24" height="24" class="rounded border bg-light"></svg>
+<!--                    <svg th:if="${#strings.isEmpty(account?.profile?.image)}"-->
+<!--                         th:data-jdenticon-value="${#authentication.name}" width="24" height="24" class="rounded border bg-light"></svg>-->
+                    <i th:if="${#strings.isEmpty(account?.profile?.image)}" class="fa fa-user-circle" aria-hidden="true"></i>
+                    <img th:if="${!#strings.isEmpty(account?.profile?.image)}"
+                         th:src="${account.profile.image}" width="24" height="24" class="rounded border"/>
                 </a>
                 <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="userDropdown">
                     <h6 class="dropdown-header">

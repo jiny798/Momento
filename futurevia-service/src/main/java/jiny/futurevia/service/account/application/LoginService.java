@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Role;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class LoginService {
@@ -31,6 +33,7 @@ public class LoginService {
 
 	@Transactional
 	public void login(Account loginAccount, HttpServletRequest request, HttpServletResponse response) {
+		log.info("[LoginService] login");
 		Set<Role> set = loginAccount.getUserRoles();
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
 		for (Role role : set) {

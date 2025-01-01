@@ -1,41 +1,34 @@
 package jiny.futurevia.service.account.application;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jiny.futurevia.service.account.domain.dto.AccountContext;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Role;
-import jiny.futurevia.service.account.endpoint.controller.SignUpForm;
+import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
+import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
 import jiny.futurevia.service.account.repository.AccountRepository;
 import jiny.futurevia.service.admin.repository.RoleRepository;
-import jiny.futurevia.service.settings.controller.Profile;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service("userDetailsService")
 public class AccountService implements UserDetailsService{
@@ -108,12 +101,13 @@ public class AccountService implements UserDetailsService{
 
 	@Transactional
 	public void verify(Account account) {
+		log.info("[AccountService] verify");
 		account.verified();
 	}
 
 
 	@Transactional
-	public void updateProfile(Account account, Profile profile) {
+	public void updateProfile(Account account, ProfileDto profile) {
 		account.updateProfile(profile);
 		accountRepository.save(account);
 	}

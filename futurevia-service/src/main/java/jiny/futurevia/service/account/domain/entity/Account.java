@@ -2,6 +2,7 @@ package jiny.futurevia.service.account.domain.entity;
 
 import jakarta.persistence.*;
 
+import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -56,10 +57,11 @@ public class Account extends AuditingEntity {
         private String company;
         @Lob
         @Basic(fetch = FetchType.EAGER)
+        @Column(length = 500000)
         private String image;
     }
 
-    public void updateProfile(jiny.futurevia.service.settings.controller.Profile profile) {
+    public void updateProfile(ProfileDto profile) {
         if (this.profile == null) {
             this.profile = new Profile();
         }
@@ -67,6 +69,7 @@ public class Account extends AuditingEntity {
         this.profile.url = profile.getUrl();
         this.profile.job = profile.getJob();
         this.profile.location = profile.getLocation();
+        this.profile.image = profile.getImage();
     }
 
     /*** 알림 ***/

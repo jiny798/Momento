@@ -1,6 +1,6 @@
 package jiny.futurevia.service.account.endpoint.controller.validator;
 
-import jiny.futurevia.service.account.endpoint.controller.SignUpForm;
+import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
 import jiny.futurevia.service.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

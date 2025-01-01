@@ -1,17 +1,16 @@
-package jiny.futurevia.service.settings.controller;
-
-import java.util.Optional;
-
-import org.hibernate.validator.constraints.Length;
+package jiny.futurevia.service.account.endpoint.controller.dto;
 
 import jiny.futurevia.service.account.domain.entity.Account;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
+
+import java.util.Optional;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Profile {
+public class ProfileDto {
     @Length(max = 35)
     private String bio;
     @Length(max = 50)
@@ -20,15 +19,17 @@ public class Profile {
     private String job;
     @Length(max = 50)
     private String location;
+    private String image;
 
-    public static Profile from(Account account) {
-        return new Profile(account);
+    public static ProfileDto from(Account account) {
+        return new ProfileDto(account);
     }
 
-    protected Profile(Account account) {
+    protected ProfileDto(Account account) {
         this.bio = Optional.ofNullable(account.getProfile()).map(Account.Profile::getBio).orElse(null);
         this.url = Optional.ofNullable(account.getProfile()).map(Account.Profile::getUrl).orElse(null);
         this.job = Optional.ofNullable(account.getProfile()).map(Account.Profile::getJob).orElse(null);
         this.location = Optional.ofNullable(account.getProfile()).map(Account.Profile::getLocation).orElse(null);
+        this.image = Optional.ofNullable(account.getProfile()).map(Account.Profile::getImage).orElse(null);
     }
 }
