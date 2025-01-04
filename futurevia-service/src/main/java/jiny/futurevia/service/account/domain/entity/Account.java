@@ -125,6 +125,11 @@ public class Account extends AuditingEntity {
     @ToString.Exclude
     private Set<Role> userRoles = new HashSet<>();
 
+    /** 정보 수정 **/
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
