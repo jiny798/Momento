@@ -8,7 +8,7 @@ import jiny.futurevia.service.account.application.LoginService;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
 import jiny.futurevia.service.account.endpoint.controller.validator.SignUpFormValidator;
-import jiny.futurevia.service.account.repository.AccountRepository;
+import jiny.futurevia.service.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.account.support.CurrentUser;
 import lombok.RequiredArgsConstructor;
 

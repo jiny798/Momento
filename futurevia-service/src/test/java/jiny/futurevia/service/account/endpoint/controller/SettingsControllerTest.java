@@ -2,7 +2,7 @@ package jiny.futurevia.service.account.endpoint.controller;
 
 import jiny.futurevia.service.WithAccount;
 import jiny.futurevia.service.account.domain.entity.Account;
-import jiny.futurevia.service.account.repository.AccountRepository;
+import jiny.futurevia.service.account.infra.repository.AccountRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

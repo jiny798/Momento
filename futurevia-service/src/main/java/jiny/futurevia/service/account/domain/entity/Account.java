@@ -4,18 +4,15 @@ import jakarta.persistence.*;
 
 import jiny.futurevia.service.account.endpoint.controller.dto.NotificationForm;
 import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
+import jiny.futurevia.service.tag.domain.entity.Tag;
 import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.*;
-
-import org.hibernate.Hibernate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor(access = AccessLevel.PROTECTED)

@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import jiny.futurevia.service.account.repository.AccountRepository;
+import jiny.futurevia.service.account.infra.repository.AccountRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 

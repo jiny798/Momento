@@ -6,8 +6,9 @@ import jiny.futurevia.service.account.domain.entity.Role;
 import jiny.futurevia.service.account.endpoint.controller.dto.NotificationForm;
 import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
 import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
-import jiny.futurevia.service.account.repository.AccountRepository;
+import jiny.futurevia.service.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.admin.repository.RoleRepository;
+import jiny.futurevia.service.tag.domain.entity.Tag;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -139,5 +140,22 @@ public class AccountService implements UserDetailsService{
 		mailMessage.setSubject("[Futurevia] 로그인 링크");
 		mailMessage.setText("/login-by-email?token=" + account.getEmailToken() + "&email=" + account.getEmail());
 		mailSender.send(mailMessage);
+	}
+
+	@Transactional
+	public void addTag(Account account, Tag tag) {
+		accountRepository.findById(account.getId())
+				.ifPresent(a -> a.getTags().add(tag));
+	}
+
+	public Set<Tag> getTags(Account account) {
+		return accountRepository.findById(account.getId()).orElseThrow().getTags();
+	}
+
+	@Transactional
+	public void removeTag(Account account, Tag tag) {
+		accountRepository.findById(account.getId())
+				.map(Account::getTags)
+				.ifPresent(tags -> tags.remove(tag));
 	}
 }

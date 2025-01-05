@@ -1,4 +1,4 @@
-package jiny.futurevia.service.account.repository;
+package jiny.futurevia.service.account.infra.repository;
 
 
 import jiny.futurevia.service.account.domain.entity.Account;

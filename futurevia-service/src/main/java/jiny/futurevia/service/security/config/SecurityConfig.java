@@ -29,7 +29,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll());
-        http.csrf(AbstractHttpConfigurer::disable);
+//        http.csrf(AbstractHttpConfigurer::disable);
         http.formLogin(form -> form
                 .loginPage("/login").permitAll());
         http.rememberMe(rememberMe -> rememberMe
