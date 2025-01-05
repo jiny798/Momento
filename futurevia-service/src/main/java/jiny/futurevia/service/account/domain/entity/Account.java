@@ -45,9 +45,20 @@ public class Account extends AuditingEntity {
         this.password = newPassword;
     }
 
+    public static Account from(String email, String nickname, String password, Set<Role> roles) {
+        Account account = new Account();
+        account.email = email;
+        account.nickname = nickname;
+        account.password = password;
+        account.userRoles = roles;
+
+        return account;
+    }
+
     /*** 프로필 ***/
     @Embedded
     private Profile profile;
+
     @Embeddable
     @NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @Builder @Getter @ToString
@@ -75,8 +86,8 @@ public class Account extends AuditingEntity {
     }
 
     /*** 태그 ***/
-    @ManyToMany
-    private Set<Tag> tags;
+    @ManyToMany @ToString.Exclude
+    private Set<Tag> tags = new HashSet<>();
 
     /*** 알림 ***/
     @Embedded

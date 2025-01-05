@@ -63,7 +63,6 @@ public class AccountService implements UserDetailsService{
 	@Transactional
 	public Account signUp(SignUpForm signUpForm) {
 		Account newAccount = saveNewAccount(signUpForm);
-		newAccount.generateToken();
 		sendVerificationEmail(newAccount);
 		return newAccount;
 	}
@@ -73,17 +72,12 @@ public class AccountService implements UserDetailsService{
 		Set<Role> roles = new HashSet<>();
 		roles.add(role);
 
-		Account account = Account.builder()
-			.email(signUpForm.getEmail())
-			.nickname(signUpForm.getNickname())
-			.password(passwordEncoder.encode(signUpForm.getPassword()))
-			.notificationSetting(Account.NotificationSetting.builder()
-				.studyCreatedByWeb(true)
-				.studyUpdatedByWeb(true)
-				.studyRegistrationResultByWeb(true)
-				.build())
-			.userRoles(roles)
-			.build();
+		Account account = Account.from(signUpForm.getEmail(),
+				signUpForm.getNickname(),
+				signUpForm.getPassword(),
+				roles);
+
+		account.generateToken();
 		return accountRepository.save(account);
 	}
 
