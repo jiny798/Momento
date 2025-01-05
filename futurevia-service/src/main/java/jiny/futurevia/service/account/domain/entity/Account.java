@@ -44,6 +44,10 @@ public class Account extends AuditingEntity {
         }
     }
 
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
     /*** 프로필 ***/
     @Embedded
     private Profile profile;
@@ -72,6 +76,10 @@ public class Account extends AuditingEntity {
         this.profile.location = profile.getLocation();
         this.profile.image = profile.getImage();
     }
+
+    /*** 태그 ***/
+    @ManyToMany
+    private Set<Tag> tags;
 
     /*** 알림 ***/
     @Embedded
@@ -116,6 +124,10 @@ public class Account extends AuditingEntity {
     public void verified() {
         this.isValid = true;
         joinedAt = LocalDateTime.now();
+    }
+
+    public boolean isValid(String token) {
+        return this.emailToken.equals(token);
     }
 
     /*** 권한 관련 ***/

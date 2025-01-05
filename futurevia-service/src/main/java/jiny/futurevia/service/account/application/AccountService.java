@@ -113,13 +113,31 @@ public class AccountService implements UserDetailsService{
 		accountRepository.save(account);
 	}
 
+	@Transactional
 	public void updateNotification(Account account, NotificationForm notificationForm) {
 		account.updateNotification(notificationForm);
 		accountRepository.save(account);
 	}
 
+	@Transactional
 	public void updateNickname(Account account, String nickname) {
 		account.updateNickname(nickname);
 		accountRepository.save(account);
+	}
+
+	@Transactional
+	public void updatePassword(Account account, String newPassword) {
+		account.updatePassword(passwordEncoder.encode(newPassword));
+		accountRepository.save(account);
+	}
+
+	@Transactional
+	public void sendLoginLink(Account account) {
+		account.generateToken();
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(account.getEmail());
+		mailMessage.setSubject("[Futurevia] 로그인 링크");
+		mailMessage.setText("/login-by-email?token=" + account.getEmailToken() + "&email=" + account.getEmail());
+		mailSender.send(mailMessage);
 	}
 }
