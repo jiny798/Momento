@@ -74,7 +74,7 @@ public class AccountService implements UserDetailsService{
 
 		Account account = Account.from(signUpForm.getEmail(),
 				signUpForm.getNickname(),
-				signUpForm.getPassword(),
+				passwordEncoder.encode(signUpForm.getPassword()),
 				roles);
 
 		account.generateToken();

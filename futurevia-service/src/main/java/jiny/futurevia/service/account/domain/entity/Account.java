@@ -15,11 +15,15 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder @Getter @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@Getter
+@ToString
 public class Account extends AuditingEntity {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Long id;
 
@@ -60,8 +64,11 @@ public class Account extends AuditingEntity {
     private Profile profile;
 
     @Embeddable
-    @NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor(access = AccessLevel.PROTECTED)
-    @Builder @Getter @ToString
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @Builder
+    @Getter
+    @ToString
     public static class Profile {
         private String bio;
         private String url;
@@ -86,16 +93,19 @@ public class Account extends AuditingEntity {
     }
 
     /*** 태그 ***/
-    @ManyToMany @ToString.Exclude
+    @ManyToMany
+    @ToString.Exclude
     private Set<Tag> tags = new HashSet<>();
 
     /*** 알림 ***/
     @Embedded
-    private NotificationSetting notificationSetting;
+    private NotificationSetting notificationSetting = new NotificationSetting();
 
     @Embeddable
-    @NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor(access = AccessLevel.PROTECTED)
-    @Builder @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @Builder
+    @Getter
     @ToString
     public static class NotificationSetting {
         private boolean studyCreatedByEmail = false;
@@ -139,13 +149,15 @@ public class Account extends AuditingEntity {
     }
 
     /*** 권한 관련 ***/
-    @ManyToMany(fetch = FetchType.LAZY, cascade={CascadeType.MERGE})
-    @JoinTable(name = "account_roles", joinColumns = { @JoinColumn(name = "account_id") }, inverseJoinColumns = {
-            @JoinColumn(name = "role_id") })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @JoinTable(name = "account_roles", joinColumns = {@JoinColumn(name = "account_id")}, inverseJoinColumns = {
+            @JoinColumn(name = "role_id")})
     @ToString.Exclude
     private Set<Role> userRoles = new HashSet<>();
 
-    /** 정보 수정 **/
+    /**
+     * 정보 수정
+     **/
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
