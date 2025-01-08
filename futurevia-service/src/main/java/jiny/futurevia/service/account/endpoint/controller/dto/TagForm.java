@@ -1,11 +1,11 @@
 package jiny.futurevia.service.account.endpoint.controller.dto;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TagForm {
     private String tagTitle;
 }
