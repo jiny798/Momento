@@ -3,6 +3,7 @@ package jiny.futurevia.service.account.application;
 import jiny.futurevia.service.account.domain.dto.AccountContext;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Role;
+import jiny.futurevia.service.account.domain.entity.Zone;
 import jiny.futurevia.service.account.endpoint.controller.dto.NotificationForm;
 import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
 import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 @Service("userDetailsService")
 public class AccountService implements UserDetailsService{
 
@@ -41,7 +43,6 @@ public class AccountService implements UserDetailsService{
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
-	@Transactional
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
 		Account account = Optional.ofNullable(accountRepository.findByEmail(email))
@@ -60,7 +61,7 @@ public class AccountService implements UserDetailsService{
 		return new AccountContext(account, authorities);
 	}
 
-	@Transactional
+
 	public Account signUp(SignUpForm signUpForm) {
 		Account newAccount = saveNewAccount(signUpForm);
 		sendVerificationEmail(newAccount);
@@ -95,38 +96,37 @@ public class AccountService implements UserDetailsService{
 	}
 
 
-	@Transactional
+
 	public void verify(Account account) {
 		log.info("[AccountService] verify");
 		account.verified();
 	}
 
 
-	@Transactional
+
 	public void updateProfile(Account account, ProfileDto profile) {
 		account.updateProfile(profile);
 		accountRepository.save(account);
 	}
 
-	@Transactional
+
 	public void updateNotification(Account account, NotificationForm notificationForm) {
 		account.updateNotification(notificationForm);
 		accountRepository.save(account);
 	}
 
-	@Transactional
+
 	public void updateNickname(Account account, String nickname) {
 		account.updateNickname(nickname);
 		accountRepository.save(account);
 	}
 
-	@Transactional
+
 	public void updatePassword(Account account, String newPassword) {
 		account.updatePassword(passwordEncoder.encode(newPassword));
 		accountRepository.save(account);
 	}
 
-	@Transactional
 	public void sendLoginLink(Account account) {
 		account.generateToken();
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -136,7 +136,6 @@ public class AccountService implements UserDetailsService{
 		mailSender.send(mailMessage);
 	}
 
-	@Transactional
 	public void addTag(Account account, Tag tag) {
 		accountRepository.findById(account.getId())
 				.ifPresent(a -> a.getTags().add(tag));
@@ -146,10 +145,25 @@ public class AccountService implements UserDetailsService{
 		return accountRepository.findById(account.getId()).orElseThrow().getTags();
 	}
 
-	@Transactional
 	public void removeTag(Account account, Tag tag) {
 		accountRepository.findById(account.getId())
 				.map(Account::getTags)
 				.ifPresent(tags -> tags.remove(tag));
+	}
+
+	public Set<Zone> getZones(Account account) {
+		return accountRepository.findById(account.getId())
+				.orElseThrow()
+				.getZones();
+	}
+
+	public void addZone(Account account, Zone zone) {
+		accountRepository.findById(account.getId())
+				.ifPresent(a -> a.getZones().add(zone));
+	}
+
+	public void removeZone(Account account, Zone zone) {
+		accountRepository.findById(account.getId())
+				.ifPresent(a -> a.getZones().remove(zone));
 	}
 }

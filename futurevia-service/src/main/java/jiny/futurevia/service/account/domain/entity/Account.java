@@ -35,6 +35,14 @@ public class Account extends AuditingEntity {
     private String password;
     private LocalDateTime joinedAt;
 
+    @ManyToMany
+    @ToString.Exclude
+    private Set<Tag> tags = new HashSet<>();
+
+    @ManyToMany @ToString.Exclude
+    private Set<Zone> zones = new HashSet<>();
+
+
     @PostLoad
     private void init() {
         if (profile == null) {
@@ -75,10 +83,12 @@ public class Account extends AuditingEntity {
         private String job;
         private String location;
         private String company;
+
         @Lob
         @Basic(fetch = FetchType.EAGER)
         @Column(length = 500000)
         private String image;
+
     }
 
     public void updateProfile(ProfileDto profile) {
@@ -91,11 +101,6 @@ public class Account extends AuditingEntity {
         this.profile.location = profile.getLocation();
         this.profile.image = profile.getImage();
     }
-
-    /*** 태그 ***/
-    @ManyToMany
-    @ToString.Exclude
-    private Set<Tag> tags = new HashSet<>();
 
     /*** 알림 ***/
     @Embedded

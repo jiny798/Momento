@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import jiny.futurevia.service.account.application.AccountService;
 import jiny.futurevia.service.account.domain.entity.Account;
+import jiny.futurevia.service.account.domain.entity.Zone;
 import jiny.futurevia.service.account.endpoint.controller.dto.*;
 import jiny.futurevia.service.tag.domain.entity.Tag;
 import jiny.futurevia.service.account.endpoint.controller.validator.NicknameFormValidator;
 import jiny.futurevia.service.account.endpoint.controller.validator.PasswordFormValidator;
 import jiny.futurevia.service.account.support.CurrentUser;
 import jiny.futurevia.service.tag.infra.repository.TagRepository;
+import jiny.futurevia.service.zone.infra.repository.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -46,10 +48,16 @@ public class SettingsController {
     static final String SETTINGS_TAGS_VIEW_NAME = "settings/tags";
     static final String SETTINGS_TAGS_URL = "/" + SETTINGS_TAGS_VIEW_NAME;
 
+    static final String SETTINGS_ZONE_VIEW_NAME = "settings/zones";
+    static final String SETTINGS_ZONE_URL = "/" + SETTINGS_ZONE_VIEW_NAME;
+
     private final AccountService accountService;
     private final TagRepository tagRepository;
+    private final ZoneRepository zoneRepository;
+
     private final NicknameFormValidator nicknameFormValidator;
     private final ObjectMapper objectMapper;
+
 
     @InitBinder("passwordForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -179,5 +187,36 @@ public class SettingsController {
         Tag tag = tagRepository.findByTitle(title)
                 .orElseThrow(IllegalArgumentException::new);
         accountService.removeTag(account, tag);
+    }
+
+    // Zone
+    @GetMapping(SETTINGS_ZONE_URL)
+    public String updateZonesForm(@CurrentUser Account account, Model model) throws JsonProcessingException {
+        model.addAttribute(account);
+        Set<Zone> zones = accountService.getZones(account);
+        model.addAttribute("zones", zones.stream()
+                .map(Zone::toString)
+                .collect(Collectors.toList()));
+        List<String> allZones = zoneRepository.findAll().stream()
+                .map(Zone::toString)
+                .collect(Collectors.toList());
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(allZones));
+        return SETTINGS_ZONE_VIEW_NAME;
+    }
+
+    @PostMapping(SETTINGS_ZONE_URL + "/add")
+    @ResponseStatus(HttpStatus.OK)
+    public void addZone(@CurrentUser Account account, @RequestBody ZoneForm zoneForm) {
+        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName())
+                .orElseThrow(IllegalArgumentException::new);
+        accountService.addZone(account, zone);
+    }
+
+    @PostMapping(SETTINGS_ZONE_URL + "/remove")
+    @ResponseStatus(HttpStatus.OK)
+    public void removeZone(@CurrentUser Account account, @RequestBody ZoneForm zoneForm) {
+        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName())
+                .orElseThrow(IllegalArgumentException::new);
+        accountService.removeZone(account, zone);
     }
 }
