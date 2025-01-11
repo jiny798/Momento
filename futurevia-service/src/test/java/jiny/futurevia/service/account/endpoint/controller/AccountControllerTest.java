@@ -4,17 +4,24 @@ import jiny.futurevia.service.account.application.AccountService;
 import jiny.futurevia.service.account.domain.entity.Account;
 
 import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
+import jiny.futurevia.service.mail.EmailMessage;
+import jiny.futurevia.service.mail.EmailService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.BDDMockito.then;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
@@ -36,13 +43,16 @@ class AccountControllerTest {
 	@Autowired
 	AccountService accountService;
 
+	@MockBean
+	EmailService emailService;
+
 	@BeforeEach
 	void beforeEach() {
-		SignUpForm signUpForm = new SignUpForm();
-		signUpForm.setNickname("jiny1234");
-		signUpForm.setEmail("jiny1234@jiny.com");
-		signUpForm.setPassword("jiny1234");
-		accountService.signUp(signUpForm);
+//		SignUpForm signUpForm = new SignUpForm();
+//		signUpForm.setNickname("jiny1234");
+//		signUpForm.setEmail("jiny1234@jiny.com");
+//		signUpForm.setPassword("jiny1234");
+//		accountService.signUp(signUpForm);
 	}
 
 	@AfterEach
@@ -95,6 +105,11 @@ class AccountControllerTest {
 
 		Account account = accountRepository.findByEmail("dareme798@naver.com");
 		Assertions.assertNotEquals(account.getPassword(), password);
+		Assertions.assertNotNull(account.getEmailToken());
+
+		then(emailService)
+				.should()
+				.sendEmail(ArgumentMatchers.any(EmailMessage.class));
 	}
 
 	@DisplayName("인증 메일 확인: 잘못된 링크")

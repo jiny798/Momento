@@ -52,6 +52,7 @@ dependencies {
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test:6.1.6'
+	testImplementation 'com.tngtech.archunit:archunit-junit5-api:0.23.1'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	// validation

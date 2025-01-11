@@ -33,7 +33,6 @@ public class AccountController {
     private final AccountService accountService;
     private final LoginService loginService;
     private final SignUpFormValidator signUpFormValidator;
-    private final JavaMailSender javaMailSender;
     private final AccountRepository accountRepository;
 
     @InitBinder("signUpForm")

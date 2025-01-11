@@ -9,6 +9,8 @@ import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
 import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
 import jiny.futurevia.service.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.admin.repository.RoleRepository;
+import jiny.futurevia.service.mail.EmailMessage;
+import jiny.futurevia.service.mail.EmailService;
 import jiny.futurevia.service.tag.domain.entity.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -39,8 +41,9 @@ public class AccountService implements UserDetailsService{
 
 	private final AccountRepository accountRepository;
 	private final RoleRepository roleRepository;
-	private final JavaMailSender mailSender;
+
 	private final PasswordEncoder passwordEncoder;
+	private final EmailService emailService;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -83,12 +86,14 @@ public class AccountService implements UserDetailsService{
 	}
 
 	public void sendVerificationEmail(Account newAccount) {
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		mailMessage.setTo(newAccount.getEmail());
-		mailMessage.setSubject("회원 가입 인증");
-		mailMessage.setText(String.format("/check-email-token?token=%s&email=%s", newAccount.getEmailToken(),
-			newAccount.getEmail()));
-		mailSender.send(mailMessage);
+		log.info("[AccountService] sendVerificationEmail");
+		log.info("[AccountService] emailService {}", emailService );
+		emailService.sendEmail(EmailMessage.builder()
+				.to(newAccount.getEmail())
+				.subject("Futurevia 회원 가입 인증")
+				.message(String.format("/check-email-token?token=%s&email=%s", newAccount.getEmailToken(),
+						newAccount.getEmail()))
+				.build());
 	}
 
 	public Account findAccountByEmail(String email) {
@@ -130,11 +135,11 @@ public class AccountService implements UserDetailsService{
 
 	public void sendLoginLink(Account account) {
 		account.generateToken();
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		mailMessage.setTo(account.getEmail());
-		mailMessage.setSubject("[Futurevia] 로그인 링크");
-		mailMessage.setText("/login-by-email?token=" + account.getEmailToken() + "&email=" + account.getEmail());
-		mailSender.send(mailMessage);
+		emailService.sendEmail(EmailMessage.builder()
+				.to(account.getEmail())
+				.subject("[Futurevia] 로그인 링크")
+				.message("/login-by-email?token=" + account.getEmailToken() + "&email=" + account.getEmail())
+				.build());
 	}
 
 	public void addTag(Account account, Tag tag) {
