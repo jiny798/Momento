@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jiny.futurevia.service.WithAccount;
 import jiny.futurevia.service.account.application.AccountService;
 import jiny.futurevia.service.account.domain.entity.Account;
+import jiny.futurevia.service.account.domain.entity.Zone;
 import jiny.futurevia.service.account.endpoint.controller.dto.TagForm;
+import jiny.futurevia.service.account.endpoint.controller.dto.ZoneForm;
 import jiny.futurevia.service.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.tag.domain.entity.Tag;
 import jiny.futurevia.service.tag.infra.repository.TagRepository;
+import jiny.futurevia.service.zone.infra.repository.ZoneRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,11 +40,14 @@ class SettingsControllerTest {
     @Autowired
     TagRepository tagRepository;
     @Autowired
+    ZoneRepository zoneRepository;
+    @Autowired
     ObjectMapper objectMapper;
 
     @AfterEach
     void afterEach() {
         accountRepository.deleteAll();
+        zoneRepository.deleteAll();
     }
 
     @Test
@@ -72,8 +78,9 @@ class SettingsControllerTest {
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeExists("account"))
                 .andExpect(model().attributeExists("profile"));
-        Account jaime = accountRepository.findByNickname("jiny798");
-        assertNull(jaime.getProfile().getBio());
+
+        Account account = accountRepository.findByNickname("jiny798");
+        assertNull(account.getProfile().getBio());
     }
 
     @Test
@@ -181,7 +188,7 @@ class SettingsControllerTest {
     }
 
     @Test
-    @DisplayName("태그 수정 폼")
+    @DisplayName("프로필: 태그 수정 폼")
     @WithAccount("jiny798")
     void updateTagForm() throws Exception {
         mockMvc.perform(get(SettingsController.SETTINGS_TAGS_URL))
@@ -193,7 +200,7 @@ class SettingsControllerTest {
     }
 
     @Test
-    @DisplayName("태그 추가")
+    @DisplayName("프로필: 태그 추가")
     @WithAccount("jiny798")
     void addTag() throws Exception {
         TagForm tagForm = new TagForm();
@@ -213,7 +220,7 @@ class SettingsControllerTest {
     }
 
     @Test
-    @DisplayName("태그 삭제")
+    @DisplayName("프로필: 태그 삭제")
     @WithAccount("jiny798")
     void removeTag() throws Exception {
 
@@ -233,6 +240,57 @@ class SettingsControllerTest {
                 .andExpect(status().isOk());
 
         assertFalse(account.getTags().contains(tag));
+    }
+
+    @Test
+    @DisplayName("프로필: 지역 정보 수정 화면")
+    @WithAccount("jiny798")
+    void updateZonesForm() throws Exception {
+        mockMvc.perform(get(SettingsController.SETTINGS_ZONE_URL))
+                .andExpect(view().name(SettingsController.SETTINGS_ZONE_VIEW_NAME))
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("whitelist"))
+                .andExpect(model().attributeExists("zones"));
+    }
+
+    @Test
+    @DisplayName("프로필: 지역 정보 추가")
+    @WithAccount("jiny798")
+    void addZone() throws Exception {
+        // given
+        Zone testZone = Zone.builder().city("test").localNameOfCity("테스트시").province("테스트주").build();
+        zoneRepository.save(testZone);
+
+        ZoneForm zoneForm = new ZoneForm();
+        zoneForm.setZoneName(testZone.toString());
+        mockMvc.perform(post(SettingsController.SETTINGS_ZONE_URL + "/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(zoneForm))
+                        .with(csrf()))
+                .andExpect(status().isOk());
+        Account account = accountRepository.findByNickname("jiny798");
+        assertTrue(account.getZones().contains(testZone));
+    }
+
+    @Test
+    @DisplayName("프로필: 지역 정보 삭제")
+    @WithAccount("jiny798")
+    void removeZone() throws Exception {
+        // given
+        Account jaime = accountRepository.findByNickname("jiny798");
+        Zone testZone = Zone.builder().city("test").localNameOfCity("테스트시").province("테스트주").build();
+        zoneRepository.save(testZone);
+        accountService.addZone(jaime, testZone);
+        assertTrue(jaime.getZones().contains(testZone));
+
+        ZoneForm zoneForm = new ZoneForm();
+        zoneForm.setZoneName(testZone.toString());
+        mockMvc.perform(post(SettingsController.SETTINGS_ZONE_URL + "/remove")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(zoneForm))
+                        .with(csrf()))
+                .andExpect(status().isOk());
+        assertFalse(jaime.getZones().contains(testZone));
     }
 
 }

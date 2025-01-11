@@ -105,6 +105,7 @@ public class AccountService implements UserDetailsService{
 
 
 	public void updateProfile(Account account, ProfileDto profile) {
+		log.info("[update profile]");
 		account.updateProfile(profile);
 		accountRepository.save(account);
 	}

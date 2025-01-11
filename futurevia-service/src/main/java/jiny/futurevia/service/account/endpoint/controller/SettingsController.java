@@ -81,7 +81,9 @@ public class SettingsController {
     @PostMapping(SETTINGS_PROFILE_URL)
     public String updateProfile(@CurrentUser Account account, @ModelAttribute("profile") @Valid ProfileDto profile, Errors errors, Model model,
                                 RedirectAttributes attributes) {
+        log.info("[Controller update profile] account" + account);
         if (errors.hasErrors()) {
+            log.info("[Controller update profile] errors");
             model.addAttribute(account);
             return SETTINGS_PROFILE_VIEW_NAME;
         }
@@ -194,6 +196,7 @@ public class SettingsController {
     public String updateZonesForm(@CurrentUser Account account, Model model) throws JsonProcessingException {
         model.addAttribute(account);
         Set<Zone> zones = accountService.getZones(account);
+        log.info("zone size {}", zones.size());
         model.addAttribute("zones", zones.stream()
                 .map(Zone::toString)
                 .collect(Collectors.toList()));
@@ -219,4 +222,5 @@ public class SettingsController {
                 .orElseThrow(IllegalArgumentException::new);
         accountService.removeZone(account, zone);
     }
+
 }

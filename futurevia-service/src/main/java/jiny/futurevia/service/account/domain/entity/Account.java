@@ -6,6 +6,7 @@ import jiny.futurevia.service.account.endpoint.controller.dto.NotificationForm;
 import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
 import jiny.futurevia.service.tag.domain.entity.Tag;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+@Slf4j
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,15 +45,17 @@ public class Account extends AuditingEntity {
     private Set<Zone> zones = new HashSet<>();
 
 
-    @PostLoad
-    private void init() {
-        if (profile == null) {
-            profile = new Profile();
-        }
-        if (notificationSetting == null) {
-            notificationSetting = new NotificationSetting();
-        }
-    }
+    // @TODO : PostLoad not working
+//    @PostLoad
+//    private void init() {
+//        log.info("[Account] init");
+//        if (profile == null) {
+//            profile = new Profile();
+//        }
+//        if (notificationSetting == null) {
+//            notificationSetting = new NotificationSetting();
+//        }
+//    }
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
@@ -63,6 +67,13 @@ public class Account extends AuditingEntity {
         account.nickname = nickname;
         account.password = password;
         account.userRoles = roles;
+
+        if (account.profile == null) {
+            account.profile = new Profile();
+        }
+        if (account.notificationSetting == null) {
+            account.notificationSetting = new NotificationSetting();
+        }
 
         return account;
     }
