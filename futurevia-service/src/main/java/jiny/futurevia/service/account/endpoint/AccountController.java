@@ -1,4 +1,4 @@
-package jiny.futurevia.service.account.endpoint.controller;
+package jiny.futurevia.service.account.endpoint;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -6,14 +6,13 @@ import jakarta.validation.Valid;
 import jiny.futurevia.service.account.application.AccountService;
 import jiny.futurevia.service.account.application.LoginService;
 import jiny.futurevia.service.account.domain.entity.Account;
-import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
-import jiny.futurevia.service.account.endpoint.controller.validator.SignUpFormValidator;
+import jiny.futurevia.service.account.endpoint.dto.SignUpForm;
+import jiny.futurevia.service.account.endpoint.validator.SignUpFormValidator;
 import jiny.futurevia.service.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.account.support.CurrentUser;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;

@@ -1,4 +1,4 @@
-package jiny.futurevia.service.account.endpoint.controller;
+package jiny.futurevia.service.account.endpoint;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,9 +7,10 @@ import jiny.futurevia.service.account.application.AccountService;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Zone;
 import jiny.futurevia.service.account.endpoint.controller.dto.*;
+import jiny.futurevia.service.account.endpoint.dto.*;
 import jiny.futurevia.service.tag.domain.entity.Tag;
-import jiny.futurevia.service.account.endpoint.controller.validator.NicknameFormValidator;
-import jiny.futurevia.service.account.endpoint.controller.validator.PasswordFormValidator;
+import jiny.futurevia.service.account.endpoint.validator.NicknameFormValidator;
+import jiny.futurevia.service.account.endpoint.validator.PasswordFormValidator;
 import jiny.futurevia.service.account.support.CurrentUser;
 import jiny.futurevia.service.tag.infra.repository.TagRepository;
 import jiny.futurevia.service.zone.infra.repository.ZoneRepository;

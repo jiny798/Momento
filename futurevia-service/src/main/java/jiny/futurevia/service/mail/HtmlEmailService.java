@@ -15,21 +15,21 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class HtmlEmailService implements EmailService {
 
-    private final JavaMailSender javaMailSender;
+//    private final JavaMailSender javaMailSender;
 
     @Override
     public void sendEmail(EmailMessage emailMessage) {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper;
-        try {
-            mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
-            mimeMessageHelper.setTo(emailMessage.getTo());
-            mimeMessageHelper.setSubject(emailMessage.getSubject());
-            mimeMessageHelper.setText(emailMessage.getMessage(), false);
-            javaMailSender.send(mimeMessage);
-            log.info("sent email: {}", emailMessage.getMessage());
-        } catch (MessagingException e) {
-            log.error("failed to send email", e);
-        }
+//        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+//        MimeMessageHelper mimeMessageHelper;
+//        try {
+//            mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+//            mimeMessageHelper.setTo(emailMessage.getTo());
+//            mimeMessageHelper.setSubject(emailMessage.getSubject());
+//            mimeMessageHelper.setText(emailMessage.getMessage(), false);
+//            javaMailSender.send(mimeMessage);
+//            log.info("sent email: {}", emailMessage.getMessage());
+//        } catch (MessagingException e) {
+//            log.error("failed to send email", e);
+//        }
     }
 }

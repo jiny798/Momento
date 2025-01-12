@@ -1,7 +1,7 @@
 package jiny.futurevia.service;
 
 import jiny.futurevia.service.account.application.AccountService;
-import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
+import jiny.futurevia.service.account.endpoint.dto.SignUpForm;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;

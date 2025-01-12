@@ -2,8 +2,8 @@ package jiny.futurevia.service.account.domain.entity;
 
 import jakarta.persistence.*;
 
-import jiny.futurevia.service.account.endpoint.controller.dto.NotificationForm;
-import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
+import jiny.futurevia.service.account.endpoint.dto.NotificationForm;
+import jiny.futurevia.service.account.endpoint.dto.ProfileDto;
 import jiny.futurevia.service.tag.domain.entity.Tag;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -80,7 +80,7 @@ public class Account extends AuditingEntity {
 
     /*** 프로필 ***/
     @Embedded
-    private Profile profile;
+    private Profile profile = new Profile();;
 
     @Embeddable
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -89,7 +89,7 @@ public class Account extends AuditingEntity {
     @Getter
     @ToString
     public static class Profile {
-        private String bio;
+        private String bio = "";
         private String url;
         private String job;
         private String location;

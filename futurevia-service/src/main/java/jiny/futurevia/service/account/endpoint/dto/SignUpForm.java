@@ -1,4 +1,4 @@
-package jiny.futurevia.service.account.endpoint.controller.dto;
+package jiny.futurevia.service.account.endpoint.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

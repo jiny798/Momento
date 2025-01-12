@@ -4,11 +4,12 @@ import jiny.futurevia.service.account.domain.dto.AccountContext;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Role;
 import jiny.futurevia.service.account.domain.entity.Zone;
-import jiny.futurevia.service.account.endpoint.controller.dto.NotificationForm;
-import jiny.futurevia.service.account.endpoint.controller.dto.ProfileDto;
-import jiny.futurevia.service.account.endpoint.controller.dto.SignUpForm;
+import jiny.futurevia.service.account.endpoint.dto.NotificationForm;
+import jiny.futurevia.service.account.endpoint.dto.ProfileDto;
+import jiny.futurevia.service.account.endpoint.dto.SignUpForm;
 import jiny.futurevia.service.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.admin.repository.RoleRepository;
+import jiny.futurevia.service.config.AppProperties;
 import jiny.futurevia.service.mail.EmailMessage;
 import jiny.futurevia.service.mail.EmailService;
 import jiny.futurevia.service.tag.domain.entity.Tag;
@@ -16,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +25,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,9 @@ public class AccountService implements UserDetailsService{
 
 	private final PasswordEncoder passwordEncoder;
 	private final EmailService emailService;
+
+	private final TemplateEngine templateEngine;
+	private final AppProperties appProperties;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -87,12 +91,19 @@ public class AccountService implements UserDetailsService{
 
 	public void sendVerificationEmail(Account newAccount) {
 		log.info("[AccountService] sendVerificationEmail");
-		log.info("[AccountService] emailService {}", emailService );
+		Context context = new Context();
+		context.setVariable("link", String.format("/check-email-token?token=%s&email=%s", newAccount.getEmailToken(),
+				newAccount.getEmail()));
+		context.setVariable("nickname", newAccount.getNickname());
+		context.setVariable("linkName", "이메일 인증하기");
+		context.setVariable("message", "Futurevia 가입 인증을 위해 링크를 클릭하세요.");
+		context.setVariable("host", appProperties.getHost());
+
+		String message = templateEngine.process("mail/simple-link", context);
 		emailService.sendEmail(EmailMessage.builder()
 				.to(newAccount.getEmail())
 				.subject("Futurevia 회원 가입 인증")
-				.message(String.format("/check-email-token?token=%s&email=%s", newAccount.getEmailToken(),
-						newAccount.getEmail()))
+				.message(message)
 				.build());
 	}
 
@@ -135,10 +146,19 @@ public class AccountService implements UserDetailsService{
 
 	public void sendLoginLink(Account account) {
 		account.generateToken();
+
+		Context context = new Context();
+		context.setVariable("link", "/login-by-email?token=" + account.getEmailToken() + "&email=" + account.getEmail());
+		context.setVariable("nickname", account.getNickname());
+		context.setVariable("linkName", "Futurevia 로그인하기");
+		context.setVariable("message", "로그인 하려면 아래 링크를 클릭하세요.");
+		context.setVariable("host", appProperties.getHost());
+		String message = templateEngine.process("mail/simple-link", context);
+
 		emailService.sendEmail(EmailMessage.builder()
 				.to(account.getEmail())
 				.subject("[Futurevia] 로그인 링크")
-				.message("/login-by-email?token=" + account.getEmailToken() + "&email=" + account.getEmail())
+				.message(message)
 				.build());
 	}
 

@@ -1,4 +1,4 @@
-package jiny.futurevia.service.account.endpoint.controller.dto;
+package jiny.futurevia.service.account.endpoint.dto;
 
 import jiny.futurevia.service.account.domain.entity.Account;
 import lombok.AccessLevel;

@@ -1,4 +1,4 @@
-package jiny.futurevia.service.security.config;
+package jiny.futurevia.service.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

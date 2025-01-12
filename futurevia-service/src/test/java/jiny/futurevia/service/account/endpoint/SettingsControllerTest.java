@@ -1,12 +1,12 @@
-package jiny.futurevia.service.account.endpoint.controller;
+package jiny.futurevia.service.account.endpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jiny.futurevia.service.WithAccount;
 import jiny.futurevia.service.account.application.AccountService;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Zone;
-import jiny.futurevia.service.account.endpoint.controller.dto.TagForm;
-import jiny.futurevia.service.account.endpoint.controller.dto.ZoneForm;
+import jiny.futurevia.service.account.endpoint.dto.TagForm;
+import jiny.futurevia.service.account.endpoint.dto.ZoneForm;
 import jiny.futurevia.service.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.tag.domain.entity.Tag;
 import jiny.futurevia.service.tag.infra.repository.TagRepository;
