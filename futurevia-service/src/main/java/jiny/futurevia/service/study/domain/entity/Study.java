@@ -1,6 +1,7 @@
 package jiny.futurevia.service.study.domain.entity;
 
 import jakarta.persistence.*;
+import jiny.futurevia.service.account.domain.dto.AccountContext;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Zone;
 import jiny.futurevia.service.study.form.StudyForm;
@@ -23,11 +24,11 @@ public class Study {
 
     @ManyToMany
     private Set<Account> managers = new HashSet<>();
-    ;
+
 
     @ManyToMany
     private Set<Account> members = new HashSet<>();
-    ;
+
 
     @Column(unique = true)
     private String path;
@@ -46,11 +47,11 @@ public class Study {
 
     @ManyToMany
     private Set<Tag> tags = new HashSet<>();
-    ;
+
 
     @ManyToMany
     private Set<Zone> zones = new HashSet<>();
-    ;
+
 
     private LocalDateTime publishedDateTime;
 
@@ -77,5 +78,18 @@ public class Study {
 
     public void addManager(Account account) {
         managers.add(account);
+    }
+
+    public boolean isJoinable(AccountContext userAccount) {
+        Account account = userAccount.getAccount();
+        return this.isPublished() && this.isRecruiting() && !this.members.contains(account) && !this.managers.contains(account);
+    }
+
+    public boolean isMember(AccountContext userAccount) {
+        return this.members.contains(userAccount.getAccount());
+    }
+
+    public boolean isManager(AccountContext userAccount) {
+        return this.managers.contains(userAccount.getAccount());
     }
 }

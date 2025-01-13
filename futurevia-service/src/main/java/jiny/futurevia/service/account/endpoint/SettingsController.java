@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import jiny.futurevia.service.account.application.AccountService;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Zone;
-import jiny.futurevia.service.account.endpoint.controller.dto.*;
 import jiny.futurevia.service.account.endpoint.dto.*;
 import jiny.futurevia.service.tag.domain.entity.Tag;
 import jiny.futurevia.service.account.endpoint.validator.NicknameFormValidator;
