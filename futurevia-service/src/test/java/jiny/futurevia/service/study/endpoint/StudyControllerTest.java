@@ -95,4 +95,23 @@ class StudyControllerTest {
                 .andExpect(model().attributeExists("study"));
     }
 
+    @Test
+    @DisplayName("스터디 멤버 조회")
+    @WithAccount("jiny798")
+    void studyMemberView() throws Exception {
+        Account account = accountRepository.findByNickname("jiny798");
+        String studyPath = "study-test";
+        studyService.createNewStudy(StudyForm.builder()
+                .path(studyPath)
+                .title("study-title")
+                .shortDescription("short-description")
+                .fullDescription("full-description")
+                .build(), account);
+        mockMvc.perform(get("/study/" + studyPath + "/members"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("study/members"))
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("study"));
+    }
+
 }
