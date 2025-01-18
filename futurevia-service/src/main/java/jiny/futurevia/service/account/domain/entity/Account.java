@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import jiny.futurevia.service.account.endpoint.dto.NotificationForm;
 import jiny.futurevia.service.account.endpoint.dto.ProfileDto;
+import jiny.futurevia.service.study.domain.entity.Study;
 import jiny.futurevia.service.tag.domain.entity.Tag;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -170,6 +171,10 @@ public class Account extends AuditingEntity {
             @JoinColumn(name = "role_id")})
     @ToString.Exclude
     private Set<Role> userRoles = new HashSet<>();
+
+    public boolean isManagerOf(Study study) {
+        return study.getManagers().contains(this);
+    }
 
     /**
      * 정보 수정

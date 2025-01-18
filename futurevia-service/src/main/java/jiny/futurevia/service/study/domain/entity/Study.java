@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jiny.futurevia.service.account.domain.dto.AccountContext;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.domain.entity.Zone;
+import jiny.futurevia.service.study.form.StudyDescriptionForm;
 import jiny.futurevia.service.study.form.StudyForm;
 import jiny.futurevia.service.tag.domain.entity.Tag;
 import lombok.AccessLevel;
@@ -97,5 +98,10 @@ public class Study {
 
     public boolean isManager(AccountContext userAccount) {
         return this.managers.contains(userAccount.getAccount());
+    }
+
+    public void updateDescription(StudyDescriptionForm studyDescriptionForm) {
+        this.shortDescription = studyDescriptionForm.getShortDescription();
+        this.fullDescription = studyDescriptionForm.getFullDescription();
     }
 }

@@ -99,7 +99,7 @@ public class AccountController {
     @GetMapping("/profile/{nickname}")
     public String viewProfile(@PathVariable String nickname, Model model, @CurrentUser Account account) {
         log.info("viewProfile ");
-        Account byNickname = accountRepository.findByNickname(nickname);
+        Account byNickname = accountService.getAccountBy(nickname);
         if (byNickname == null) {
             throw new IllegalArgumentException(nickname + "에 해당하는 사용자가 없습니다.");
         }

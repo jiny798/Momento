@@ -68,7 +68,6 @@ public class AccountService implements UserDetailsService{
 		return new AccountContext(account, authorities);
 	}
 
-
 	public Account signUp(SignUpForm signUpForm) {
 		Account newAccount = saveNewAccount(signUpForm);
 		sendVerificationEmail(newAccount);
@@ -191,5 +190,10 @@ public class AccountService implements UserDetailsService{
 	public void removeZone(Account account, Zone zone) {
 		accountRepository.findById(account.getId())
 				.ifPresent(a -> a.getZones().remove(zone));
+	}
+
+	public Account getAccountBy(String nickname) {
+		return Optional.ofNullable(accountRepository.findByNickname(nickname))
+				.orElseThrow(() -> new IllegalArgumentException(nickname + "에 해당하는 사용자가 없습니다."));
 	}
 }
