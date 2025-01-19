@@ -10,6 +10,7 @@ import jiny.futurevia.service.tag.domain.entity.Tag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -49,8 +50,20 @@ public class Study {
     private String fullDescription;
 
     @Lob
+    @Column(columnDefinition="LONGTEXT")
     @Basic(fetch = FetchType.EAGER)
     private String image;
+
+    @Accessors(fluent = true)
+    private boolean useBanner;
+
+    public void updateImage(String image) {
+        this.image = image;
+    }
+
+    public void setBanner(boolean useBanner) {
+        this.useBanner = useBanner;
+    }
 
     @ManyToMany
     private Set<Tag> tags = new HashSet<>();
@@ -72,7 +85,6 @@ public class Study {
 
     private boolean closed;
 
-    private boolean useBanner;
 
     public static Study from(StudyForm studyForm) {
         Study study = new Study();

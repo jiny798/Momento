@@ -56,8 +56,9 @@ class StudySettingsControllerTest {
         studyRepository.deleteAll();
     }
 
+    // 스터디 설명
     @Test
-    @DisplayName("스터디 세팅 폼 조회")
+    @DisplayName("스터디 세팅 폼 조회: 설명")
     @WithAccount("jiny798")
     void studyForm() throws Exception {
         mockMvc.perform(get("/study/" + studyPath + "/settings/description"))
@@ -68,7 +69,7 @@ class StudySettingsControllerTest {
     }
 
     @Test
-    @DisplayName("스터디 세팅 수정")
+    @DisplayName("스터디 세팅 수정: 설명")
     @WithAccount("jiny798")
     void createStudy() throws Exception {
         Account account = accountRepository.findByNickname("jiny798");
@@ -83,5 +84,53 @@ class StudySettingsControllerTest {
         Study study = studyService.getStudy(account, studyPath);
         assertEquals(shortDescriptionToBeUpdated, study.getShortDescription());
         assertEquals(fullDescriptionToBeUpdated, study.getFullDescription());
+    }
+
+    // 배너
+    @Test
+    @DisplayName("스터디 세팅 폼 조회: 배너")
+    @WithAccount("jiny798")
+    void studySettingFormBanner() throws Exception {
+        mockMvc.perform(get("/study/" + studyPath + "/settings/banner"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("study/settings/banner"))
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("study"));
+    }
+
+    @Test
+    @DisplayName("스터디 배너 업데이트")
+    @WithAccount("jiny798")
+    void updateStudyBanner() throws Exception {
+        mockMvc.perform(post("/study/" + studyPath + "/settings/banner")
+                        .param("image", "image-test")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/study/" + studyPath + "/settings/banner"));
+    }
+
+
+    @Test
+    @DisplayName("스터디 배너 사용")
+    @WithAccount("jiny798")
+    void enableStudyBanner() throws Exception {
+        mockMvc.perform(post("/study/" + studyPath + "/settings/banner/enable")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/study/" + studyPath + "/settings/banner"));
+        Study study = studyRepository.findByPath(studyPath);
+        assertTrue(study.useBanner());
+    }
+
+    @Test
+    @DisplayName("스터디 배너 미사용")
+    @WithAccount("jiny798")
+    void disableStudyBanner() throws Exception {
+        mockMvc.perform(post("/study/" + studyPath + "/settings/banner/disable")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/study/" + studyPath + "/settings/banner"));
+        Study study = studyRepository.findByPath(studyPath);
+        assertFalse(study.useBanner());
     }
 }
