@@ -1,11 +1,11 @@
 package jiny.futurevia.service.account.endpoint.dto;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class ZoneForm {
 
     private String zoneName;
