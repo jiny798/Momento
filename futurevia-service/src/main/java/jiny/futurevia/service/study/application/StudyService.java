@@ -26,7 +26,7 @@ public class StudyService {
     }
 
     // 일반 사용자
-    public Study getStudy(Account account, String path) {
+    public Study getStudy(String path) {
         Study study = studyRepository.findByPath(path);
         checkStudyExists(path, study);
         return study;
@@ -141,5 +141,13 @@ public class StudyService {
 
     public void removeZone(Study study, Zone zone) {
         study.removeZone(zone);
+    }
+
+    public void addMember(Study study, Account account) {
+        study.addMember(account);
+    }
+
+    public void removeMember(Study study, Account account) {
+        study.removeMember(account);
     }
 }

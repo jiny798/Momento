@@ -45,7 +45,7 @@ public class StudySettingsController {
 
     @GetMapping("/description")
     public String viewStudySetting(@CurrentUser Account account, @PathVariable String path, Model model) {
-        Study study = studyService.getStudy(account, path);
+        Study study = studyService.getStudyToUpdate(account, path);
         model.addAttribute(account);
         model.addAttribute(study);
         model.addAttribute(StudyDescriptionForm.builder()
@@ -57,7 +57,7 @@ public class StudySettingsController {
 
     @PostMapping("/description")
     public String updateStudy(@CurrentUser Account account, @PathVariable String path, @Valid StudyDescriptionForm studyDescriptionForm, Errors errors, Model model, RedirectAttributes attributes) {
-        Study study = studyService.getStudy(account, path);
+        Study study = studyService.getStudyToUpdate(account, path);
         if (errors.hasErrors()) {
             model.addAttribute(account);
             model.addAttribute(study);
@@ -70,7 +70,7 @@ public class StudySettingsController {
 
     @GetMapping("/banner")
     public String studyImageForm(@CurrentUser Account account, @PathVariable String path, Model model) {
-        Study study = studyService.getStudy(account, path);
+        Study study = studyService.getStudyToUpdate(account, path);
         model.addAttribute(account);
         model.addAttribute(study);
         return "study/settings/banner";
@@ -78,7 +78,7 @@ public class StudySettingsController {
 
     @PostMapping("/banner")
     public String updateBanner(@CurrentUser Account account, @PathVariable String path, String image, RedirectAttributes attributes) {
-        Study study = studyService.getStudy(account, path);
+        Study study = studyService.getStudyToUpdate(account, path);
         studyService.updateStudyImage(study, image);
         attributes.addFlashAttribute("message", "스터디 이미지를 수정하였습니다.");
         return "redirect:/study/" + encode(path) + "/settings/banner";
@@ -86,21 +86,21 @@ public class StudySettingsController {
 
     @PostMapping("/banner/enable")
     public String enableStudyBanner(@CurrentUser Account account, @PathVariable String path) {
-        Study study = studyService.getStudy(account, path);
+        Study study = studyService.getStudyToUpdate(account, path);
         studyService.enableStudyBanner(study);
         return "redirect:/study/" + encode(path) + "/settings/banner";
     }
 
     @PostMapping("/banner/disable")
     public String disableStudyBanner(@CurrentUser Account account, @PathVariable String path) {
-        Study study = studyService.getStudy(account, path);
+        Study study = studyService.getStudyToUpdate(account, path);
         studyService.disableStudyBanner(study);
         return "redirect:/study/" + encode(path) + "/settings/banner";
     }
 
     @GetMapping("/tags")
     public String studyTagsForm(@CurrentUser Account account, @PathVariable String path, Model model) throws JsonProcessingException {
-        Study study = studyService.getStudy(account, path);
+        Study study = studyService.getStudyToUpdate(account, path);
         model.addAttribute(account);
         model.addAttribute(study);
         model.addAttribute("tags", study.getTags().stream()
@@ -131,7 +131,7 @@ public class StudySettingsController {
 
     @GetMapping("/zones")
     public String studyZonesForm(@CurrentUser Account account, @PathVariable String path, Model model) throws JsonProcessingException {
-        Study study = studyService.getStudy(account, path);
+        Study study = studyService.getStudyToUpdate(account, path);
         model.addAttribute(account);
         model.addAttribute(study);
         model.addAttribute("zones", study.getZones().stream()
@@ -163,7 +163,7 @@ public class StudySettingsController {
 
     @GetMapping("/study")
     public String studySettingForm(@CurrentUser Account account, @PathVariable String path, Model model) {
-        Study study = studyService.getStudy(account, path);
+        Study study = studyService.getStudyToUpdate(account, path);
         model.addAttribute(account);
         model.addAttribute(study);
         return "study/settings/study";

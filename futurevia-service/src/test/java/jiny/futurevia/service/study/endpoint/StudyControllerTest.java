@@ -4,6 +4,7 @@ import jiny.futurevia.service.WithAccount;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.study.application.StudyService;
+import jiny.futurevia.service.study.domain.entity.Study;
 import jiny.futurevia.service.study.form.StudyForm;
 import jiny.futurevia.service.study.infra.repository.StudyRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -114,4 +115,48 @@ class StudyControllerTest {
                 .andExpect(model().attributeExists("study"));
     }
 
+    @Test
+    @DisplayName("스터디 가입")
+    @WithAccount(value = {"jiny798", "member798"})
+    void joinStudy() throws Exception {
+        // 스터디 생성
+        Account manager = accountRepository.findByNickname("jiny798");
+        String studyPath = "study-path";
+        Study study = studyService.createNewStudy(StudyForm.builder()
+            .path(studyPath)
+            .title("study-title")
+            .shortDescription("short-description")
+            .fullDescription("full-description")
+            .build(), manager);
+
+        mockMvc.perform(get("/study/" + studyPath + "/join"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/study/" + studyPath + "/members"));
+        Account member = accountRepository.findByNickname("member798");
+        assertTrue(study.getMembers().contains(member));
+    }
+
+    @Test
+    @DisplayName("스터디 탈퇴")
+    @WithAccount(value = {"jiny798", "member798"})
+    void leaveStudy() throws Exception {
+        // 스터디 생성
+        Account manager = accountRepository.findByNickname("jiny798");
+        String studyPath = "study-path";
+        Study study = studyService.createNewStudy(StudyForm.builder()
+            .path(studyPath)
+            .title("study-title")
+            .shortDescription("short-description")
+            .fullDescription("full-description")
+            .build(), manager);
+        // 스터디 가입
+        Account member = accountRepository.findByNickname("member798");
+        studyService.addMember(study, member);
+
+        // 스터디 탈퇴
+        mockMvc.perform(get("/study/" + studyPath + "/leave"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/study/" + studyPath + "/members"));
+        assertFalse(study.getMembers().contains(member));
+    }
 }
