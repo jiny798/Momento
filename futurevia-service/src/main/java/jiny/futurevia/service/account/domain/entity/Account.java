@@ -45,18 +45,13 @@ public class Account extends AuditingEntity {
     @ManyToMany @ToString.Exclude
     private Set<Zone> zones = new HashSet<>();
 
-
-    // @TODO : PostLoad not working
-//    @PostLoad
-//    private void init() {
-//        log.info("[Account] init");
-//        if (profile == null) {
-//            profile = new Profile();
-//        }
-//        if (notificationSetting == null) {
-//            notificationSetting = new NotificationSetting();
-//        }
-//    }
+    public static Account with(String email, String nickname, String password) {
+        Account account = new Account();
+        account.email = email;
+        account.nickname = nickname;
+        account.password = password;
+        return account;
+    }
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;

@@ -1,7 +1,10 @@
 package jiny.futurevia.service.event.domain.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -65,8 +68,8 @@ public class Event {
 
     private Integer limitOfEnrollments;
 
-    @OneToMany(mappedBy = "event")
-    private List<Enrollment> enrollments;
+    @OneToMany(mappedBy = "event") @ToString.Exclude
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private EventType eventType;
@@ -139,5 +142,71 @@ public class Event {
         this.endDateTime = eventForm.getEndDateTime();
         this.limitOfEnrollments = eventForm.getLimitOfEnrollments();
         this.endEnrollmentDateTime = eventForm.getEndEnrollmentDateTime();
+    }
+
+    public boolean isAbleToAcceptWaitingEnrollment() {
+        // 선착순이고, 인원 여유가 있는지 체크
+        return this.eventType == EventType.FCFS && this.limitOfEnrollments > this.getNumberOfAcceptedEnrollments();
+    }
+
+    public void addEnrollment(Enrollment enrollment) {
+        this.enrollments.add(enrollment);
+        enrollment.attach(this);
+    }
+
+    public void removeEnrollment(Enrollment enrollment) {
+        this.enrollments.remove(enrollment);
+        enrollment.detachEvent();
+    }
+
+    public void acceptNextIfAvailable() {
+        if (this.isAbleToAcceptWaitingEnrollment()) {
+            this.firstWaitingEnrollment().ifPresent(Enrollment::accept);
+        }
+    }
+
+    private Optional<Enrollment> firstWaitingEnrollment() {
+        return this.enrollments.stream()
+            .filter(e -> !e.isAccepted())
+            .findFirst();
+    }
+
+    public void acceptWaitingList() {
+        if (this.isAbleToAcceptWaitingEnrollment()) {
+            List<Enrollment> waitingList = this.enrollments.stream()
+                .filter(e -> !e.isAccepted())
+                .collect(Collectors.toList());
+
+            int numberToAccept = (int) Math.min(limitOfEnrollments - getNumberOfAcceptedEnrollments(), waitingList.size());
+
+            waitingList.subList(0, numberToAccept).forEach(Enrollment::accept);
+        }
+    }
+
+    public void accept(Enrollment enrollment) {
+        if (this.eventType == EventType.CONFIRMATIVE && this.limitOfEnrollments > this.getNumberOfAcceptedEnrollments()) {
+            enrollment.accept();
+        }
+    }
+
+    // public void reject(Enrollment enrollment) {
+    //     if (this.eventType == EventType.CONFIRMATIVE) {
+    //         enrollment.reject();
+    //     }
+    // }
+
+    public boolean isAcceptable(Enrollment enrollment) {
+        return this.eventType == EventType.CONFIRMATIVE
+            && this.enrollments.contains(enrollment)
+            && this.limitOfEnrollments > this.getNumberOfAcceptedEnrollments()
+            && !enrollment.isAttended()
+            && !enrollment.isAccepted();
+    }
+
+    public boolean isRejectable(Enrollment enrollment) {
+        return this.eventType == EventType.CONFIRMATIVE
+            && this.enrollments.contains(enrollment)
+            && !enrollment.isAttended()
+            && enrollment.isAccepted();
     }
 }

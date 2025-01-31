@@ -36,4 +36,24 @@ public class Enrollment {
     private boolean accepted;
 
     private boolean attended;
+
+    public static Enrollment of(LocalDateTime enrolledAt, boolean isAbleToAcceptWaitingEnrollment, Account account) {
+        Enrollment enrollment = new Enrollment();
+        enrollment.enrolledAt = enrolledAt;
+        enrollment.accepted = isAbleToAcceptWaitingEnrollment;
+        enrollment.account = account;
+        return enrollment;
+    }
+
+    public void accept() {
+        this.accepted = true;
+    }
+
+    public void attach(Event event) {
+        this.event = event;
+    }
+
+    public void detachEvent() {
+        this.event = null;
+    }
 }

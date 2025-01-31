@@ -33,7 +33,6 @@ public class StudyService {
     }
 
     // 관리자
-
     public Study getStudyToUpdate(Account account, String path) {
         return getStudy(account, path, studyRepository.findByPath(path));
     }
@@ -53,6 +52,12 @@ public class StudyService {
         checkStudyExists(path, studyByPath);
         checkAccountIsManager(account, studyByPath);
         return studyByPath;
+    }
+
+    public Study getStudyToEnroll(String path) {
+        // 참가신청은 스터디 정보만 필요하므로, Study 만 조회
+        return studyRepository.findStudyOnlyByPath(path)
+            .orElseThrow(() -> new IllegalArgumentException(path + "에 해당하는 스터디가 존재하지 않습니다."));
     }
 
     private void checkStudyExists(String path, Study study) {

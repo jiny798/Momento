@@ -8,10 +8,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
@@ -53,7 +55,7 @@ public class EventController {
     }
 
     @PostMapping("/new-event")
-    public String createNewEvent(@CurrentUser Account account, @PathVariable String path, @Valid EventForm eventForm, Errors errors, Model model) {
+    public String createNewEvent(@CurrentUser Account account, @PathVariable String path, @Valid @RequestBody EventForm eventForm, Errors errors, Model model) {
         Study study = studyService.getStudyToUpdateStatus(account, path);
         if (errors.hasErrors()) {
             model.addAttribute(account);
@@ -106,7 +108,7 @@ public class EventController {
     }
 
     @PostMapping("/events/{id}/edit")
-    public String updateEventSubmit(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id, @Valid EventForm eventForm, Errors errors, Model model) {
+    public String updateEventSubmit(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id, @Valid @RequestBody EventForm eventForm, Errors errors, Model model) {
         Study study = studyService.getStudyToUpdate(account, path);
         Event event = eventRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("모임이 존재하지 않습니다."));
@@ -121,5 +123,29 @@ public class EventController {
         }
         eventService.updateEvent(event, eventForm);
         return "redirect:/study/" + study.getEncodedPath() +  "/events/" + event.getId();
+    }
+
+    @DeleteMapping("/events/{id}")
+    public String deleteEvent(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id) {
+        Study study = studyService.getStudyToUpdateStatus(account, path);
+        eventService.deleteEvent(eventRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("모임이 존재하지 않습니다.")));
+        return "redirect:/study/" + study.getEncodedPath() + "/events";
+    }
+
+    @PostMapping("/events/{id}/enroll")
+    public String enroll(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id) {
+        Study study = studyService.getStudyToEnroll(path);
+        eventService.enroll(eventRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("모임이 존재하지 않습니다.")), account);
+        return "redirect:/study/" + study.getEncodedPath() + "/events/" + id;
+    }
+
+    @PostMapping("/events/{id}/leave")
+    public String leave(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id) {
+        Study study = studyService.getStudyToEnroll(path);
+        eventService.leave(eventRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("모임이 존재하지 않습니다.")), account);
+        return "redirect:/study/" + study.getEncodedPath() + "/events/" + id;
     }
 }

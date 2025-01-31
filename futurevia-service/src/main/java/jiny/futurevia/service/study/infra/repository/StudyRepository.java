@@ -1,5 +1,7 @@
 package jiny.futurevia.service.study.infra.repository;
 
+import java.util.Optional;
+
 import jiny.futurevia.service.study.domain.entity.Study;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +25,6 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
 
     @EntityGraph(value = "Study.withMembers", type = EntityGraph.EntityGraphType.FETCH)
     Study findStudyWithMembersByPath(String path);
+
+    Optional<Study> findStudyOnlyByPath(String path);
 }
