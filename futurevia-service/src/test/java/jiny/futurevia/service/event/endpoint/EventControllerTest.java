@@ -106,6 +106,7 @@ class EventControllerTest {
 				.param("startDateTime", now.plusWeeks(2).toString())
 				.param("title", "title")
 				.with(csrf()));
+
 		Event event = eventRepository.findAll()
 				.stream()
 				.findFirst()
@@ -231,7 +232,7 @@ void editEvent() throws Exception {
 						.with(csrf()))
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/study/" + study.getPath() + "/events/" + event.getId()));
-		Account account = accountRepository.findByNickname("jaime");
+		Account account = accountRepository.findByNickname("jiny798");
 		isAccepted(account, event);
 	}
 
@@ -248,7 +249,7 @@ void editEvent() throws Exception {
 						.with(csrf()))
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl("/study/" + study.getPath() + "/events/" + event.getId()));
-		Account jaime = accountRepository.findByNickname("jaime");
+		Account jaime = accountRepository.findByNickname("jiny798");
 		isNotAccepted(jaime, event);
 	}
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 import jiny.futurevia.service.event.domain.entity.Enrollment;
 import jiny.futurevia.service.event.infra.repository.EnrollmentRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -31,6 +32,7 @@ import jiny.futurevia.service.study.domain.entity.Study;
 import jiny.futurevia.service.study.infra.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Controller
 @RequestMapping("/study/{path}")
 @RequiredArgsConstructor
@@ -58,7 +60,8 @@ public class EventController {
     }
 
     @PostMapping("/new-event")
-    public String createNewEvent(@CurrentUser Account account, @PathVariable String path, @Valid @RequestBody EventForm eventForm, Errors errors, Model model) {
+    public String createNewEvent(@CurrentUser Account account, @PathVariable String path, @Valid EventForm eventForm, Errors errors, Model model) {
+        log.info("[createNewEvent] - {}",eventForm );
         Study study = studyService.getStudyToUpdateStatus(account, path);
         if (errors.hasErrors()) {
             model.addAttribute(account);
@@ -111,7 +114,7 @@ public class EventController {
     }
 
     @PostMapping("/events/{id}/edit")
-    public String updateEventSubmit(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id, @Valid @RequestBody EventForm eventForm, Errors errors, Model model) {
+    public String updateEventSubmit(@CurrentUser Account account, @PathVariable String path, @PathVariable Long id, @Valid EventForm eventForm, Errors errors, Model model) {
         Study study = studyService.getStudyToUpdate(account, path);
         Event event = eventRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("모임이 존재하지 않습니다."));
