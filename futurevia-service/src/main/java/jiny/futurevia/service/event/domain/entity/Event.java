@@ -6,18 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jiny.futurevia.service.account.domain.dto.AccountContext;
 import jiny.futurevia.service.account.domain.entity.Account;
 import jiny.futurevia.service.event.form.EventForm;
@@ -69,6 +58,7 @@ public class Event {
     private Integer limitOfEnrollments;
 
     @OneToMany(mappedBy = "event") @ToString.Exclude
+    @OrderBy("enrolledAt")
     private List<Enrollment> enrollments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -87,14 +77,6 @@ public class Event {
         event.study = study;
         event.createdDateTime = LocalDateTime.now();
         return event;
-    }
-
-    public boolean isEnrollableFor(AccountContext userAccount) {
-        return isNotClosed() && !isAlreadyEnrolled(userAccount);
-    }
-
-    public boolean isDisenrollableFor(AccountContext userAccount) {
-        return isNotClosed() && isAlreadyEnrolled(userAccount);
     }
 
     private boolean isNotClosed() {
@@ -183,18 +165,31 @@ public class Event {
         }
     }
 
+    // 참가자 : 등록 가능한지 (참석하지 않은 상태인지)
+    public boolean isEnrollableFor(AccountContext userAccount) {
+        // 등록마감 시간 전이고, 등록 신청 안했으면 TRUE 반환
+        return isNotClosed() && !isAlreadyEnrolled(userAccount);
+    }
+
+    public boolean isDisenrollableFor(AccountContext userAccount) {
+        // 등록마감 시간 전이고, 등록 신청 했으면 TRUE 반환
+        return isNotClosed() && isAlreadyEnrolled(userAccount);
+    }
+
     public void accept(Enrollment enrollment) {
+        // 관리자가 확인해야 하는 모임이고, 참석 가능할 경우 참가의 상태를 변경합니다.
         if (this.eventType == EventType.CONFIRMATIVE && this.limitOfEnrollments > this.getNumberOfAcceptedEnrollments()) {
             enrollment.accept();
         }
     }
 
-    // public void reject(Enrollment enrollment) {
-    //     if (this.eventType == EventType.CONFIRMATIVE) {
-    //         enrollment.reject();
-    //     }
-    // }
+     public void reject(Enrollment enrollment) {
+         if (this.eventType == EventType.CONFIRMATIVE) {
+             enrollment.reject();
+         }
+     }
 
+     // 관리자: 수락 가능한지
     public boolean isAcceptable(Enrollment enrollment) {
         return this.eventType == EventType.CONFIRMATIVE
             && this.enrollments.contains(enrollment)
@@ -203,6 +198,7 @@ public class Event {
             && !enrollment.isAccepted();
     }
 
+    // 관리자: 거절 가능한지
     public boolean isRejectable(Enrollment enrollment) {
         return this.eventType == EventType.CONFIRMATIVE
             && this.enrollments.contains(enrollment)

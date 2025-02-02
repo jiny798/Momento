@@ -36,6 +36,7 @@ public class EventService {
         eventRepository.delete(event);
     }
 
+    // 사용자 - 참가 신청
     public void enroll(Event event, Account account) {
         if (!enrollmentRepository.existsByEventAndAccount(event, account)) {
             Enrollment enrollment = Enrollment.of(LocalDateTime.now(), event.isAbleToAcceptWaitingEnrollment(), account); // (3)
@@ -44,10 +45,33 @@ public class EventService {
         }
     }
 
+    // 사용자 - 참가 취소
     public void leave(Event event, Account account) {
         Enrollment enrollment = enrollmentRepository.findByEventAndAccount(event, account);
-        event.removeEnrollment(enrollment);
-        enrollmentRepository.delete(enrollment);
-        event.acceptNextIfAvailable();
+        if (!enrollment.isAttended()) {
+            event.removeEnrollment(enrollment);
+            enrollmentRepository.delete(enrollment);
+            event.acceptNextIfAvailable();
+        }
+    }
+
+    // 관리자 - 참가신청 승인
+    public void acceptEnrollment(Event event, Enrollment enrollment) {
+        event.accept(enrollment);
+    }
+
+    // 관리자 - 참가신청 거부
+    public void rejectEnrollment(Event event, Enrollment enrollment) {
+        event.reject(enrollment);
+    }
+
+    // 출석 체크 
+    public void checkInEnrollment(Event event, Enrollment enrollment) {
+        enrollment.attend();
+    }
+
+    // 출석 취소
+    public void cancelCheckinEnrollment(Event event, Enrollment enrollment) {
+        enrollment.absent();
     }
 }

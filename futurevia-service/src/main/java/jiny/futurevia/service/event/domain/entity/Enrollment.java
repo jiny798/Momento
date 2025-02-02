@@ -56,4 +56,16 @@ public class Enrollment {
     public void detachEvent() {
         this.event = null;
     }
+    public void reject() {
+        this.accepted = false;
+    }
+
+    public void attend() {
+        this.attended = true;
+    }
+
+    public void absent() {
+        this.attended = false;
+    }
+
 }
