@@ -61,6 +61,8 @@ dependencies {
 	implementation 'org.modelmapper:modelmapper:3.1.0'
 
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	testImplementation 'com.tngtech.archunit:archunit-junit5-api:0.23.1'
 }
 
 tasks.named('test') {

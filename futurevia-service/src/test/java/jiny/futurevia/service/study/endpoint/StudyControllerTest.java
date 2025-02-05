@@ -1,12 +1,12 @@
 package jiny.futurevia.service.study.endpoint;
 
 import jiny.futurevia.service.WithAccount;
-import jiny.futurevia.service.account.domain.entity.Account;
-import jiny.futurevia.service.account.infra.repository.AccountRepository;
-import jiny.futurevia.service.study.application.StudyService;
-import jiny.futurevia.service.study.domain.entity.Study;
-import jiny.futurevia.service.study.form.StudyForm;
-import jiny.futurevia.service.study.infra.repository.StudyRepository;
+import jiny.futurevia.service.modules.account.domain.entity.Account;
+import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
+import jiny.futurevia.service.modules.study.application.StudyService;
+import jiny.futurevia.service.modules.study.domain.entity.Study;
+import jiny.futurevia.service.modules.study.form.StudyForm;
+import jiny.futurevia.service.modules.study.infra.repository.StudyRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

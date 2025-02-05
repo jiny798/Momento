@@ -1,10 +1,10 @@
 package jiny.futurevia.service.account.endpoint;
 
-import jiny.futurevia.service.account.application.AccountService;
-import jiny.futurevia.service.account.domain.entity.Account;
+import jiny.futurevia.service.modules.account.application.AccountService;
+import jiny.futurevia.service.modules.account.domain.entity.Account;
 
-import jiny.futurevia.service.mail.EmailMessage;
-import jiny.futurevia.service.mail.EmailService;
+import jiny.futurevia.service.infra.mail.EmailMessage;
+import jiny.futurevia.service.infra.mail.EmailService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import jiny.futurevia.service.account.infra.repository.AccountRepository;
+import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 
