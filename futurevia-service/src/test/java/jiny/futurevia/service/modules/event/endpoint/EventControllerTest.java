@@ -1,4 +1,4 @@
-package jiny.futurevia.service.event.endpoint;
+package jiny.futurevia.service.modules.event.endpoint;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import jiny.futurevia.service.infra.IntegrationTest;
 import jiny.futurevia.service.modules.event.domain.entity.Enrollment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,9 +37,7 @@ import jiny.futurevia.service.modules.study.domain.entity.Study;
 import jiny.futurevia.service.modules.study.form.StudyForm;
 import jiny.futurevia.service.modules.study.infra.repository.StudyRepository;
 
-@SpringBootTest
-@Transactional
-@AutoConfigureMockMvc
+@IntegrationTest
 class EventControllerTest {
 	@Autowired
 	MockMvc mockMvc;
@@ -137,6 +136,7 @@ class EventControllerTest {
 	@WithAccount("jiny798")
 	void eventView() throws Exception {
 		Event event = stubbingEvent(EventType.FCFS);
+		// 템플릿 내부 eventType 수정필요
 		mockMvc.perform(get("/study/" + studyPath + "/events/" + event.getId()))
 			.andExpect(status().isOk())
 			.andExpect(model().attributeExists("account"))

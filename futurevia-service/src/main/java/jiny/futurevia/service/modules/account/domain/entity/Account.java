@@ -85,7 +85,7 @@ public class Account extends AuditingEntity {
     @Getter
     @ToString
     public static class Profile {
-        private String bio = "";
+        private String bio;
         private String url;
         private String job;
         private String location;

@@ -1,6 +1,7 @@
-package jiny.futurevia.service.study.endpoint;
+package jiny.futurevia.service.modules.study.endpoint;
 
 import jiny.futurevia.service.WithAccount;
+import jiny.futurevia.service.infra.IntegrationTest;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.modules.study.application.StudyService;
@@ -21,9 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@Transactional
-@AutoConfigureMockMvc
+@IntegrationTest
 class StudyControllerTest {
     @Autowired
     MockMvc mockMvc;

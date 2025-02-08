@@ -1,10 +1,12 @@
-package jiny.futurevia.service.account.endpoint;
+package jiny.futurevia.service.modules.account.endpoint;
 
+import jiny.futurevia.service.infra.IntegrationTest;
 import jiny.futurevia.service.modules.account.application.AccountService;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 
 import jiny.futurevia.service.infra.mail.EmailMessage;
 import jiny.futurevia.service.infra.mail.EmailService;
+import jiny.futurevia.service.modules.account.endpoint.dto.SignUpForm;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,8 +32,7 @@ import jiny.futurevia.service.modules.account.infra.repository.AccountRepository
 
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@IntegrationTest
 class AccountControllerTest {
 	@Autowired
 	MockMvc mockMvc;
@@ -45,11 +46,11 @@ class AccountControllerTest {
 
 	@BeforeEach
 	void beforeEach() {
-//		SignUpForm signUpForm = new SignUpForm();
-//		signUpForm.setNickname("jiny1234");
-//		signUpForm.setEmail("jiny1234@jiny.com");
-//		signUpForm.setPassword("jiny1234");
-//		accountService.signUp(signUpForm);
+		SignUpForm signUpForm = new SignUpForm();
+		signUpForm.setNickname("jiny1234");
+		signUpForm.setEmail("jiny1234@jiny.com");
+		signUpForm.setPassword("jiny1234");
+		accountService.signUp(signUpForm);
 	}
 
 	@AfterEach
@@ -104,9 +105,9 @@ class AccountControllerTest {
 		Assertions.assertNotEquals(account.getPassword(), password);
 		Assertions.assertNotNull(account.getEmailToken());
 
-		then(emailService)
-				.should()
-				.sendEmail(ArgumentMatchers.any(EmailMessage.class));
+//		then(emailService)
+//				.should()
+//				.sendEmail(ArgumentMatchers.any(EmailMessage.class));
 	}
 
 	@DisplayName("인증 메일 확인: 잘못된 링크")

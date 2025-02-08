@@ -1,7 +1,8 @@
-package jiny.futurevia.service.account.endpoint;
+package jiny.futurevia.service.modules.account.endpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jiny.futurevia.service.WithAccount;
+import jiny.futurevia.service.infra.IntegrationTest;
 import jiny.futurevia.service.modules.account.application.AccountService;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.domain.entity.Zone;
@@ -28,9 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@Transactional
-@SpringBootTest
-@AutoConfigureMockMvc
+@IntegrationTest
 class SettingsControllerTest {
     @Autowired
     MockMvc mockMvc;
