@@ -54,6 +54,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test:6.1.6'
 	testImplementation 'com.tngtech.archunit:archunit-junit5-api:0.23.1'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'com.tngtech.archunit:archunit-junit5-api:0.23.1'
 
 	// validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -62,7 +63,11 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-	testImplementation 'com.tngtech.archunit:archunit-junit5-api:0.23.1'
+	// queryDSL
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 }
 
 tasks.named('test') {
