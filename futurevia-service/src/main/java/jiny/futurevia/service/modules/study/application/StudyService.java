@@ -4,6 +4,7 @@ import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.domain.entity.Zone;
 import jiny.futurevia.service.modules.study.domain.entity.Study;
 import jiny.futurevia.service.modules.study.domain.entity.StudyCreatedEvent;
+import jiny.futurevia.service.modules.study.event.StudyUpdateEvent;
 import jiny.futurevia.service.modules.study.form.StudyDescriptionForm;
 import jiny.futurevia.service.modules.study.form.StudyForm;
 import jiny.futurevia.service.modules.study.infra.repository.StudyRepository;
@@ -76,14 +77,17 @@ public class StudyService {
 
     public void close(Study study) {
         study.close();
+        eventPublisher.publishEvent(new StudyUpdateEvent(study, "스터디를 종료했습니다."));
     }
 
     public void startRecruit(Study study) {
         study.startRecruit();
+        eventPublisher.publishEvent(new StudyUpdateEvent(study, "팀원 모집을 시작합니다."));
     }
 
     public void stopRecruit(Study study) {
         study.stopRecruit();
+        eventPublisher.publishEvent(new StudyUpdateEvent(study, "팀원 모집을 종료했습니다."));
     }
 
     public boolean isValidPath(String newPath) {
@@ -121,6 +125,7 @@ public class StudyService {
 
     public void updateStudyDescription(Study study, StudyDescriptionForm studyDescriptionForm) { // (3)
         study.updateDescription(studyDescriptionForm);
+        eventPublisher.publishEvent(new StudyUpdateEvent(study, "스터디 소개를 수정했습니다."));
     }
 
     public void updateStudyImage(Study study, String image) {
