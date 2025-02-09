@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.support.CurrentUser;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class MainController {
     private final StudyRepository studyRepository;
 
