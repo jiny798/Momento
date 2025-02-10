@@ -9,7 +9,9 @@ import jiny.futurevia.service.modules.study.form.StudyDescriptionForm;
 import jiny.futurevia.service.modules.study.form.StudyForm;
 import jiny.futurevia.service.modules.study.infra.repository.StudyRepository;
 import jiny.futurevia.service.modules.tag.domain.entity.Tag;
+import jiny.futurevia.service.modules.tag.infra.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final TagRepository tagRepository;
 
     public Study createNewStudy(StudyForm studyForm, Account account) {
         Study study = Study.from(studyForm);
@@ -163,5 +166,20 @@ public class StudyService {
 
     public void removeMember(Study study, Account account) {
         study.removeMember(account);
+    }
+
+    public void generateTestStudies(Account account) {
+        for (int i = 0; i < 30; i++) {
+            String randomValue = RandomString.make(5);
+            Study study = createNewStudy(StudyForm.builder()
+                    .title("테스트 스터디 " + randomValue)
+                    .path("test-" + randomValue)
+                    .shortDescription("테스트용 스터디 입니다.")
+                    .fullDescription("test")
+                    .build(), account);
+            study.publish();
+            Tag jpa = tagRepository.findByTitle("jpa").orElse(null);
+            study.getTags().add(jpa);
+        }
     }
 }

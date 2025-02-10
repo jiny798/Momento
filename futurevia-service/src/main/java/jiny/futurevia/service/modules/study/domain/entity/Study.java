@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -104,6 +105,9 @@ public class Study {
     private boolean published;
 
     private boolean closed;
+
+    @ColumnDefault(value = "0")
+    private Integer memberCount = 0;
 
 
     public static Study from(StudyForm studyForm) {
@@ -204,10 +208,12 @@ public class Study {
 
     public void addMember(Account account) {
         this.members.add(account);
+        this.memberCount++;
     }
 
     public void removeMember(Account account) {
         this.members.remove(account);
+        this.memberCount--;
     }
 
     public String getEncodedPath() {
