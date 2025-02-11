@@ -1,5 +1,7 @@
 package jiny.futurevia.service.modules.main.endpoint;
 
+import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
+import jiny.futurevia.service.modules.event.infra.repository.EnrollmentRepository;
 import jiny.futurevia.service.modules.study.domain.entity.Study;
 import jiny.futurevia.service.modules.study.infra.repository.StudyRepository;
 import org.springframework.data.domain.Page;
@@ -20,12 +22,30 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MainController {
     private final StudyRepository studyRepository;
+    private final AccountRepository accountRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     @GetMapping("/")
     public String home(@CurrentUser Account account, Model model) {
         if (account != null) {
-            model.addAttribute(account);
+            Account accountLoaded = accountRepository.findAccountWithTagsAndZonesById(account.getId());
+            model.addAttribute(accountLoaded);
+
+            model.addAttribute("enrollmentList",
+                    enrollmentRepository.findByAccountAndAcceptedOrderByEnrolledAtDesc(accountLoaded, true));
+
+            model.addAttribute("studyList",
+                    studyRepository.findByAccount(accountLoaded.getTags(), accountLoaded.getZones()));
+
+            model.addAttribute("studyManagerOf",
+                    studyRepository.findFirst5ByManagersContainingAndClosedOrderByPublishedDateTimeDesc(account, false));
+
+            model.addAttribute("studyMemberOf",
+                    studyRepository.findFirst5ByMembersContainingAndClosedOrderByPublishedDateTimeDesc(account, false));
+            return "home";
         }
+        model.addAttribute("studyList",
+                studyRepository.findFirst9ByPublishedAndClosedOrderByPublishedDateTimeDesc(true, false));
         return "index";
     }
 

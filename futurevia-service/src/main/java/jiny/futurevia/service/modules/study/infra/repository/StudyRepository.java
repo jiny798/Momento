@@ -3,6 +3,7 @@ package jiny.futurevia.service.modules.study.infra.repository;
 import java.util.List;
 import java.util.Optional;
 
+import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.study.domain.entity.Study;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,5 +35,14 @@ public interface StudyRepository extends JpaRepository<Study, Long>, StudyReposi
 
     @EntityGraph(attributePaths = {"managers", "members"})
     Study findStudyWithManagersAndMembersById(Long id);
+
+    @EntityGraph(attributePaths = {"tags", "zones"})
+    List<Study> findFirst9ByPublishedAndClosedOrderByPublishedDateTimeDesc(boolean published, boolean closed);
+
+    List<Study> findFirst5ByManagersContainingAndClosedOrderByPublishedDateTimeDesc(Account account,
+                                                                                    boolean closed);
+
+    List<Study> findFirst5ByMembersContainingAndClosedOrderByPublishedDateTimeDesc(Account account,
+                                                                                   boolean closed);
 
 }
