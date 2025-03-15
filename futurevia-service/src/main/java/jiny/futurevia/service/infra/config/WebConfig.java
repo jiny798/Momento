@@ -1,6 +1,5 @@
 package jiny.futurevia.service.infra.config;
 
-import jiny.futurevia.service.modules.notification.infra.interceptor.NotificationInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.StaticResourceLocation;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +13,7 @@ import java.util.stream.Stream;
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
-    private final NotificationInterceptor notificationInterceptor;
+//    private final NotificationInterceptor notificationInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -23,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .collect(Collectors.toList());
         staticResourcesPath.add("/node_modules/**");
 
-        registry.addInterceptor(notificationInterceptor)
-                .excludePathPatterns(staticResourcesPath);
+//        registry.addInterceptor(notificationInterceptor)
+//                .excludePathPatterns(staticResourcesPath);
     }
 }
