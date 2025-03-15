@@ -23,21 +23,8 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/api/posts")
-    public Map<String,String> post(@RequestBody @Valid PostCreate postForm, BindingResult result) throws Exception {
-        if(result.hasErrors()) {
-            List<FieldError> fieldErrors = result.getFieldErrors();
-            FieldError fieldError = fieldErrors.get(0);
-            String invalidFieldName = fieldError.getField();
-            String fieldErrorMessage = fieldError.getDefaultMessage();
-
-            Map<String,String> error = new HashMap<String,String>();
-            error.put(invalidFieldName, invalidFieldName);
-            return error;
-        }
-
-        String title = postForm.getTitle();
-
-        postService.write(postForm);
+    public Map<String,String> post(@RequestBody @Valid PostCreate postCreate ) throws Exception {
+        postService.write(postCreate);
         return Map.of();
     }
 }

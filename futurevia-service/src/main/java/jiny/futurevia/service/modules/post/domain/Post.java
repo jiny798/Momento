@@ -24,9 +24,6 @@ public class Post {
     @Column(columnDefinition = "LONGTEXT")
     private String content;
 
-    @Column(nullable = false)
-    private LocalDateTime regDate;
-
     @Builder
     public Post(String title, String content) {
         this.title = title;
