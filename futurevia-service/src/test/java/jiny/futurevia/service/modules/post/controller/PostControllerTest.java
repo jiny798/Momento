@@ -3,7 +3,9 @@ package jiny.futurevia.service.modules.post.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jiny.futurevia.service.modules.post.domain.Post;
 import jiny.futurevia.service.modules.post.dto.request.PostCreate;
+import jiny.futurevia.service.modules.post.dto.response.PostResponse;
 import jiny.futurevia.service.modules.post.repository.PostRepository;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -40,7 +49,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 생성 : 정상작동")
-    public void test1() throws Exception {
+    public void createPost() throws Exception {
         // given
         PostCreate postCreate = PostCreate.builder()
                 .title("제목입니다.")
@@ -67,7 +76,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 생성 : 제목누락")
-    public void test2() throws Exception {
+    public void createPostFailByTitle() throws Exception {
         // given
         PostCreate postCreate = PostCreate.builder()
                 .title("")
@@ -88,7 +97,7 @@ class PostControllerTest {
 
     @Test
     @DisplayName("글 1개 조회")
-    public void test3() throws Exception {
+    public void getPost() throws Exception {
         // given
         Post post = Post.builder()
                 .title("title")
@@ -110,4 +119,29 @@ class PostControllerTest {
     }
 
 
+    @Test
+    @DisplayName("글 여러개 조회")
+    public void getPostList() throws Exception {
+        // given
+        List<Post> requestPosts = IntStream.range(0, 30).mapToObj(i -> {
+            return Post.builder()
+                    .title("title-"+ i)
+                    .content("content-"+ i)
+                    .build();
+        }).toList();
+        postRepository.saveAll(requestPosts);
+
+        // when
+        mockMvc.perform(get("/api/posts?page=1&size=10")
+                        .contentType(APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(10))
+                .andExpect(jsonPath("$[0].id").value(30))
+                .andExpect(jsonPath("$[0].title").value("title-29"))
+                .andExpect(jsonPath("$[0].content").value("content-29"))
+                .andDo(print());
+
+        // then
+    }
 }

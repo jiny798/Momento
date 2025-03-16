@@ -1,5 +1,6 @@
 package jiny.futurevia.service.infra.config;
 
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;

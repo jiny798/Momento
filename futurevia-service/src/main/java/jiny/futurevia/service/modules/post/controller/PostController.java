@@ -3,10 +3,13 @@ package jiny.futurevia.service.modules.post.controller;
 import jakarta.validation.Valid;
 import jiny.futurevia.service.modules.post.domain.Post;
 import jiny.futurevia.service.modules.post.dto.request.PostCreate;
+import jiny.futurevia.service.modules.post.dto.request.PostSearch;
 import jiny.futurevia.service.modules.post.dto.response.PostResponse;
 import jiny.futurevia.service.modules.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -33,4 +36,8 @@ public class PostController {
         return postService.get(postId);
     }
 
+    @GetMapping("/api/posts")
+    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) throws Exception {
+        return postService.getList(postSearch);
+    }
 }
