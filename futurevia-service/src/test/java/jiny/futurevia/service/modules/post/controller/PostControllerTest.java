@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static jiny.futurevia.service.modules.post.domain.QPost.post;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -118,6 +119,19 @@ class PostControllerTest {
         // then
     }
 
+    @Test
+    @DisplayName("글 1개 조회")
+    public void getPostException() throws Exception {
+        // when
+        mockMvc.perform(get("/api/posts/{postId}", 1)
+                        .contentType(APPLICATION_JSON)
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("404"))
+                .andDo(print());
+
+        // then
+    }
 
     @Test
     @DisplayName("글 여러개 조회")
@@ -164,6 +178,25 @@ class PostControllerTest {
                         .content(mapper.writeValueAsString(postEdit))
                 )
                 .andExpect(status().isOk())
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("없는 글 수정")
+    public void editPostException() throws Exception {
+        // given
+        PostEdit postEdit = PostEdit.builder()
+                .title("title2")
+                .content("content2")
+                .build();
+
+        // when
+        mockMvc.perform(get("/api/posts/{postId}", 1)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(postEdit))
+                )
+                .andExpect(status().isNotFound())
                 .andDo(print());
 
     }

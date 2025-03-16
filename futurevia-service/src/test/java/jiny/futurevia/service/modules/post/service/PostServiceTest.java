@@ -1,5 +1,6 @@
 package jiny.futurevia.service.modules.post.service;
 
+import jiny.futurevia.service.modules.exception.type.PostNotFound;
 import jiny.futurevia.service.modules.post.domain.Post;
 import jiny.futurevia.service.modules.post.dto.request.PostCreate;
 import jiny.futurevia.service.modules.post.dto.request.PostEdit;
@@ -12,9 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +52,7 @@ class PostServiceTest {
 
     @Test
     @DisplayName("글 1개 조회")
-    public void test2() throws Exception {
+    public void getPost() throws Exception {
         // given
         Post requestPost = Post.builder()
                 .title("title")
@@ -70,6 +68,23 @@ class PostServiceTest {
         assertEquals("title", response.getTitle());
         assertEquals("content", response.getContent());
     }
+
+    @Test
+    @DisplayName("없는 글 조회")
+    public void getPostException() throws Exception {
+        // given
+        Post requestPost = Post.builder()
+                .title("title")
+                .content("content")
+                .build();
+        postRepository.save(requestPost);
+
+        // when
+        // then
+        PostNotFound e = Assertions.assertThrows(PostNotFound.class,
+                () -> postService.get(requestPost.getId() + 1), "예외가 발생하지 않음");
+    }
+
 
     @Test
     @DisplayName("게시글 페이지 조회")
@@ -137,4 +152,6 @@ class PostServiceTest {
         // then
         Assertions.assertEquals(0, postRepository.count());
     }
+
+
 }
