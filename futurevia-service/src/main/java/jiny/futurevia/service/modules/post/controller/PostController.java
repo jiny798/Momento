@@ -3,6 +3,7 @@ package jiny.futurevia.service.modules.post.controller;
 import jakarta.validation.Valid;
 import jiny.futurevia.service.modules.post.domain.Post;
 import jiny.futurevia.service.modules.post.dto.request.PostCreate;
+import jiny.futurevia.service.modules.post.dto.request.PostEdit;
 import jiny.futurevia.service.modules.post.dto.request.PostSearch;
 import jiny.futurevia.service.modules.post.dto.response.PostResponse;
 import jiny.futurevia.service.modules.post.service.PostService;
@@ -40,4 +41,15 @@ public class PostController {
     public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) throws Exception {
         return postService.getList(postSearch);
     }
+
+    @PatchMapping("/api/posts/{postId}")
+    public void edit(@PathVariable(name = "postId") Long postId, @RequestBody @Valid PostEdit postEdit) throws Exception {
+        postService.edit(postId, postEdit);
+    }
+
+    @DeleteMapping("/api/posts/{postId}")
+    public void delete(@PathVariable(name = "postId") Long postId) throws Exception {
+        postService.delete(postId);
+    }
+
 }

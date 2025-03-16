@@ -2,6 +2,7 @@ package jiny.futurevia.service.modules.post.service;
 
 import jiny.futurevia.service.modules.post.domain.Post;
 import jiny.futurevia.service.modules.post.dto.request.PostCreate;
+import jiny.futurevia.service.modules.post.dto.request.PostEdit;
 import jiny.futurevia.service.modules.post.dto.request.PostSearch;
 import jiny.futurevia.service.modules.post.dto.response.PostResponse;
 import jiny.futurevia.service.modules.post.repository.PostRepository;
@@ -76,8 +77,8 @@ class PostServiceTest {
         // given
         List<Post> requestPosts = IntStream.range(0, 20).mapToObj(i -> {
             return Post.builder()
-                    .title("title-"+ i)
-                    .content("content-"+ i)
+                    .title("title-" + i)
+                    .content("content-" + i)
                     .build();
         }).collect(Collectors.toList());
         postRepository.saveAll(requestPosts);
@@ -94,4 +95,46 @@ class PostServiceTest {
         assertEquals("title-19", postList.get(0).getTitle());
     }
 
+    @Test
+    @DisplayName("게시글 수정")
+    public void editPost() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("title")
+                .content("content")
+                .build();
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("title2")
+                .content("content2")
+                .build();
+
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다"));
+        Assertions.assertEquals("title2", changedPost.getTitle());
+        Assertions.assertEquals("content2", changedPost.getContent());
+    }
+
+
+    @Test
+    @DisplayName("게시글 수정")
+    public void deletePost() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("title")
+                .content("content")
+                .build();
+        postRepository.save(post);
+
+        // when
+        postService.delete(post.getId());
+
+        // then
+        Assertions.assertEquals(0, postRepository.count());
+    }
 }

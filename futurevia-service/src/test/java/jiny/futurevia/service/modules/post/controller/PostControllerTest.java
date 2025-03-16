@@ -3,6 +3,7 @@ package jiny.futurevia.service.modules.post.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jiny.futurevia.service.modules.post.domain.Post;
 import jiny.futurevia.service.modules.post.dto.request.PostCreate;
+import jiny.futurevia.service.modules.post.dto.request.PostEdit;
 import jiny.futurevia.service.modules.post.dto.response.PostResponse;
 import jiny.futurevia.service.modules.post.repository.PostRepository;
 import org.hamcrest.Matchers;
@@ -24,8 +25,7 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -69,7 +69,7 @@ class PostControllerTest {
         //then
         Assertions.assertEquals(1L, postRepository.count());
 
-        Post post = postRepository.findById(1L).get();
+        Post post = postRepository.findAll().get(0);
         assertEquals("제목입니다.", post.getTitle());
         assertEquals("내용입니다.", post.getContent());
     }
@@ -125,8 +125,8 @@ class PostControllerTest {
         // given
         List<Post> requestPosts = IntStream.range(0, 30).mapToObj(i -> {
             return Post.builder()
-                    .title("title-"+ i)
-                    .content("content-"+ i)
+                    .title("title-" + i)
+                    .content("content-" + i)
                     .build();
         }).toList();
         postRepository.saveAll(requestPosts);
@@ -141,7 +141,52 @@ class PostControllerTest {
                 .andExpect(jsonPath("$[0].title").value("title-29"))
                 .andExpect(jsonPath("$[0].content").value("content-29"))
                 .andDo(print());
-
-        // then
     }
+
+    @Test
+    @DisplayName("글 수정")
+    public void editPost() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("title")
+                .content("content")
+                .build();
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("title2")
+                .content("content2")
+                .build();
+
+        // when
+        mockMvc.perform(get("/api/posts/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(postEdit))
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("글 삭제")
+    public void deletePost() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("title")
+                .content("content")
+                .build();
+        postRepository.save(post);
+
+        // when
+        mockMvc.perform(delete("/api/posts/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+
+    }
+
+
+
 }
