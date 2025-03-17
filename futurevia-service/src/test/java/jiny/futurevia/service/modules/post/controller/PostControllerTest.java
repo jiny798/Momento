@@ -120,7 +120,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("글 1개 조회")
+    @DisplayName("존재하지 않는 글 조회")
     public void getPostException() throws Exception {
         // when
         mockMvc.perform(get("/api/posts/{postId}", 1)
@@ -130,7 +130,6 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.code").value("404"))
                 .andDo(print());
 
-        // then
     }
 
     @Test

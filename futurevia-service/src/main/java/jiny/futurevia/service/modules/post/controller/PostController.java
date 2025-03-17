@@ -20,34 +20,35 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
 
-    @PostMapping("/api/posts")
+    @PostMapping("/posts")
     public void post(@RequestBody @Valid PostCreate postCreate ) throws Exception {
         postService.write(postCreate);
 
     }
 
-    @GetMapping("/api/posts/{postId}")
+    @GetMapping("/posts/{postId}")
     public PostResponse get(@PathVariable(name = "postId") Long postId) throws Exception {
         return postService.get(postId);
     }
 
-    @GetMapping("/api/posts")
+    @GetMapping("/posts")
     public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) throws Exception {
         return postService.getList(postSearch);
     }
 
-    @PatchMapping("/api/posts/{postId}")
+    @PatchMapping("/posts/{postId}")
     public void edit(@PathVariable(name = "postId") Long postId, @RequestBody @Valid PostEdit postEdit) throws Exception {
         postService.edit(postId, postEdit);
     }
 
-    @DeleteMapping("/api/posts/{postId}")
+    @DeleteMapping("/posts/{postId}")
     public void delete(@PathVariable(name = "postId") Long postId) throws Exception {
         postService.delete(postId);
     }

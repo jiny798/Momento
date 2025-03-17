@@ -1,4 +1,4 @@
-package jiny.futurevia.service.infra.config.security;
+package jiny.futurevia.service.infra.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
