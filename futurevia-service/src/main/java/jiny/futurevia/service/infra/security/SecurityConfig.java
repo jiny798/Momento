@@ -1,9 +1,17 @@
 package jiny.futurevia.service.infra.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jiny.futurevia.service.infra.security.filter.EmailPasswordAuthFilter;
+import jiny.futurevia.service.infra.security.handler.Http401Handler;
+import jiny.futurevia.service.infra.security.handler.Http403Handler;
+import jiny.futurevia.service.infra.security.handler.LoginFailHandler;
+import jiny.futurevia.service.infra.security.handler.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -11,11 +19,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
 import javax.sql.DataSource;
 
@@ -25,36 +35,64 @@ import javax.sql.DataSource;
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final DataSource dataSource;
+    private final ObjectMapper objectMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-       return new WebSecurityCustomizer() {
-           @Override
-           public void customize(WebSecurity web) {
-               web.ignoring().requestMatchers("/favicon.ico","/error");
-           }
-       };
+        return new WebSecurityCustomizer() {
+            @Override
+            public void customize(WebSecurity web) {
+                web.ignoring().requestMatchers("/favicon.ico", "/error");
+            }
+        };
 
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth ->
+                        auth.anyRequest().permitAll()
+                );
 
-        // 보안
-        http.csrf(AbstractHttpConfigurer::disable);
+        http
+                .addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(e -> {
+                    e.accessDeniedHandler(new Http403Handler(objectMapper));
+                    e.authenticationEntryPoint(new Http401Handler(objectMapper));
+                })
+                .rememberMe(rm -> rm.rememberMeParameter("remember")
+                        .alwaysRemember(false)
+                        .tokenValiditySeconds(2592000)
+                )
+                .csrf(AbstractHttpConfigurer::disable);
 
-        // 로그인
-        http.formLogin(form -> form
-                .loginPage("/login").permitAll());
-        http.rememberMe(rememberMe -> rememberMe
-                .userDetailsService(userDetailsService)
-                .tokenRepository(tokenRepository()));
-
-        // 권한
-        http.authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll());
 
         return http.build();
+    }
+
+    @Bean
+    public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
+        EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/auth/login", objectMapper);
+        filter.setAuthenticationManager(authenticationManager());
+        filter.setAuthenticationSuccessHandler(new LoginSuccessHandler(objectMapper));
+        filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
+        filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+
+        SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
+        rememberMeServices.setAlwaysRemember(true);
+        rememberMeServices.setValiditySeconds(3600 * 24 * 30);
+        filter.setRememberMeServices(rememberMeServices);
+        return filter;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(provider);
     }
 
     @Bean

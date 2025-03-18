@@ -39,6 +39,10 @@ dependencies {
 //	implementation 'org.springframework.session:spring-session-jdbc'
 //	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+	implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'org.springframework.session:spring-session-jdbc'
+
 	// thymeleaf - security
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
