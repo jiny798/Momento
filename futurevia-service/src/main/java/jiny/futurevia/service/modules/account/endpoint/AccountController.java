@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 @Slf4j
 @Controller
@@ -121,7 +121,7 @@ public class AccountController {
     }
 
     @PostMapping("/email-login")
-    public String sendLinkForEmailLogin(String email, Model model, RedirectAttributes attributes) {
+    public String sendLinkForEmailLogin(String email, Model model) { // RedirectAttributes attributes
         Account account = accountRepository.findByEmail(email);
         if (account == null) {
             model.addAttribute("error", "유효한 이메일 주소가 아닙니다.");
@@ -132,7 +132,7 @@ public class AccountController {
 //            return "account/email-login";
 //        }
         accountService.sendLoginLink(account);
-        attributes.addFlashAttribute("message", "로그인을 위한 링크를 이메일로 전송하였습니다.");
+//        attributes.addFlashAttribute("message", "로그인을 위한 링크를 이메일로 전송하였습니다.");
         return "redirect:/email-login";
     }
 

@@ -21,7 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Set;
@@ -79,8 +78,7 @@ public class SettingsController {
     }
 
     @PostMapping(SETTINGS_PROFILE_URL)
-    public String updateProfile(@CurrentUser Account account, @ModelAttribute("profile") @Valid ProfileDto profile, Errors errors, Model model,
-                                RedirectAttributes attributes) {
+    public String updateProfile(@CurrentUser Account account, @ModelAttribute("profile") @Valid ProfileDto profile, Errors errors, Model model) {//, //RedirectAttributes attributes) {
         log.info("[Controller update profile] account" + account);
         if (errors.hasErrors()) {
             log.info("[Controller update profile] errors");
@@ -88,7 +86,7 @@ public class SettingsController {
             return SETTINGS_PROFILE_VIEW_NAME;
         }
         accountService.updateProfile(account, profile);
-        attributes.addFlashAttribute("message", "프로필을 수정하였습니다.");
+//        attributes.addFlashAttribute("message", "프로필을 수정하였습니다.");
         return "redirect:" + SETTINGS_PROFILE_URL;
     }
 
@@ -101,13 +99,13 @@ public class SettingsController {
     }
 
     @PostMapping(SETTINGS_NOTIFICATION_URL)
-    public String updateNotification(@CurrentUser Account account, @Valid NotificationForm notificationForm, Errors errors, Model model, RedirectAttributes attributes) {
+    public String updateNotification(@CurrentUser Account account, @Valid NotificationForm notificationForm, Errors errors, Model model) {//, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(account);
             return SETTINGS_NOTIFICATION_URL;
         }
         accountService.updateNotification(account, notificationForm);
-        attributes.addFlashAttribute("message", "알림설정 수정 완료");
+//        attributes.addFlashAttribute("message", "알림설정 수정 완료");
         return "redirect:" + SETTINGS_NOTIFICATION_URL;
     }
 
@@ -120,13 +118,13 @@ public class SettingsController {
     }
 
     @PostMapping(SETTINGS_PASSWORD_URL)
-    public String updatePassword(@CurrentUser Account account, @Valid PasswordForm passwordForm, Errors errors, Model model, RedirectAttributes attributes) {
+    public String updatePassword(@CurrentUser Account account, @Valid PasswordForm passwordForm, Errors errors, Model model) { // RedirectAttributes attributes
         if (errors.hasErrors()) {
             model.addAttribute(account);
             return SETTINGS_PASSWORD_VIEW_NAME;
         }
         accountService.updatePassword(account, passwordForm.getNewPassword());
-        attributes.addFlashAttribute("message", "패스워드를 변경했습니다.");
+//        attributes.addFlashAttribute("message", "패스워드를 변경했습니다.");
         return "redirect:" + SETTINGS_PASSWORD_URL;
     }
 
@@ -139,13 +137,13 @@ public class SettingsController {
     }
 
     @PostMapping(SETTINGS_ACCOUNT_URL)
-    public String updateNickname(@CurrentUser Account account, @Valid NicknameForm nicknameForm, Errors errors, Model model, RedirectAttributes attributes) {
+    public String updateNickname(@CurrentUser Account account, @Valid NicknameForm nicknameForm, Errors errors, Model model) { //, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(account);
             return SETTINGS_ACCOUNT_VIEW_NAME;
         }
         accountService.updateNickname(account, nicknameForm.getNickname());
-        attributes.addFlashAttribute("message", "닉네임을 수정하였습니다.");
+//        attributes.addFlashAttribute("message", "닉네임을 수정하였습니다.");
         return "redirect:" + SETTINGS_ACCOUNT_URL;
     }
 
