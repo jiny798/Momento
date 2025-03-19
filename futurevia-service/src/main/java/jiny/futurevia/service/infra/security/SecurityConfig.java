@@ -1,7 +1,7 @@
 package jiny.futurevia.service.infra.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jiny.futurevia.service.infra.security.filter.EmailPasswordAuthFilter;
+import jiny.futurevia.service.infra.security.filter.RestAuthenticationFilter;
 import jiny.futurevia.service.infra.security.handler.Http401Handler;
 import jiny.futurevia.service.infra.security.handler.Http403Handler;
 import jiny.futurevia.service.infra.security.handler.LoginFailHandler;
@@ -9,10 +9,11 @@ import jiny.futurevia.service.infra.security.handler.LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,10 +34,9 @@ import javax.sql.DataSource;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final UserDetailsService userDetailsService;
+
     private final DataSource dataSource;
     private final ObjectMapper objectMapper;
-    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -50,14 +50,23 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth ->
-                        auth.anyRequest().permitAll()
-                );
+
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         http
-                .addFilterBefore(usernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .securityMatcher("/api")
+                .authorizeHttpRequests(auth ->
+                        auth.requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.ico", "/error").permitAll()
+                                .anyRequest().permitAll()
+                )
+                .csrf(AbstractHttpConfigurer::disable);
+
+        http
+                .addFilterBefore(restAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
+                .authenticationManager(authenticationManager)
                 .exceptionHandling(e -> {
                     e.accessDeniedHandler(new Http403Handler(objectMapper));
                     e.authenticationEntryPoint(new Http401Handler(objectMapper));
@@ -65,20 +74,18 @@ public class SecurityConfig {
                 .rememberMe(rm -> rm.rememberMeParameter("remember")
                         .alwaysRemember(false)
                         .tokenValiditySeconds(2592000)
-                )
-                .csrf(AbstractHttpConfigurer::disable);
+                );
 
 
         return http.build();
     }
 
-    @Bean
-    public EmailPasswordAuthFilter usernamePasswordAuthenticationFilter() {
-        EmailPasswordAuthFilter filter = new EmailPasswordAuthFilter("/auth/login", objectMapper);
-        filter.setAuthenticationManager(authenticationManager());
+    public RestAuthenticationFilter restAuthenticationFilter(AuthenticationManager authenticationManager) {
+        RestAuthenticationFilter filter = new RestAuthenticationFilter("/api/login", objectMapper);
+        filter.setAuthenticationManager(authenticationManager);
         filter.setAuthenticationSuccessHandler(new LoginSuccessHandler(objectMapper));
         filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
-        filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+//        filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
 
         SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
         rememberMeServices.setAlwaysRemember(true);
@@ -87,13 +94,13 @@ public class SecurityConfig {
         return filter;
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return new ProviderManager(provider);
-    }
+//    @Bean
+//    public AuthenticationManager authenticationManager() {
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setUserDetailsService(userDetailsService);
+//        provider.setPasswordEncoder(passwordEncoder);
+//        return new ProviderManager(provider);
+//    }
 
     @Bean
     public PersistentTokenRepository tokenRepository() {
