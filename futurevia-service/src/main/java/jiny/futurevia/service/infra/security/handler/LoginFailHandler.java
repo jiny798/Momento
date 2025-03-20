@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -28,13 +29,13 @@ public class LoginFailHandler implements AuthenticationFailureHandler {
         log.error("[인증오류] 아이디 혹은 비밀번호가 올바르지 않습니다.");
 
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .code("400")
+                .code("401")
                 .message("아이디 혹은 비밀번호가 올바르지 않습니다.")
                 .build();
 
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(UTF_8.name());
-        response.setStatus(SC_BAD_REQUEST);
+        response.setStatus(SC_UNAUTHORIZED);
         objectMapper.writeValue(response.getWriter(), errorResponse);
     }
 }
