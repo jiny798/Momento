@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable);
 
         http
-                .addFilterBefore(restAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(e -> {
                     e.accessDeniedHandler(new Http403Handler(objectMapper));
@@ -83,12 +83,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-    public RestAuthenticationFilter restAuthenticationFilter(AuthenticationManager authenticationManager) {
-        RestAuthenticationFilter filter = new RestAuthenticationFilter("/api/login", objectMapper);
+    public RestAuthenticationFilter restAuthenticationFilter(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) {
+        RestAuthenticationFilter filter = new RestAuthenticationFilter(httpSecurity, "/api/login", objectMapper);
         filter.setAuthenticationManager(authenticationManager);
         filter.setAuthenticationSuccessHandler(new LoginSuccessHandler(objectMapper));
         filter.setAuthenticationFailureHandler(new LoginFailHandler(objectMapper));
-//        filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
 
         SpringSessionRememberMeServices rememberMeServices = new SpringSessionRememberMeServices();
         rememberMeServices.setAlwaysRemember(true);
