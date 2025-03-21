@@ -1,6 +1,8 @@
 package jiny.futurevia.service.infra.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jiny.futurevia.service.infra.security.csrf.CsrfCookieFilter;
+import jiny.futurevia.service.infra.security.csrf.SpaCsrfTokenRequestHandler;
 import jiny.futurevia.service.infra.security.filter.RestAuthenticationFilter;
 import jiny.futurevia.service.infra.security.handler.Http401Handler;
 import jiny.futurevia.service.infra.security.handler.Http403Handler;
@@ -26,7 +28,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
 import javax.sql.DataSource;
@@ -58,6 +62,7 @@ public class SecurityConfig {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(restAuthenticationProvider);
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+        SpaCsrfTokenRequestHandler csrfTokenRequestHandler = new SpaCsrfTokenRequestHandler();
 
         http
                 .securityMatcher("/api/**")
@@ -67,7 +72,9 @@ public class SecurityConfig {
                                 .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
                                 .anyRequest().permitAll()
                 )
-                .csrf(AbstractHttpConfigurer::disable);
+                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(csrfTokenRequestHandler))
+                .addFilterBefore(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
 
         http
                 .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
