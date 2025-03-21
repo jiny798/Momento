@@ -60,9 +60,11 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         http
-                .securityMatcher("/api")
+                .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.ico", "/error").permitAll()
+                                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                                .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
                                 .anyRequest().permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable);
@@ -71,8 +73,8 @@ public class SecurityConfig {
                 .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(e -> {
-                    e.accessDeniedHandler(new Http403Handler(objectMapper));
-                    e.authenticationEntryPoint(new Http401Handler(objectMapper));
+                    e.accessDeniedHandler(new Http403Handler(objectMapper)); // 인증O -> 접근 거부
+                    e.authenticationEntryPoint(new Http401Handler(objectMapper)); // 인증X -> 접근 거부
                 })
                 .rememberMe(rm -> rm.rememberMeParameter("remember")
                         .alwaysRemember(false)
