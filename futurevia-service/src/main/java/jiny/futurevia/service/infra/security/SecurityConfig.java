@@ -64,11 +64,12 @@ public class SecurityConfig {
                                 .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
                                 .anyRequest().permitAll()
                 )
+                        .csrf(csrf -> csrf.disable());
                 // csrf
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(csrfTokenRequestHandler))
-                .addFilterBefore(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
+//                .csrf(csrf -> csrf
+//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                        .csrfTokenRequestHandler(csrfTokenRequestHandler))
+//                .addFilterBefore(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
 
         http
                 // 인증필터

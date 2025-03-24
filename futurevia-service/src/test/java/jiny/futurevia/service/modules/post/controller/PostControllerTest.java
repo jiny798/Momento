@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -49,6 +50,7 @@ class PostControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "jiny@abc.com" , roles = {"ADMIN"}, password = "jiny1234!")
     @DisplayName("게시글 생성 : 정상작동")
     public void createPost() throws Exception {
         // given
@@ -76,6 +78,7 @@ class PostControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "jiny@abc.com" , roles = {"ADMIN"}, password = "jiny1234!")
     @DisplayName("게시글 생성 : 제목누락")
     public void createPostFailByTitle() throws Exception {
         // given
@@ -201,6 +204,7 @@ class PostControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "jiny@abc.com" , roles = {"ADMIN"}, password = "jiny1234!")
     @DisplayName("글 삭제")
     public void deletePost() throws Exception {
         // given

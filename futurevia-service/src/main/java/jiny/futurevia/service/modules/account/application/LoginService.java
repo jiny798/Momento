@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class LoginService {
 	/*** Authenticate ***/
-	private final AuthenticationManager authenticationManager;
+//	private final AuthenticationManager authenticationManager;
 	private final HttpSessionSecurityContextRepository sessionContextRepository = new HttpSessionSecurityContextRepository();
 	private final AccountService accountService;
 
