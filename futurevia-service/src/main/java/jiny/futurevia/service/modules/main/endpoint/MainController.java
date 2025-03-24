@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.support.CurrentUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -64,5 +66,12 @@ public class MainController {
                 ? "publishedDateTime"
                 : "memberCount");
         return "search";
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ResponseBody
+    @GetMapping("/user")
+    public String user() {
+        return "user page";
     }
 }

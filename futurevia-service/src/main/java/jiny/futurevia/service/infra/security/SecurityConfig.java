@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,23 +38,13 @@ import javax.sql.DataSource;
 
 @EnableWebSecurity
 @Configuration
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final DataSource dataSource;
     private final ObjectMapper objectMapper;
     private final AuthenticationProvider restAuthenticationProvider;
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return new WebSecurityCustomizer() {
-            @Override
-            public void customize(WebSecurity web) {
-                web.ignoring().requestMatchers("/favicon.ico", "/error");
-            }
-        };
-
-    }
 
     @Bean
     @Order(1)
@@ -65,6 +56,7 @@ public class SecurityConfig {
         SpaCsrfTokenRequestHandler csrfTokenRequestHandler = new SpaCsrfTokenRequestHandler();
 
         http
+                // request
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.ico", "/error").permitAll()
@@ -72,11 +64,14 @@ public class SecurityConfig {
                                 .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
                                 .anyRequest().permitAll()
                 )
-                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                // csrf
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(csrfTokenRequestHandler))
                 .addFilterBefore(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
 
         http
+                // 인증필터
                 .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(e -> {
@@ -104,14 +99,6 @@ public class SecurityConfig {
         filter.setRememberMeServices(rememberMeServices);
         return filter;
     }
-
-//    @Bean
-//    public AuthenticationManager authenticationManager() {
-//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-//        provider.setUserDetailsService(userDetailsService);
-//        provider.setPasswordEncoder(passwordEncoder);
-//        return new ProviderManager(provider);
-//    }
 
     @Bean
     public PersistentTokenRepository tokenRepository() {
