@@ -8,10 +8,13 @@ import jiny.futurevia.service.infra.security.handler.Http401Handler;
 import jiny.futurevia.service.infra.security.handler.Http403Handler;
 import jiny.futurevia.service.infra.security.handler.LoginFailHandler;
 import jiny.futurevia.service.infra.security.handler.LoginSuccessHandler;
+import jiny.futurevia.service.modules.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -45,6 +48,7 @@ public class SecurityConfig {
     private final DataSource dataSource;
     private final ObjectMapper objectMapper;
     private final AuthenticationProvider restAuthenticationProvider;
+    private final PostRepository postRepository;
 
     @Bean
     @Order(1)
@@ -108,5 +112,11 @@ public class SecurityConfig {
         return jdbcTokenRepository;
     }
 
+    @Bean
+    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
+        var handler = new DefaultMethodSecurityExpressionHandler();
+        handler.setPermissionEvaluator(new PostPermissionEvaluator(postRepository));
+        return handler;
+    }
 
 }

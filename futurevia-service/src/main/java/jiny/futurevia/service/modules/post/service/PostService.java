@@ -1,7 +1,10 @@
 package jiny.futurevia.service.modules.post.service;
 
 
+import jiny.futurevia.service.modules.account.domain.entity.Account;
+import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.modules.exception.type.PostNotFound;
+import jiny.futurevia.service.modules.exception.type.UserNotFound;
 import jiny.futurevia.service.modules.post.domain.Post;
 import jiny.futurevia.service.modules.post.domain.PostEditor;
 import jiny.futurevia.service.modules.post.dto.request.PostEdit;
@@ -23,8 +26,10 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final AccountRepository accountRepository;
 
-    public void write(PostCreate postCreate) {
+    public void write(Long userId, PostCreate postCreate) {
+        var user = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
 
         Post post = Post.builder()
                 .title(postCreate.getTitle())

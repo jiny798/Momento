@@ -1,6 +1,9 @@
 package jiny.futurevia.service.modules.post.controller;
 
+
 import jakarta.validation.Valid;
+import jiny.futurevia.service.modules.account.domain.entity.Account;
+import jiny.futurevia.service.modules.account.support.CurrentUser;
 import jiny.futurevia.service.modules.post.domain.Post;
 import jiny.futurevia.service.modules.post.dto.request.PostCreate;
 import jiny.futurevia.service.modules.post.dto.request.PostEdit;
@@ -30,8 +33,8 @@ public class PostController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/posts")
-    public void post(@RequestBody @Valid PostCreate postCreate ) throws Exception {
-        postService.write(postCreate);
+    public void post(@CurrentUser Account account, @RequestBody @Valid PostCreate postCreate) throws Exception {
+        postService.write(account.getId(), postCreate);
 
     }
 
@@ -51,7 +54,8 @@ public class PostController {
         postService.edit(postId, postEdit);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') && hasPermission(#postId, 'POST', 'DELETE')")
     @DeleteMapping("/posts/{postId}")
     public void delete(@PathVariable(name = "postId") Long postId) throws Exception {
         postService.delete(postId);

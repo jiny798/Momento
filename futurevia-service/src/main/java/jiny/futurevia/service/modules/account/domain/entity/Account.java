@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import jiny.futurevia.service.modules.account.endpoint.dto.NotificationForm;
 import jiny.futurevia.service.modules.account.endpoint.dto.ProfileDto;
+import jiny.futurevia.service.modules.post.domain.Post;
 import jiny.futurevia.service.modules.study.domain.entity.Study;
 import jiny.futurevia.service.modules.tag.domain.entity.Tag;
 import lombok.*;
@@ -11,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Entity
@@ -37,6 +35,9 @@ public class Account extends AuditingEntity {
     private String nickname;
     private String password;
     private LocalDateTime joinedAt;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
+    private List<Post> posts;
 
     @ManyToMany
     @ToString.Exclude
