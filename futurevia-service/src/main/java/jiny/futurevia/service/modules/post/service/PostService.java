@@ -14,6 +14,7 @@ import jiny.futurevia.service.modules.post.repository.PostRepository;
 import jiny.futurevia.service.modules.post.dto.request.PostCreate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,17 +44,12 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFound::new);
 
-        return PostResponse.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .build();
+        return new PostResponse(post);
 
     }
 
     public List<PostResponse> getList(PostSearch postSearch) {
-
-        return postRepository.getList(postSearch).stream()
+        Page<Post> postPage = postRepository.getList(postSearch).stream()
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
     }

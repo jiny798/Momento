@@ -8,10 +8,11 @@
 
 <style scoped lang="scss">
 .main {
-  margin-top: 1.4rem;
+  margin-top: 0.1rem;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  max-width: 1200px;
+
+  //max-width: 1200px;
 }
 </style>

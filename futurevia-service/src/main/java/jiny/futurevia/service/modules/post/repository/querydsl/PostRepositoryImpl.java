@@ -5,6 +5,7 @@ import jiny.futurevia.service.modules.post.domain.Post;
 import jiny.futurevia.service.modules.post.domain.QPost;
 import jiny.futurevia.service.modules.post.dto.request.PostSearch;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
@@ -17,11 +18,17 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public List<Post> getList(PostSearch postSearch) {
-        return jpaQueryFactory.selectFrom(post)
+        long total = jpaQueryFactory.select(post.count())
+                .from(post)
+                .fetchFirst();
+
+        List<Post> items = jpaQueryFactory.selectFrom(post)
                 .limit(postSearch.getSize())
                 .offset(postSearch.getOffset())
                 .orderBy(post.id.desc())
                 .fetch();
+
+        return new PageImpl<>(items, postSearch.getPageable(), total);
 
     }
 }

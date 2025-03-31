@@ -1,6 +1,9 @@
 package jiny.futurevia.service.modules.post.dto.request;
 
 import lombok.*;
+import org.springframework.data.domain.PageRequest;
+
+import java.awt.print.Pageable;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -22,5 +25,9 @@ public class PostSearch {
 
     public long getOffset() {
         return (long) (max(1, page) - 1) * min(size, MAX_SIZE);
+    }
+
+    public Pageable getPageable() {
+        return (Pageable) PageRequest.of(page - 1, size);
     }
 }

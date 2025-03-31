@@ -29,11 +29,15 @@ public class Post {
     @JoinColumn
     Account account;
 
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
     @Builder
     public Post(String title, String content, Account account) {
         this.title = title;
         this.content = content;
         this.account = account;
+        this.createdAt = LocalDateTime.now();
     }
 
     public void edit(PostEditor postEditor) {
