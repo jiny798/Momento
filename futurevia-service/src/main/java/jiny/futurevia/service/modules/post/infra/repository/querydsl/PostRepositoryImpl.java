@@ -15,19 +15,19 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    @Override
-    public List<Post> getList(PostSearch postSearch) {
-        long total = jpaQueryFactory.select(post.count())
-                .from(post)
-                .fetchFirst();
-
-        List<Post> items = jpaQueryFactory.selectFrom(post)
-                .limit(postSearch.getSize())
-                .offset(postSearch.getOffset())
-                .orderBy(post.id.desc())
-                .fetch();
-
-        return new PageImpl<>(items, postSearch.getPageable(), total);
-
-    }
+//    @Override
+//    public List<Post> getList(PostSearch postSearch) {
+//        long total = jpaQueryFactory.select(post.count())
+//                .from(post)
+//                .fetchFirst();
+//
+//        List<Post> items = jpaQueryFactory.selectFrom(post)
+//                .limit(postSearch.getSize())
+//                .offset(postSearch.getOffset())
+//                .orderBy(post.id.desc())
+//                .fetch();
+//
+//        return new PageImpl<>(items, postSearch.getPageable(), total);
+//
+//    }
 }

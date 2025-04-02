@@ -28,7 +28,6 @@ public class PostController {
     @PostMapping("/posts")
     public void post(@CurrentUser Account account, @RequestBody @Valid PostCreate postCreate) throws Exception {
         postService.write(account.getId(), postCreate);
-
     }
 
     @GetMapping("/posts/{postId}")
@@ -36,10 +35,10 @@ public class PostController {
         return postService.get(postId);
     }
 
-    @GetMapping("/posts")
-    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) throws Exception {
-        return postService.getList(postSearch);
-    }
+//    @GetMapping("/posts")
+//    public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) throws Exception {
+//        return postService.getList(postSearch);
+//    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/posts/{postId}")

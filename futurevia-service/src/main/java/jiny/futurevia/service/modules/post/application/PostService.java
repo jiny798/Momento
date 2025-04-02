@@ -47,11 +47,11 @@ public class PostService {
 
     }
 
-    public List<PostResponse> getList(PostSearch postSearch) {
-        Page<Post> postPage = postRepository.getList(postSearch).stream()
-                .map(PostResponse::new)
-                .collect(Collectors.toList());
-    }
+//    public List<PostResponse> getList(PostSearch postSearch) {
+//        Page<Post> postPage = postRepository.getList(postSearch).stream()
+//                .map(PostResponse::new)
+//                .collect(Collectors.toList());
+//    }
 
     @Transactional
     public void edit(Long id, PostEdit postEdit) {
