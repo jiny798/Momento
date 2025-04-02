@@ -2,11 +2,9 @@ package jiny.futurevia.service.modules.post.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jiny.futurevia.service.modules.post.domain.Post;
-import jiny.futurevia.service.modules.post.dto.request.PostCreate;
-import jiny.futurevia.service.modules.post.dto.request.PostEdit;
-import jiny.futurevia.service.modules.post.dto.response.PostResponse;
-import jiny.futurevia.service.modules.post.repository.PostRepository;
-import org.hamcrest.Matchers;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostCreate;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostEdit;
+import jiny.futurevia.service.modules.post.infra.repository.PostRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,17 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static jiny.futurevia.service.modules.post.domain.QPost.post;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

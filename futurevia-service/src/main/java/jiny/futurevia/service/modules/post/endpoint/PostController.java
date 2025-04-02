@@ -1,27 +1,20 @@
-package jiny.futurevia.service.modules.post.controller;
+package jiny.futurevia.service.modules.post.endpoint;
 
 
 import jakarta.validation.Valid;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.support.CurrentUser;
-import jiny.futurevia.service.modules.post.domain.Post;
-import jiny.futurevia.service.modules.post.dto.request.PostCreate;
-import jiny.futurevia.service.modules.post.dto.request.PostEdit;
-import jiny.futurevia.service.modules.post.dto.request.PostSearch;
-import jiny.futurevia.service.modules.post.dto.response.PostResponse;
-import jiny.futurevia.service.modules.post.service.PostService;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostCreate;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostEdit;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostSearch;
+import jiny.futurevia.service.modules.post.endpoint.dto.response.PostResponse;
+import jiny.futurevia.service.modules.post.application.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RequestMapping("/api")

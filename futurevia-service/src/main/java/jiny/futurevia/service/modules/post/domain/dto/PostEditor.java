@@ -1,4 +1,4 @@
-package jiny.futurevia.service.modules.post.domain;
+package jiny.futurevia.service.modules.post.domain.dto;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -2,14 +2,13 @@ package jiny.futurevia.service.infra.security;
 
 import jiny.futurevia.service.modules.account.domain.dto.AccountContext;
 import jiny.futurevia.service.modules.exception.type.PostNotFound;
-import jiny.futurevia.service.modules.post.repository.PostRepository;
+import jiny.futurevia.service.modules.post.infra.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 
 import java.io.Serializable;
-import java.nio.file.attribute.UserPrincipal;
 
 @Slf4j
 @RequiredArgsConstructor

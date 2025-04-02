@@ -1,17 +1,16 @@
-package jiny.futurevia.service.modules.post.service;
+package jiny.futurevia.service.modules.post.application;
 
 
-import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.modules.exception.type.PostNotFound;
 import jiny.futurevia.service.modules.exception.type.UserNotFound;
 import jiny.futurevia.service.modules.post.domain.Post;
-import jiny.futurevia.service.modules.post.domain.PostEditor;
-import jiny.futurevia.service.modules.post.dto.request.PostEdit;
-import jiny.futurevia.service.modules.post.dto.request.PostSearch;
-import jiny.futurevia.service.modules.post.dto.response.PostResponse;
-import jiny.futurevia.service.modules.post.repository.PostRepository;
-import jiny.futurevia.service.modules.post.dto.request.PostCreate;
+import jiny.futurevia.service.modules.post.domain.dto.PostEditor;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostEdit;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostSearch;
+import jiny.futurevia.service.modules.post.endpoint.dto.response.PostResponse;
+import jiny.futurevia.service.modules.post.infra.repository.PostRepository;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostCreate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.query.Page;

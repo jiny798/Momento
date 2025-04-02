@@ -2,13 +2,13 @@ package jiny.futurevia.service.modules.post.domain;
 
 import jakarta.persistence.*;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
+import jiny.futurevia.service.modules.post.domain.dto.PostEditor;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Entity

@@ -1,7 +1,7 @@
-package jiny.futurevia.service.modules.post.repository.querydsl;
+package jiny.futurevia.service.modules.post.infra.repository.querydsl;
 
 import jiny.futurevia.service.modules.post.domain.Post;
-import jiny.futurevia.service.modules.post.dto.request.PostSearch;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostSearch;
 
 import java.util.List;
 

@@ -1,12 +1,13 @@
 package jiny.futurevia.service.modules.post.service;
 
 import jiny.futurevia.service.modules.exception.type.PostNotFound;
+import jiny.futurevia.service.modules.post.application.PostService;
 import jiny.futurevia.service.modules.post.domain.Post;
-import jiny.futurevia.service.modules.post.dto.request.PostCreate;
-import jiny.futurevia.service.modules.post.dto.request.PostEdit;
-import jiny.futurevia.service.modules.post.dto.request.PostSearch;
-import jiny.futurevia.service.modules.post.dto.response.PostResponse;
-import jiny.futurevia.service.modules.post.repository.PostRepository;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostCreate;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostEdit;
+import jiny.futurevia.service.modules.post.endpoint.dto.request.PostSearch;
+import jiny.futurevia.service.modules.post.endpoint.dto.response.PostResponse;
+import jiny.futurevia.service.modules.post.infra.repository.PostRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
