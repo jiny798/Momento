@@ -51,7 +51,7 @@ public class AccountService implements UserDetailsService{
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
+		log.info("[loadUserByUsername]");
 		Account account = Optional.ofNullable(accountRepository.findByEmail(email))
 			.orElse(accountRepository.findByNickname(email));
 		if (account == null) {

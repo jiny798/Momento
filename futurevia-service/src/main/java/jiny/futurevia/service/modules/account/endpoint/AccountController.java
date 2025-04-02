@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class AccountController {
 
@@ -41,24 +41,15 @@ public class AccountController {
         webDataBinder.addValidators(signUpFormValidator);
     }
 
-    @GetMapping("/sign-up")
-    public String signUpForm(Model model) {
-        model.addAttribute(new SignUpForm());
-        return "account/sign-up";
-    }
-
     @PostMapping("/sign-up")
-    public String signUpSubmit(@Valid @ModelAttribute SignUpForm signUpForm, Errors errors, HttpServletRequest request,
+    public void signUpSubmit(@Valid @RequestBody SignUpForm signUpForm, Errors errors, HttpServletRequest request,
                                HttpServletResponse response) {
-        if (errors.hasErrors()) {
-            return "account/sign-up";
-        }
         Account account = accountService.signUp(signUpForm);
         loginService.login(account, request, response);
-
-        return "redirect:/";
     }
 
+    // 메일 인증 임시 주석
+    /*
     @GetMapping("/check-email-token")
     public String verifyEmail(String token, String email, Model model, HttpServletRequest request, HttpServletResponse response) { // HttpServletRequest request,	HttpServletResponse response
 
@@ -145,6 +136,8 @@ public class AccountController {
         loginService.login(account, request, response);
         return "account/logged-in-by-email";
     }
+
+     */
 
     @GetMapping
     public void logout(HttpServletRequest request, HttpServletResponse response) {

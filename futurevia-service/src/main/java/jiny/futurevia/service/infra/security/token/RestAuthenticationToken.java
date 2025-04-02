@@ -18,7 +18,7 @@ public class RestAuthenticationToken extends AbstractAuthenticationToken {
         setAuthenticated(true);
     }
 
-    public RestAuthenticationToken( Object credentials, Object principal) {
+    public RestAuthenticationToken(Object principal, Object credentials) {
         super(null);
         this.principal = principal;
         this.credentials = credentials;

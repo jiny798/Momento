@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jiny.futurevia.service.infra.security.token.RestAuthenticationToken;
 import lombok.Getter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,6 +22,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
+@Slf4j
 public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private final ObjectMapper objectMapper;
@@ -50,7 +53,7 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
         }
 
         LoginInfo loginInfo = objectMapper.readValue(request.getInputStream(), LoginInfo.class);
-
+        log.info("[LoginInfo] {}", loginInfo);
         if (!StringUtils.hasText(loginInfo.getEmail()) || !StringUtils.hasText(loginInfo.getPassword())) {
             throw new IllegalArgumentException("Email or password not provided");
         }
@@ -60,6 +63,7 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
         return this.getAuthenticationManager().authenticate(authToken);
     }
 
+    @ToString
     @Getter
     private static class LoginInfo {
         private String email;

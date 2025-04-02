@@ -1,23 +1,23 @@
 ### 회원가입
 
-POST http://localhost:8080/auth/signup
+POST http://localhost:8080/sign-up
 Content-Type: application/json
 
 {
-  "name": "호돌맨",
-  "email": "hodolman88@gmail.com",
-  "password": "1234"
+  "nickname": "모멘토",
+  "email": "momento@momento.com",
+  "password": "momento1234"
 }
 
 
 ### 로그인
 
-POST http://localhost:8080/auth/login
+POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "email": "hodolman88@gmail.com",
-  "password": "1234"
+  "email": "momento@momento.com",
+  "password": "momento1234"
 }
 
 
