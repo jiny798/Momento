@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import jiny.futurevia.service.modules.account.endpoint.dto.NotificationForm;
 import jiny.futurevia.service.modules.account.endpoint.dto.ProfileDto;
-import jiny.futurevia.service.modules.post.domain.Post;
+import jiny.futurevia.service.modules.post.domain.Product;
 import jiny.futurevia.service.modules.study.domain.entity.Study;
 import jiny.futurevia.service.modules.tag.domain.entity.Tag;
 import lombok.*;
@@ -37,7 +37,7 @@ public class Account extends AuditingEntity {
     private LocalDateTime joinedAt;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
-    private List<Post> posts;
+    private List<Product> posts;
 
     @ManyToMany
     @ToString.Exclude

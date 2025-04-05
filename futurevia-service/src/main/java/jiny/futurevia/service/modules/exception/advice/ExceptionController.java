@@ -2,7 +2,6 @@ package jiny.futurevia.service.modules.exception.advice;
 
 
 import jiny.futurevia.service.modules.exception.type.CommonException;
-import jiny.futurevia.service.modules.exception.type.PostNotFound;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

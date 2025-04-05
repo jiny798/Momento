@@ -7,7 +7,7 @@ import jiny.futurevia.service.infra.security.handler.Http401Handler;
 import jiny.futurevia.service.infra.security.handler.Http403Handler;
 import jiny.futurevia.service.infra.security.handler.LoginFailHandler;
 import jiny.futurevia.service.infra.security.handler.LoginSuccessHandler;
-import jiny.futurevia.service.modules.post.infra.repository.PostRepository;
+import jiny.futurevia.service.modules.post.infra.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +37,7 @@ public class SecurityConfig {
     private final DataSource dataSource;
     private final ObjectMapper objectMapper;
     private final AuthenticationProvider restAuthenticationProvider;
-    private final PostRepository postRepository;
+    private final ProductRepository productRepository;
 
     @Bean
     @Order(1)
@@ -104,7 +104,7 @@ public class SecurityConfig {
     @Bean
     public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
         var handler = new DefaultMethodSecurityExpressionHandler();
-        handler.setPermissionEvaluator(new PostPermissionEvaluator(postRepository));
+        handler.setPermissionEvaluator(new PostPermissionEvaluator(productRepository));
         return handler;
     }
 
