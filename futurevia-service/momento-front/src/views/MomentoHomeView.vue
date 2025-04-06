@@ -1,8 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import MainBanner from '@/components/banner/MainBanner.vue'
+import NewArrivals from '@/components/NewArrivals.vue'
+</script>
 
 <template>
-  <div id="banner">
-    <div class="container"></div>
+  <div>
+    <MainBanner></MainBanner>
+    <NewArrivals></NewArrivals>
   </div>
 </template>
 

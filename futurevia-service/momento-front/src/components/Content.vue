@@ -8,7 +8,6 @@
 
 <style scoped lang="scss">
 .main {
-  margin-top: 0.1rem;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
