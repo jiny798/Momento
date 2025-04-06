@@ -1,8 +1,8 @@
 <template>
   <section class="product-list-section">
     <div class="section-header">
-      <h2>Momento</h2>
-      <p></p>
+      <h2>MOMENTO</h2>
+      <p>자연을 담은 젤라또</p>
     </div>
 
     <ul class="product-grid">
@@ -44,7 +44,7 @@ interface Product {
 const products: Product[] = [
   {
     id: 1,
-    name: '유기농 달걀',
+    name: '유기농 젤라또',
     price: 6000,
     image: '/g1.JPG',
     link: '/product/유기농-달걀/18/category/1/display/2/',
@@ -52,7 +52,7 @@ const products: Product[] = [
   },
   {
     id: 2,
-    name: '유기농 아침 식빵',
+    name: '소르베',
     price: 12000,
     image: '/g2.JPG',
     link: '/product/유기농-아침-식빵/17/category/1/display/2/',
@@ -60,7 +60,7 @@ const products: Product[] = [
   },
   {
     id: 3,
-    name: '딸기 무스 케이크',
+    name: '젤라또 포장',
     price: 30000,
     image: '/g3.JPG',
     link: '/product/딸기-무스-케이크/16/category/1/display/2/',

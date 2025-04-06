@@ -25,7 +25,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/posts")
+    @PostMapping("/products")
     public void post(@CurrentUser Account account, @RequestBody @Valid ProductCreate productCreate) throws Exception {
         productService.write(account.getId(), productCreate);
     }
@@ -46,7 +46,6 @@ public class ProductController {
 //        postService.edit(postId, postEdit);
 //    }
 
-    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/posts/{postId}")
     public void delete(@PathVariable(name = "postId") Long postId) throws Exception {

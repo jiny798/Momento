@@ -20,7 +20,6 @@ import java.util.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
-@ToString
 public class Account extends AuditingEntity {
 
     @Id
@@ -39,24 +38,11 @@ public class Account extends AuditingEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
     private List<Product> posts;
 
-    @ManyToMany
-    @ToString.Exclude
+    @ManyToMany @ToString.Exclude
     private Set<Tag> tags = new HashSet<>();
 
     @ManyToMany @ToString.Exclude
     private Set<Zone> zones = new HashSet<>();
-
-    public static Account with(String email, String nickname, String password) {
-        Account account = new Account();
-        account.email = email;
-        account.nickname = nickname;
-        account.password = password;
-        return account;
-    }
-
-    public void updatePassword(String newPassword) {
-        this.password = newPassword;
-    }
 
     public static Account from(String email, String nickname, String password, Set<Role> roles) {
         Account account = new Account();
@@ -75,9 +61,91 @@ public class Account extends AuditingEntity {
         return account;
     }
 
-    /*** 프로필 ***/
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    /*** 인증 관련 ***/
+    private boolean isValid;
+    private String emailToken;
+    private LocalDateTime emailTokenGeneratedAt;
+
     @Embedded
     private Profile profile = new Profile();;
+
+    @Embedded
+    private NotificationSetting notificationSetting = new NotificationSetting();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @JoinTable(name = "account_roles", joinColumns = {@JoinColumn(name = "account_id")}, inverseJoinColumns = {
+            @JoinColumn(name = "role_id")})
+    @ToString.Exclude
+    private Set<Role> userRoles = new HashSet<>();
+
+    public void updateProfile(ProfileDto profile) {
+        if (this.profile == null) {
+            this.profile = new Profile();
+        }
+        this.profile.bio = profile.getBio();
+        this.profile.url = profile.getUrl();
+        this.profile.job = profile.getJob();
+        this.profile.location = profile.getLocation();
+        this.profile.image = profile.getImage();
+    }
+
+    public void updateNotification(NotificationForm notificationForm) {
+        this.notificationSetting.studyCreatedByEmail = notificationForm.isStudyCreatedByEmail();
+        this.notificationSetting.studyCreatedByWeb = notificationForm.isStudyCreatedByWeb();
+        this.notificationSetting.studyUpdatedByWeb = notificationForm.isStudyUpdatedByWeb();
+        this.notificationSetting.studyUpdatedByEmail = notificationForm.isStudyUpdatedByEmail();
+        this.notificationSetting.studyRegistrationResultByEmail = notificationForm.isStudyRegistrationResultByEmail();
+        this.notificationSetting.studyRegistrationResultByWeb = notificationForm.isStudyRegistrationResultByWeb();
+    }
+
+    public void generateToken() {
+        this.emailToken = UUID.randomUUID().toString();
+        this.emailTokenGeneratedAt = LocalDateTime.now();
+    }
+
+    public boolean enableToSendEmail() {
+        return this.emailTokenGeneratedAt.isBefore(LocalDateTime.now().minusMinutes(5));
+    }
+
+    public void verified() {
+        this.isValid = true;
+        joinedAt = LocalDateTime.now();
+    }
+
+    public boolean isValid(String token) {
+        return this.emailToken.equals(token);
+    }
+
+
+    public boolean isManagerOf(Study study) {
+        return study.getManagers().contains(this);
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+        Account account = (Account) o;
+        return id != null && Objects.equals(id, account.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
 
     @Embeddable
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -99,21 +167,6 @@ public class Account extends AuditingEntity {
 
     }
 
-    public void updateProfile(ProfileDto profile) {
-        if (this.profile == null) {
-            this.profile = new Profile();
-        }
-        this.profile.bio = profile.getBio();
-        this.profile.url = profile.getUrl();
-        this.profile.job = profile.getJob();
-        this.profile.location = profile.getLocation();
-        this.profile.image = profile.getImage();
-    }
-
-    /*** 알림 ***/
-    @Embedded
-    private NotificationSetting notificationSetting = new NotificationSetting();
-
     @Embeddable
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -129,70 +182,14 @@ public class Account extends AuditingEntity {
         private boolean studyUpdatedByWeb = true;
     }
 
-    public void updateNotification(NotificationForm notificationForm) {
-        this.notificationSetting.studyCreatedByEmail = notificationForm.isStudyCreatedByEmail();
-        this.notificationSetting.studyCreatedByWeb = notificationForm.isStudyCreatedByWeb();
-        this.notificationSetting.studyUpdatedByWeb = notificationForm.isStudyUpdatedByWeb();
-        this.notificationSetting.studyUpdatedByEmail = notificationForm.isStudyUpdatedByEmail();
-        this.notificationSetting.studyRegistrationResultByEmail = notificationForm.isStudyRegistrationResultByEmail();
-        this.notificationSetting.studyRegistrationResultByWeb = notificationForm.isStudyRegistrationResultByWeb();
-    }
-
-    /*** 인증 관련 ***/
-    private boolean isValid;
-    private String emailToken;
-    private LocalDateTime emailTokenGeneratedAt;
-
-    public void generateToken() {
-        this.emailToken = UUID.randomUUID().toString();
-        this.emailTokenGeneratedAt = LocalDateTime.now();
-    }
-
-    public boolean enableToSendEmail() {
-        return this.emailTokenGeneratedAt.isBefore(LocalDateTime.now().minusMinutes(5));
-    }
-
-    public void verified() {
-        this.isValid = true;
-        joinedAt = LocalDateTime.now();
-    }
-
-    public boolean isValid(String token) {
-        return this.emailToken.equals(token);
-    }
-
-    /*** 권한 관련 ***/
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
-    @JoinTable(name = "account_roles", joinColumns = {@JoinColumn(name = "account_id")}, inverseJoinColumns = {
-            @JoinColumn(name = "role_id")})
-    @ToString.Exclude
-    private Set<Role> userRoles = new HashSet<>();
-
-    public boolean isManagerOf(Study study) {
-        return study.getManagers().contains(this);
-    }
-
-    /**
-     * 정보 수정
-     **/
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-            return false;
-        }
-        Account account = (Account) o;
-        return id != null && Objects.equals(id, account.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Account{");
+        sb.append("id=").append(id);
+        sb.append(", username='").append(nickname).append('\'');
+        sb.append(", email='").append(email).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

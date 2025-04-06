@@ -70,7 +70,7 @@ public class AccountService implements UserDetailsService{
 
 	public Account signUp(SignUpForm signUpForm) {
 		Account newAccount = saveNewAccount(signUpForm);
-		sendVerificationEmail(newAccount);
+//		sendVerificationEmail(newAccount);
 		return newAccount;
 	}
 

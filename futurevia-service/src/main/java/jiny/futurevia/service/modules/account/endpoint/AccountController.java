@@ -45,7 +45,7 @@ public class AccountController {
     public void signUpSubmit(@Valid @RequestBody SignUpForm signUpForm, Errors errors, HttpServletRequest request,
                                HttpServletResponse response) {
         Account account = accountService.signUp(signUpForm);
-        loginService.login(account, request, response);
+//        loginService.login(account, request, response);
     }
 
     // 메일 인증 임시 주석
