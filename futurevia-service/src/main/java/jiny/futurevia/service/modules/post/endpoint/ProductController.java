@@ -35,21 +35,21 @@ public class ProductController {
         return productService.get(postId);
     }
 
-    @GetMapping("/posts")
+    @GetMapping("/products")
     public PagingResponse<ProductResponse> getList(@ModelAttribute ProductSearch postSearch) throws Exception {
         return productService.getList(postSearch);
     }
 
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @PatchMapping("/posts/{postId}")
-//    public void edit(@PathVariable(name = "postId") Long postId, @RequestBody @Valid PostEdit postEdit) throws Exception {
-//        postService.edit(postId, postEdit);
+//    @PatchMapping("/products/{productId}")
+//    public void edit(@PathVariable(name = "productId") Long productId, @RequestBody @Valid PostEdit postEdit) throws Exception {
+//        productService.edit(productId, postEdit);
 //    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/posts/{postId}")
-    public void delete(@PathVariable(name = "postId") Long postId) throws Exception {
-        productService.delete(postId);
+    @DeleteMapping("/products/{productId}")
+    public void delete(@PathVariable(name = "productId") Long productId) throws Exception {
+        productService.delete(productId);
     }
 
 

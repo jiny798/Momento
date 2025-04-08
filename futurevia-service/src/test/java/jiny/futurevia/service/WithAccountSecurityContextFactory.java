@@ -39,8 +39,6 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
             UserDetails principal = accountService.loadUserByUsername(nickname);
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
             Authentication authentication = new RestAuthenticationToken(authorities, principal, null);
-
-//            Authentication authentication = new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities());
             context.setAuthentication(authentication);
         }
         return context;

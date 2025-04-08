@@ -5,8 +5,10 @@ export default class HttpError {
   private readonly message: string
 
   constructor(e: AxiosError) {
-    this.code = e.response?.data.code ?? '500'
-    this.message = e.response?.data.message ?? '네트워크 상태가 안좋아잉..'
+    const errorData = e.response?.data as { code?: string; message?: string }
+
+    this.code = errorData?.code ?? '500'
+    this.message = errorData?.message ?? '네트워크 상태가 안좋아잉..'
   }
 
   public getMessage() {

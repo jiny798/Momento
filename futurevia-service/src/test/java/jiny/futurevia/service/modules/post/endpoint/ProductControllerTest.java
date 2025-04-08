@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jiny.futurevia.service.WithAccount;
 import jiny.futurevia.service.modules.post.endpoint.dto.request.ProductCreate;
 import jiny.futurevia.service.modules.post.infra.repository.ProductRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ class ProductControllerTest {
                 .andDo(print());
 //
 //        //then
-//        Assertions.assertEquals(1L, productRepository.count());
+        Assertions.assertEquals(1L, productRepository.count());
 
 //        Product post = postRepository.findAll().get(0);
 //        assertEquals("제목입니다.", post.getTitle());

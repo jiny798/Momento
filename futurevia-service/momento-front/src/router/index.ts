@@ -4,6 +4,7 @@ import WriteView from '@/views/WriteView.vue'
 import ReadView from '@/views/ReadView.vue'
 import LoginView from '@/views/LoginView.vue'
 import MomentoHomeView from '@/views/MomentoHomeView.vue'
+import ProductWriteView from '@/views/ProductWriteView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,6 +34,11 @@ const router = createRouter({
       path: '/momento',
       name: 'momento',
       component: MomentoHomeView,
+    },
+    {
+      path: '/product/write',
+      name: 'product write',
+      component: ProductWriteView,
     },
   ],
 })
