@@ -1,4 +1,4 @@
-package jiny.futurevia.service.modules.post.endpoint.dto.response;
+package jiny.futurevia.service.modules.product.endpoint.dto.response;
 
 import lombok.Getter;
 import org.springframework.data.domain.Page;

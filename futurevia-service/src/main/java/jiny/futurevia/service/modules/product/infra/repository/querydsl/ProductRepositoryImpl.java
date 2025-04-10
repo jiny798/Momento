@@ -1,16 +1,15 @@
-package jiny.futurevia.service.modules.post.infra.repository.querydsl;
+package jiny.futurevia.service.modules.product.infra.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jiny.futurevia.service.modules.post.domain.Product;
-import jiny.futurevia.service.modules.post.domain.QProduct;
-import jiny.futurevia.service.modules.post.endpoint.dto.request.ProductSearch;
+import jiny.futurevia.service.modules.product.domain.Product;
+import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
-import static jiny.futurevia.service.modules.post.domain.QProduct.product;
+import static jiny.futurevia.service.modules.product.domain.QProduct.product;
 
 
 @RequiredArgsConstructor

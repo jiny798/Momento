@@ -1,11 +1,11 @@
-package jiny.futurevia.service.modules.post.domain;
+package jiny.futurevia.service.modules.product.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
-import jiny.futurevia.service.modules.post.endpoint.dto.request.ProductCreate;
+import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductCreate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

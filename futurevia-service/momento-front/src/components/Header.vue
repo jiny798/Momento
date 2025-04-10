@@ -1,40 +1,37 @@
 <template>
   <div class="header">
-    <el-menu
-      :default-active="activeIndex"
-      class="el-menu-demo"
-      mode="horizontal"
-      :ellipsis="false"
-      @select="handleSelect"
-    >
-      <el-menu-item index="0">
+    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+      <el-menu-item index="1">
         <el-icon><IceCream /></el-icon>
         Momento
-        <!--        <img style="width: 100%" src="/favicon.ico" alt="Element logo" />-->
       </el-menu-item>
-      <!--      <el-menu-item index="1">Momento </el-menu-item>-->
-      <el-menu-item index="2">Gelato </el-menu-item>
-      <el-menu-item index="3">Dessert </el-menu-item>
-      <!--      <el-menu-item class="custom-disabled" disabled>박진영님</el-menu-item>-->
+      <el-menu-item index="2">Gelato & Cookie </el-menu-item>
 
       <el-sub-menu index="4">
-        <template #title>-</template>
+        <template #title>내정보</template>
         <el-menu-item index="4-1">주문내역</el-menu-item>
-        <el-menu-item index="4-2">내 정보</el-menu-item>
-        <el-menu-item index="4-3">로그아웃</el-menu-item>
+        <el-menu-item index="4-2">프로필</el-menu-item>
+        <el-menu-item index="4-3">
+          <router-link to="/login">로그인</router-link>
+        </el-menu-item>
+        <el-menu-item index="4-4">로그아웃</el-menu-item>
       </el-sub-menu>
-      <!--      <el-menu-item index="5">로그인 </el-menu-item>-->
     </el-menu>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const activeIndex = ref('1')
 const activeIndex2 = ref('1')
 const handleSelect = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
+  if (key === '4-3') {
+    router.push('/login')
+  }
 }
 </script>
 

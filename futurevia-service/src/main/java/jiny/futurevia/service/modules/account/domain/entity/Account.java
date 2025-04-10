@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import jiny.futurevia.service.modules.account.endpoint.dto.NotificationForm;
 import jiny.futurevia.service.modules.account.endpoint.dto.ProfileDto;
-import jiny.futurevia.service.modules.post.domain.Product;
+import jiny.futurevia.service.modules.product.domain.Product;
 import jiny.futurevia.service.modules.study.domain.entity.Study;
 import jiny.futurevia.service.modules.tag.domain.entity.Tag;
 import lombok.*;

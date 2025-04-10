@@ -1,7 +1,5 @@
-package jiny.futurevia.service.modules.post.endpoint.dto.request;
+package jiny.futurevia.service.modules.product.endpoint.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

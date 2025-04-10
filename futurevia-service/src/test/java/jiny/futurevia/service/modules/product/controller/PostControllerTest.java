@@ -1,9 +1,7 @@
-package jiny.futurevia.service.modules.post.controller;
+package jiny.futurevia.service.modules.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jiny.futurevia.service.modules.post.domain.Product;
-import jiny.futurevia.service.modules.post.infra.repository.ProductRepository;
-import org.junit.jupiter.api.Assertions;
+import jiny.futurevia.service.modules.product.infra.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,13 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc

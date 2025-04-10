@@ -1,10 +1,12 @@
-package jiny.futurevia.service.modules.post.endpoint.dto.request;
+package jiny.futurevia.service.modules.product.endpoint.dto.request;
 
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.util.List;
 
 
 @Getter
@@ -39,5 +41,7 @@ public class ProductCreate {
 
 	@NotNull
 	private Boolean isDefect;
+
+	private List<String> imageUrls;
 
 }

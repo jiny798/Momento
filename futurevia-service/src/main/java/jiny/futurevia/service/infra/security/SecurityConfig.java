@@ -7,7 +7,7 @@ import jiny.futurevia.service.infra.security.handler.Http401Handler;
 import jiny.futurevia.service.infra.security.handler.Http403Handler;
 import jiny.futurevia.service.infra.security.handler.LoginFailHandler;
 import jiny.futurevia.service.infra.security.handler.LoginSuccessHandler;
-import jiny.futurevia.service.modules.post.infra.repository.ProductRepository;
+import jiny.futurevia.service.modules.product.infra.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

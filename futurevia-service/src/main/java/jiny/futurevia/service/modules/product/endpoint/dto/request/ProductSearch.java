@@ -1,4 +1,4 @@
-package jiny.futurevia.service.modules.post.endpoint.dto.request;
+package jiny.futurevia.service.modules.product.endpoint.dto.request;
 
 import lombok.*;
 import org.springframework.data.domain.PageRequest;

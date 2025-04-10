@@ -1,6 +1,6 @@
-package jiny.futurevia.service.modules.post.endpoint.dto.response;
+package jiny.futurevia.service.modules.product.endpoint.dto.response;
 
-import jiny.futurevia.service.modules.post.domain.Product;
+import jiny.futurevia.service.modules.product.domain.Product;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

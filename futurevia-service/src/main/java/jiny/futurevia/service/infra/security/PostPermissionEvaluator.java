@@ -2,7 +2,7 @@ package jiny.futurevia.service.infra.security;
 
 import jiny.futurevia.service.modules.account.domain.dto.AccountContext;
 import jiny.futurevia.service.modules.exception.type.ProductNotFound;
-import jiny.futurevia.service.modules.post.infra.repository.ProductRepository;
+import jiny.futurevia.service.modules.product.infra.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.PermissionEvaluator;

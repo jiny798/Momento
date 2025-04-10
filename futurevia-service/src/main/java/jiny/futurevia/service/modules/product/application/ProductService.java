@@ -1,15 +1,15 @@
-package jiny.futurevia.service.modules.post.application;
+package jiny.futurevia.service.modules.product.application;
 
 
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.modules.exception.type.ProductNotFound;
 import jiny.futurevia.service.modules.exception.type.UserNotFound;
-import jiny.futurevia.service.modules.post.domain.Product;
-import jiny.futurevia.service.modules.post.endpoint.dto.request.ProductCreate;
-import jiny.futurevia.service.modules.post.endpoint.dto.request.ProductSearch;
-import jiny.futurevia.service.modules.post.endpoint.dto.response.PagingResponse;
-import jiny.futurevia.service.modules.post.endpoint.dto.response.ProductResponse;
-import jiny.futurevia.service.modules.post.infra.repository.ProductRepository;
+import jiny.futurevia.service.modules.product.domain.Product;
+import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductCreate;
+import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductSearch;
+import jiny.futurevia.service.modules.product.endpoint.dto.response.PagingResponse;
+import jiny.futurevia.service.modules.product.endpoint.dto.response.ProductResponse;
+import jiny.futurevia.service.modules.product.infra.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

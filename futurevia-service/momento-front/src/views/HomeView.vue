@@ -23,31 +23,31 @@ const state = reactive<StateType>({
 // }
 
 onMounted(() => {
-  getList()
+  // getList()
 })
 </script>
 
 <template>
-  <div class="content">
-    <span class="totalCount">게시글 수: {{ state.postList.totalCount }}</span>
+  <!--  <div class="content">-->
+  <!--    <span class="totalCount">게시글 수: {{ state.postList.totalCount }}</span>-->
 
-    <ul class="posts">
-      <li v-for="post in state.postList.items" :key="post.id">
-        <PostComponent :post="post" />
-      </li>
-    </ul>
+  <!--    <ul class="posts">-->
+  <!--      <li v-for="post in state.postList.items" :key="post.id">-->
+  <!--        <PostComponent :post="post" />-->
+  <!--      </li>-->
+  <!--    </ul>-->
 
-    <div style="width: 100%; display: flex; justify-content: center">
-      <el-pagination
-        :background="true"
-        layout="prev, pager, next"
-        v-model:current-page="state.postList.page"
-        :total="state.postList.totalCount"
-        :default-page-size="3"
-        @current-change="(page: number) => getList(page)"
-      />
-    </div>
-  </div>
+  <!--    <div style="width: 100%; display: flex; justify-content: center">-->
+  <!--      <el-pagination-->
+  <!--        :background="true"-->
+  <!--        layout="prev, pager, next"-->
+  <!--        v-model:current-page="state.postList.page"-->
+  <!--        :total="state.postList.totalCount"-->
+  <!--        :default-page-size="3"-->
+  <!--        @current-change="(page: number) => getList(page)"-->
+  <!--      />-->
+  <!--    </div>-->
+  <!--  </div>-->
 </template>
 
 <style scoped lang="scss">
