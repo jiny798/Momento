@@ -39,9 +39,9 @@ public class ProductController {
     /*
      * 상품 이미지 등록
      */
-    @PostMapping("/api/images")
-    public String uploadImage(@RequestParam List<MultipartFile> files) {
-        String url = imageService.upload(files); // 예: AWS S3, 로컬 경로 등
+    @PostMapping("/images")
+    public String uploadImage(@RequestParam MultipartFile files) {
+        String url = imageService.upload(files);
         return url;
     }
 
