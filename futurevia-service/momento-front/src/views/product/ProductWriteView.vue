@@ -1,0 +1,369 @@
+<template>
+  <el-form ref="formRef" :rules="rules" label-width="120px" label-position="top" class="product-form">
+    <!-- 제목 -->
+    <el-form-item label="상품 제목" prop="title">
+      <el-input v-model="state.productWrite.title" maxlength="30" show-word-limit placeholder="제목을 입력해주세요" />
+    </el-form-item>
+
+    <!-- 이미지 -->
+    <el-form-item label="상품 이미지" required>
+      <el-upload
+        action=""
+        :http-request="handleHttpUpload"
+        :auto-upload="true"
+        list-type="picture-card"
+        v-model:file-list="productImages"
+        @remove="handleRemove"
+        accept="image/*"
+        multiple
+      >
+        <i class="el-icon-plus" />
+      </el-upload>
+      <div v-if="productImages.length < 2" class="checkRequired">사진을 2장 이상 등록해주세요</div>
+    </el-form-item>
+
+    <!-- 카테고리 -->
+    <!--    <el-form-item label="카테고리" prop="category">-->
+    <!--      <el-select placeholder="카테고리를 선택해주세요">-->
+    <!--        <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id" />-->
+    <!--      </el-select>-->
+    <!--    </el-form-item>-->
+
+    <!-- 가격 -->
+    <el-form-item label="가격" prop="price">
+      <el-input
+        v-model="state.productWrite.price"
+        placeholder="숫자만 입력"
+        @input="formatPrice"
+        suffix-icon="el-icon-money"
+      />
+    </el-form-item>
+
+    <el-form-item label="수량" prop="price">
+      <el-input
+        v-model="state.productWrite.stockQuantity"
+        placeholder="숫자만 입력"
+        @input="formatPrice"
+        suffix-icon="el-icon-money"
+      />
+    </el-form-item>
+
+    <!-- 상세 조건 -->
+    <div ref="editorRoot" />
+
+    <div v-if="showPopup" class="image-popup" :style="{ top: popupY + 'px', left: popupX + 'px' }">
+      <label>Width: <input v-model="inputWidth" /></label>
+      <label>Height: <input v-model="inputHeight" /></label>
+      <button @click="applyResize">적용</button>
+    </div>
+
+    <!-- 동의 체크 -->
+    <el-form-item prop="agree">
+      <el-checkbox v-model="form.agree"> 상품 가격 및 정보를 확인하였습니다</el-checkbox>
+    </el-form-item>
+
+    <!-- 제출 버튼 -->
+    <el-form-item>
+      <el-button type="primary" :loading="loading" @click="write()" :disabled="!form.agree">
+        {{ isRegister ? '상품 등록' : '상품 수정' }}
+      </el-button>
+    </el-form-item>
+  </el-form>
+</template>
+
+<script setup lang="ts">
+import { ElMessage, type UploadRawFile, type UploadUserFile } from 'element-plus'
+import { onMounted, onBeforeUnmount, ref, reactive, watch } from 'vue'
+import Editor from '@toast-ui/editor'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import ProductWrite from '@/entity/product/ProductWrite'
+import { container } from 'tsyringe'
+import { useRouter } from 'vue-router'
+import type HttpError from '@/http/HttpError'
+import ProductRepository from '@/repository/ProductRepository'
+
+const editorRoot = ref<HTMLDivElement | null>(null)
+let editorInstance: Editor | null = null
+const showPopup = ref(false)
+const popupX = ref(0)
+const popupY = ref(0)
+const selectedImage = ref<HTMLImageElement | null>(null)
+const inputWidth = ref('')
+const inputHeight = ref('')
+
+const state = reactive({
+  productWrite: new ProductWrite(),
+})
+
+const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
+
+const router = useRouter()
+
+function write() {
+  PRODUCT_REPOSITORY.write(state.productWrite)
+    .then(() => {
+      ElMessage({ type: 'success', message: '글 등록이 완료되었습니다.' })
+      router.replace('/')
+    })
+    .catch((e: HttpError) => {
+      ElMessage({ type: 'error', message: e.getMessage() })
+    })
+}
+
+// 에디터
+onMounted(() => {
+  if (editorRoot.value) {
+    editorInstance = new Editor({
+      el: editorRoot.value,
+      height: '500px',
+      initialEditType: 'wysiwyg',
+      previewStyle: 'vertical',
+      initialValue: 'Hello Toast UI ✨',
+      hideModeSwitch: true,
+      hooks: {
+        addImageBlobHook: async (blob, callback) => {
+          const formData = new FormData()
+          formData.append('file', blob)
+
+          try {
+            const response = await fetch('http://localhost:8080/api/images', {
+              method: 'POST',
+              body: formData,
+            })
+            const imageUrl = await response.text()
+            callback(imageUrl, blob.name)
+          } catch (err) {
+            console.error('업로드 실패', err)
+          }
+        },
+      },
+    })
+
+    // 에디터 내부 콘텐츠 영역에 직접 접근
+    const contentEl = editorRoot.value.querySelector('.toastui-editor-main')
+
+    if (contentEl) {
+      contentEl.addEventListener('click', (event: MouseEvent) => {
+        const target = event.target as HTMLElement
+        console.log('dd')
+        console.log('d : ' + target.tagName)
+        if (target.tagName === 'IMG') {
+          const img = target as HTMLImageElement
+          const rect = img.getBoundingClientRect()
+
+          selectedImage.value = img
+          inputWidth.value = img.getAttribute('width') || ''
+          inputHeight.value = img.getAttribute('height') || ''
+
+          popupX.value = rect.left + window.scrollX
+          popupY.value = rect.top + window.scrollY + rect.height + 8 // 이미지 아래에 위치
+
+          showPopup.value = true
+        } else {
+          showPopup.value = false
+        }
+      })
+    }
+  } // 에디터 끝
+})
+
+// 이미지 라시이즈
+const applyResize = () => {
+  if (!selectedImage.value) return
+
+  const width = inputWidth.value.trim()
+  const height = inputHeight.value.trim()
+
+  if (width) {
+    selectedImage.value.setAttribute('width', width)
+  } else {
+    selectedImage.value.removeAttribute('width')
+  }
+
+  if (height) {
+    selectedImage.value.setAttribute('height', height)
+  } else {
+    selectedImage.value.removeAttribute('height')
+  }
+
+  showPopup.value = false
+}
+
+onBeforeUnmount(() => {
+  editorInstance?.destroy()
+})
+
+const isRegister = ref(true)
+const loading = ref(false)
+const formRef = ref()
+const form = ref({
+  title: '',
+  category: '',
+  price: '',
+  description: '',
+  agree: false,
+})
+
+const productImages = ref<UploadUserFile[]>([])
+
+const categories = ref([
+  { id: 1, name: '젤라또' },
+  { id: 2, name: '쿠키' },
+])
+const grades = ['상', '중', '하']
+
+const rules = {
+  title: [{ required: true, message: '제목을 입력해주세요', trigger: 'blur' }],
+  category: [{ required: true, message: '카테고리를 선택해주세요', trigger: 'change' }],
+  price: [{ required: true, message: '가격을 입력해주세요', trigger: 'blur' }],
+  description: [{ required: true, message: '상세조건을 입력해주세요', trigger: 'blur' }],
+  agree: [{ required: true, message: '동의가 필요합니다', trigger: 'change' }],
+}
+
+const formatPrice = () => {
+  const number = Number(form.value.price.replace(/,/g, ''))
+  if (!isNaN(number)) {
+    form.value.price = number.toLocaleString()
+  }
+}
+
+// watch(productImages, (newFiles) => {
+//   state.productWrite.imageUrls = newFiles
+//     .map((file) => {
+//       // file.url은 업로드 후 설정되는 주소임
+//       return file.url || ''
+//     })
+//     .filter((url) => url !== '')
+// })
+
+const handleHttpUpload = async (options: any) => {
+  const { file, onSuccess, onError } = options
+  const formData = new FormData()
+  formData.append('file', file)
+
+  try {
+    const response = await fetch('http://localhost:8080/api/images', {
+      method: 'POST',
+      body: formData,
+    })
+    const imageUrl = await response.text()
+    console.log('imageUrl : ' + imageUrl)
+    // 이미지 URL을 미리보기로 추가
+    // productImages.value.push({
+    //   name: file.name,
+    //   url: imageUrl,
+    //   status: 'success',
+    // })
+
+    // productWrite에도 저장
+    state.productWrite.imageUrls.push(imageUrl)
+
+    onSuccess(response, file)
+  } catch (e) {
+    onError(e)
+    ElMessage.error('업로드 실패')
+  }
+}
+
+const handleRemove = (file: UploadUserFile) => {
+  console.log('삭제 구현 필요')
+  // const idx = state.productWrite.imageUrls.indexOf(file.url!)
+  // if (idx !== -1) {
+  //   state.productWrite.imageUrls.splice(idx, 1)
+  // }
+}
+</script>
+
+<style scoped>
+.product-form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.checkRequired {
+  color: #f56c6c;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.editor-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fdfdfd;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.menu-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.menu-bar button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f4f4f4;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.menu-bar button:hover {
+  background-color: #eee;
+}
+
+.menu-bar button.active {
+  background-color: #007aff;
+  color: #fff;
+  border-color: #007aff;
+  font-weight: bold;
+}
+
+.editor-body {
+  min-height: 300px;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  line-height: 1.8;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #333;
+}
+
+.image-popup {
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  z-index: 9999;
+}
+
+.image-popup label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.image-popup input {
+  width: 80px;
+  padding: 4px;
+  margin-left: 8px;
+}
+
+.image-popup button {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #007aff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+</style>

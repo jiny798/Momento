@@ -23,24 +23,13 @@ public class ProductCreate {
 	@NotNull
 	private Long price;
 
-	@NotNull
-	private String shippingMethod;
-
-	@NotNull
-	private Long shippingFee;
-
-	@NotNull
 	private Long minOrderQuantity;
 
-	@NotNull
 	private Long stockQuantity;
 
 	@NotNull
 	@Lob
 	private String details;
-
-	@NotNull
-	private Boolean isDefect;
 
 	private List<String> imageUrls;
 

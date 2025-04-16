@@ -9,7 +9,7 @@ export default class UserRepository {
 
   public login(request: Login) {
     return this.httpRepository.post({
-      path: '/api/auth/login',
+      path: '/api/login',
       body: request,
     })
   }
@@ -19,7 +19,7 @@ export default class UserRepository {
       {
         path: '/api/users/me',
       },
-      UserProfile
+      UserProfile,
     )
   }
 }

@@ -50,9 +50,9 @@ public class SecurityConfig {
 
         http
                 // request
-                .securityMatcher("/api/**")
+                .securityMatcher("/**")
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.ico", "/error").permitAll()
+                        auth.requestMatchers("/uploads/**","/css/**", "/images/**", "/js/**", "/favicon.ico", "/error").permitAll()
                                 .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                                 .requestMatchers("/api/user/**").hasAuthority("ROLE_USER")
                                 .anyRequest().permitAll()

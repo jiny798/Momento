@@ -2,12 +2,14 @@ package jiny.futurevia.service.modules.account.domain.dto;
 
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
+@Getter
 @Data
 public class AccountContext implements UserDetails {
     private Account account;

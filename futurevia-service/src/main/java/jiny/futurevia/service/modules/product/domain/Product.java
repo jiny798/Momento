@@ -32,23 +32,11 @@ public class Product {
     private Long price;
 
     @NotNull
-    private String shippingMethod;
-
-    @NotNull
-    private Long shippingFee;
-
-    @NotNull
-    private Long minOrderQuantity;
-
-    @NotNull
     private Long stockQuantity;
 
     @NotNull
     @Lob
     private String details;
-
-    @NotNull
-    private Boolean isDefect;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -57,12 +45,8 @@ public class Product {
         Product product = new Product();
         product.title = productCreate.getTitle();
         product.price = productCreate.getPrice();
-        product.shippingMethod = productCreate.getShippingMethod();
-        product.shippingFee = productCreate.getShippingFee();
-        product.minOrderQuantity = productCreate.getMinOrderQuantity();
         product.stockQuantity = productCreate.getStockQuantity();
         product.details = productCreate.getDetails();
-        product.isDefect = productCreate.getIsDefect();
         product.createdAt = LocalDateTime.now();
         return product;
     }

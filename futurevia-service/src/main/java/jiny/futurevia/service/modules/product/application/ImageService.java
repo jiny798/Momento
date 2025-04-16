@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class ImageService {
 
-    private static final String UPLOAD_DIR = "src/main/resources/static/uploads";
+    private static final String UPLOAD_DIR = "E:\\image/";
 
     public String upload(MultipartFile file) {
         if (file.isEmpty()) {

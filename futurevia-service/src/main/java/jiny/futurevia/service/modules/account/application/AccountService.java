@@ -7,11 +7,13 @@ import jiny.futurevia.service.modules.account.domain.entity.Zone;
 import jiny.futurevia.service.modules.account.endpoint.dto.NotificationForm;
 import jiny.futurevia.service.modules.account.endpoint.dto.ProfileDto;
 import jiny.futurevia.service.modules.account.endpoint.dto.SignUpForm;
+import jiny.futurevia.service.modules.account.endpoint.dto.UserResponse;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.modules.account.infra.repository.RoleRepository;
 import jiny.futurevia.service.infra.config.AppProperties;
 import jiny.futurevia.service.infra.mail.EmailMessage;
 import jiny.futurevia.service.infra.mail.EmailService;
+import jiny.futurevia.service.modules.exception.type.UserNotFound;
 import jiny.futurevia.service.modules.tag.domain.entity.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -75,7 +77,7 @@ public class AccountService implements UserDetailsService{
 	}
 
 	private Account saveNewAccount(SignUpForm signUpForm) {
-		Role role = roleRepository.findByRoleName("ROLE_USER");
+		Role role = roleRepository.findByRoleName("ROLE_ADMIN");
 		Set<Role> roles = new HashSet<>();
 		roles.add(role);
 
@@ -195,5 +197,12 @@ public class AccountService implements UserDetailsService{
 	public Account getAccountBy(String nickname) {
 		return Optional.ofNullable(accountRepository.findByNickname(nickname))
 				.orElseThrow(() -> new IllegalArgumentException(nickname + "에 해당하는 사용자가 없습니다."));
+	}
+
+	public UserResponse getUserProfile(Long id) {
+
+		Account account = accountRepository.findById(id)
+				.orElseThrow(UserNotFound::new);
+        return new UserResponse(account);
 	}
 }

@@ -13,6 +13,7 @@ import jiny.futurevia.service.modules.product.endpoint.dto.response.ProductRespo
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,30 +27,38 @@ public class ProductController {
 
     private final ProductService productService;
     private final ImageService imageService;
+    private final String host = "http://localhost:8080";
 
     /*
      * 상품 등록
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/products")
-    public void post(@CurrentUser Account account, @RequestBody @Valid ProductCreate productCreate) throws Exception {
+    public void post(@AuthenticationPrincipal Account account, @RequestBody @Valid ProductCreate productCreate) throws Exception {
+        log.info("ProductCreate : {}", productCreate);
         productService.write(account.getId(), productCreate);
     }
 
     /*
      * 상품 이미지 등록
      */
-    @PostMapping("/api/images")
-    public String uploadImage(@RequestParam List<MultipartFile> files) {
-        String url = imageService.upload(files); // 예: AWS S3, 로컬 경로 등
-        return url;
+    @PostMapping("/images")
+    public String uploadImage(@RequestParam("file") MultipartFile file) {
+        String url = imageService.upload(file); // 예: AWS S3, 로컬 경로 등
+        return host+url;
     }
 
+    /*
+     * 상품 정보
+     */
     @GetMapping("/posts/{postId}")
     public ProductResponse get(@PathVariable(name = "postId") Long postId) throws Exception {
         return productService.get(postId);
     }
 
+    /*
+     * 상품 리스트
+     */
     @GetMapping("/products")
     public PagingResponse<ProductResponse> getList(@ModelAttribute ProductSearch postSearch) throws Exception {
         return productService.getList(postSearch);
