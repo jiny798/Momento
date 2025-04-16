@@ -43,9 +43,9 @@ public class ImageService {
         }
     }
 
-    public List<String> upload(List<MultipartFile> files) {
-        return files.stream()
-                .map(this::upload)
-                .collect(Collectors.toList());
-    }
+//    public List<String> upload(List<MultipartFile> files) {
+//        return files.stream()
+//                .map(this::upload)
+//                .collect(Collectors.toList());
+//    }
 }
