@@ -8,18 +8,15 @@
     <!-- 이미지 -->
     <el-form-item label="상품 이미지" required>
       <el-upload
-        action=""
-        :http-request="handleHttpUpload"
-        :auto-upload="true"
+        :show-file-list="true"
         list-type="picture-card"
-        v-model:file-list="productImages"
-        @remove="handleRemove"
-        accept="image/*"
-        multiple
+        :file-list="fileList"
+        :http-request="handleUpload"
+        :on-remove="handleRemove"
       >
-        <i class="el-icon-plus" />
+        <el-icon><Plus /></el-icon>
       </el-upload>
-      <div v-if="productImages.length < 2" class="checkRequired">사진을 2장 이상 등록해주세요</div>
+      <div v-if="fileList.length < 2" class="checkRequired">사진을 2장 이상 등록해주세요</div>
     </el-form-item>
 
     <!-- 카테고리 -->
@@ -100,6 +97,8 @@ const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
 const router = useRouter()
 
 function write() {
+  console.log(getUploadedImageUrls())
+  state.productWrite.imageUrls = getUploadedImageUrls()
   PRODUCT_REPOSITORY.write(state.productWrite)
     .then(() => {
       ElMessage({ type: 'success', message: '글 등록이 완료되었습니다.' })
@@ -204,8 +203,6 @@ const form = ref({
   agree: false,
 })
 
-const productImages = ref<UploadUserFile[]>([])
-
 const categories = ref([
   { id: 1, name: '젤라또' },
   { id: 2, name: '쿠키' },
@@ -227,50 +224,44 @@ const formatPrice = () => {
   }
 }
 
-// watch(productImages, (newFiles) => {
-//   state.productWrite.imageUrls = newFiles
-//     .map((file) => {
-//       // file.url은 업로드 후 설정되는 주소임
-//       return file.url || ''
-//     })
-//     .filter((url) => url !== '')
-// })
+const fileList = ref<any[]>([])
+// blob -> 실제 업로드 URL 매핑용 Map
+const imageMap = new Map<string, string>()
 
-const handleHttpUpload = async (options: any) => {
-  const { file, onSuccess, onError } = options
-  const formData = new FormData()
-  formData.append('file', file)
-
+// 업로드 처리
+const handleUpload = async ({ file, onSuccess, onError }: any) => {
   try {
-    const response = await fetch('http://localhost:8080/api/images', {
+    const formData = new FormData()
+    console.log(file)
+    formData.append('file', file)
+
+    const res = await fetch('http://localhost:8080/api/images', {
       method: 'POST',
       body: formData,
     })
-    const imageUrl = await response.text()
-    console.log('imageUrl : ' + imageUrl)
-    // 이미지 URL을 미리보기로 추가
-    // productImages.value.push({
-    //   name: file.name,
-    //   url: imageUrl,
-    //   status: 'success',
-    // })
+    const uploadedUrl = await res.text()
 
-    // productWrite에도 저장
-    state.productWrite.imageUrls.push(imageUrl)
+    // 실제 업로드된 URL 매핑 저장
+    imageMap.set(file.uid, uploadedUrl)
 
-    onSuccess(response, file)
-  } catch (e) {
-    onError(e)
+    onSuccess()
+  } catch (err) {
     ElMessage.error('업로드 실패')
+    onError(err)
   }
 }
 
-const handleRemove = (file: UploadUserFile) => {
-  console.log('삭제 구현 필요')
-  // const idx = state.productWrite.imageUrls.indexOf(file.url!)
-  // if (idx !== -1) {
-  //   state.productWrite.imageUrls.splice(idx, 1)
-  // }
+// 삭제 이벤트 핸들링
+const handleRemove = (file: any) => {
+  // blob → 서버 URL 제거
+  console.log(file.uid + ' 삭제삭제 ' + file.url)
+  console.log(imageMap)
+  imageMap.delete(file.uid)
+}
+
+// 글 등록 시 이미지 주소 가져오기
+const getUploadedImageUrls = () => {
+  return Array.from(imageMap.values())
 }
 </script>
 
