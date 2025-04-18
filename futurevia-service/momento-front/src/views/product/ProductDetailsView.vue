@@ -4,8 +4,8 @@ import { ref } from 'vue'
 const product = {
   name: '무농약 레몬 3KG',
   price: '35,000',
-  image: '//ecudemo276582.cafe24.com/web/product/big/202304/cced6f410eaecda95ddbeeb145e445bd.png',
-  thumbnails: ['//ecudemo276582.cafe24.com/web/product/small/202304/fd300cca1828deb46c8f4b0d0f33da31.png'],
+  image: '',
+  thumbnails: [''],
   deliveryMethod: '택배',
   shippingFee: '2,500원 (50,000원 이상 구매 시 무료)',
 }
