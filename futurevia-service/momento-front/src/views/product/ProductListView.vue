@@ -33,11 +33,15 @@
           <div class="name">
             <a :href="item.link">{{ item.name }}</a>
           </div>
-          <p class="price">{{ item.price.toLocaleString() }}원</p>
+          <!--          <p class="price">{{ item.price.toLocaleString() }}원</p>-->
         </div>
       </li>
     </ul>
+    <div class="pagination">
+      <el-pagination layout="prev, pager, next" :total="1000" />
+    </div>
   </section>
+  <div>di</div>
 </template>
 
 <script lang="ts" setup>
@@ -58,34 +62,46 @@ const products = ref<Product[]>([
     id: 1,
     name: '산지직송 유기농 채소',
     price: 50000,
-    image: 'https://ecudemo276582.cafe24.com/web/product/medium/202304/91773e23bdb5734e9a90c23d059a81ec.png',
+    image: '/g1.JPG',
     link: '/product/산지직송-유기농-채소/21/category/46/display/1/',
   },
   {
     id: 2,
-    name: '무농약 레몬 3KG',
+    name: '상큼 레몬',
     price: 35000,
-    image: 'https://ecudemo276582.cafe24.com/web/product/medium/202304/248f1ce8272e791ede18f27021bc4a41.png',
+    image: '/g1.JPG',
     link: '/product/무농약-레몬-3kg/15/category/46/display/1/',
   },
   {
     id: 3,
-    name: '유기농 아보카도 3EA',
+    name: '유기농 아보카도',
     price: 8500,
-    image: 'https://ecudemo276582.cafe24.com/web/product/medium/202304/b615aea49d8b7ba4c927771616f67a7a.png',
+    image: '/g1.JPG',
     link: '/product/유기농-아보카도-3ea/11/category/46/display/1/',
   },
   {
     id: 4,
-    name: '유기농 감자 5KG',
+    name: '유기농 감자',
     price: 9000,
-    image: 'https://ecudemo276582.cafe24.com/web/product/medium/202304/b424453f2a84d195e42cfd1dcd071e46.png',
+    image: '/g1.JPG',
+    link: '/product/유기농-감자-5kg/12/category/46/display/1/',
+  },
+  {
+    id: 5,
+    name: '유기농 감자',
+    price: 9000,
+    image: '/g1.JPG',
     link: '/product/유기농-감자-5kg/12/category/46/display/1/',
   },
 ])
 </script>
 
 <style scoped>
+ul {
+  padding-left: 0;
+  margin: 0; /* 필요에 따라 */
+  list-style: none;
+}
 .product-grid {
   max-width: 1200px;
   margin: 0 auto;
@@ -101,6 +117,12 @@ const products = ref<Product[]>([
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 .product-item {
   border: 1px solid #eee;
@@ -142,5 +164,9 @@ const products = ref<Product[]>([
   font-weight: bold;
   font-size: 16px;
   color: #000;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
 }
 </style>

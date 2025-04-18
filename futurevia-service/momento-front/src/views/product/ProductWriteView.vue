@@ -32,6 +32,7 @@
         v-model="state.productWrite.price"
         placeholder="숫자만 입력"
         @input="formatPrice"
+        run
         suffix-icon="el-icon-money"
       />
     </el-form-item>
