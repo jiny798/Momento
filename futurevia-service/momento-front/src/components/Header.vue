@@ -41,7 +41,9 @@ onBeforeMount(() => {
         <el-icon><IceCream /></el-icon>
         Momento
       </el-menu-item>
-      <el-menu-item index="2">Gelato & Cookie </el-menu-item>
+      <el-menu-item index="2">
+        <router-link to="/products">Gelato & Cookie</router-link>
+      </el-menu-item>
 
       <el-sub-menu index="4">
         <template #title>내정보</template>
