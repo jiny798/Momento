@@ -4,6 +4,8 @@ import jiny.futurevia.service.modules.product.domain.Product;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class  ProductResponse {
@@ -12,6 +14,7 @@ public class  ProductResponse {
     private final Long price;
     private final Long stockQuantity;
     private final String details;
+    private final List<String> images;
     private final LocalDateTime createdAt;
 
     public ProductResponse(Product product) {
@@ -20,6 +23,7 @@ public class  ProductResponse {
         this.stockQuantity = product.getStockQuantity();
         this.details = product.getDetails();
         this.createdAt = product.getCreatedAt();
+        this.images = product.getImageUrls();
     }
 
 

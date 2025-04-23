@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -38,6 +40,8 @@ public class Product {
     @Lob
     private String details;
 
+    private List<String> imageUrls = new ArrayList<>();
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -47,6 +51,7 @@ public class Product {
         product.price = productCreate.getPrice();
         product.stockQuantity = productCreate.getStockQuantity();
         product.details = productCreate.getDetails();
+        product.imageUrls = productCreate.getImageUrls();
         product.createdAt = LocalDateTime.now();
         return product;
     }

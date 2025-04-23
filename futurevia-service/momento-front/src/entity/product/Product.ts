@@ -4,10 +4,10 @@ import { Transform } from 'class-transformer'
 export default class Product {
   public id = 0
   public title = ''
-  public price = ''
+  public price = 0
   public stockQuantity = 0
   public details = ''
-  public imageUrls = ''
+  public imageUrls = []
 
   @Transform(({ value }) => LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
   public regDate = LocalDateTime.now()

@@ -1,10 +1,8 @@
 <template>
   <section class="product-grid">
     <div class="list-header">
-      <p class="prd-count">
-        총 <strong>{{ products.length }}</strong
-        >개의 상품이 있습니다.
-      </p>
+      <p class="prd-count">총 <strong>x</strong>개의 상품이 있습니다.</p>
+      <!--{{ products.length }} -->
       <div class="sort">
         <select v-model="selectedSort">
           <option value="">- 정렬방식 -</option>
@@ -19,10 +17,10 @@
     </div>
 
     <ul class="grid">
-      <li v-for="item in products" :key="item.id" class="product-item">
+      <li v-for="product in state.productList.items" :key="product.id" class="product-item">
         <div class="thumbnail">
-          <a :href="item.link">
-            <img :src="item.image" :alt="item.name" />
+          <a>
+            <img :src="product.images?.[0]" alt="" />
           </a>
           <div class="icon__box">
             <span class="wish">WISH</span>
@@ -31,7 +29,7 @@
         </div>
         <div class="description">
           <div class="name">
-            <a :href="item.link">{{ item.name }}</a>
+            <a>{{ product.title }}</a>
           </div>
           <!--          <p class="price">{{ item.price.toLocaleString() }}원</p>-->
         </div>
@@ -66,50 +64,21 @@ const state = reactive<StateType>({
 function getList(page = 1) {
   PRODUCT_REPOSITORY.getList(page).then((productList) => {
     state.productList = productList
+    console.log(productList)
   })
 }
 
 onMounted(() => {
-  // getList()
+  getList()
 })
 
-const products = ref<Product[]>([
-  {
-    id: 1,
-    name: '산지직송 유기농 채소',
-    price: 50000,
-    image: '/g1.JPG',
-    link: '/product/산지직송-유기농-채소/21/category/46/display/1/',
-  },
-  {
-    id: 2,
-    name: '상큼 레몬',
-    price: 35000,
-    image: '/g1.JPG',
-    link: '/product/무농약-레몬-3kg/15/category/46/display/1/',
-  },
-  {
-    id: 3,
-    name: '유기농 아보카도',
-    price: 8500,
-    image: '/g1.JPG',
-    link: '/product/유기농-아보카도-3ea/11/category/46/display/1/',
-  },
-  {
-    id: 4,
-    name: '유기농 감자',
-    price: 9000,
-    image: '/g1.JPG',
-    link: '/product/유기농-감자-5kg/12/category/46/display/1/',
-  },
-  {
-    id: 5,
-    name: '유기농 감자',
-    price: 9000,
-    image: '/g1.JPG',
-    link: '/product/유기농-감자-5kg/12/category/46/display/1/',
-  },
-])
+// const tempProductList = ref<Product[]>([
+//   {
+//     id: 1,
+//     title: '산지직송 유기농 채소',
+//     price: 50000,
+//   },
+// ])
 </script>
 
 <style scoped>
@@ -141,6 +110,7 @@ ul {
   }
 }
 .product-item {
+  max-width: 350px;
   border: 1px solid #eee;
   border-radius: 6px;
   overflow: hidden;
