@@ -1,86 +1,139 @@
-<!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-<head th:replace="fragments.html::head"></head>
-<body class="bg-light">
-<div th:replace="fragments.html::navigation-bar"></div>
-<div class="container">
-    <div class="row mt-5 justify-content-center">
-        <div class="col-2" style="text-align:center; align-content: center;">
-            <!-- avatar -->
-<!--            <svg th:if="${#strings.isEmpty(account?.profile?.image)}" class="img-fluid float-left rounded img-thumbnail"-->
-<!--                 th:data-jdenticon-value="${account.nickname}" width="125" height="125"></svg>-->
-            <i th:if="${#strings.isEmpty(account?.profile?.image)}" class="fa fa-user-circle"
-               style="font-size: xxx-large;" aria-hidden="true"></i>
-            <svg th:if="${!#strings.isEmpty(account?.profile?.image)}" class="img-fluid float-left rounded img-thumbnail"
-                 th:src="${account.profile.image}" width="125" height="125"></svg>
-        </div>
-        <div class="col-8">
-            <!-- nickname-->
-            <h1 class="display-4" th:text="${account.nickname}">nickname</h1>
-            <!-- bio -->
-            <p class="lead" th:if="${!#strings.isEmpty(account.profile.bio)}" th:text="${account.profile.bio}">bio</p>
-            <p class="lead" th:if="${#strings.isEmpty(account.profile.bio) && isOwner}">한 줄 소개를 추가해주세요.</p>
-        </div>
-        <div class="row mt-3 justify-content-center">
-            <div class="col-2">
-                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link active" id="v-pills-intro-tab" data-bs-toggle="pill" href="#v-pills-profile"
-                       role="tab" aria-controls="v-pills-profile" aria-selected="true">소개</a>
-                    <a class="nav-link" id="v-pills-study-tab" data-bs-toggle="pill" href="#v-pills-study" role="tab"
-                       aria-controls="v-pills-study" aria-selected="false">스터디</a>
-                </div>
-            </div>
-            <div class="col-8">
-                <div class="tab-content" id="v-pills-tabContent">
-                    <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel"
-                         aria-labelledby="v-pills-home-tab">
-                        <p th:if="${!#lists.isEmpty(account.profile.url)}">
-                            <span style="">
-                                <i class="fa fa-link col-1"></i>
-                            </span>
-                            <span th:text="${account.profile.url}" class="col-11"></span>
-                        </p>
-                        <p th:if="${!#strings.isEmpty(account.profile.job)}">
-                            <span style="">
-                                <i class="fa fa-briefcase col-1"></i>
-                            </span>
-                            <span th:text="${account.profile.job}" class="col-9"></span>
-                        </p>
-                        <p th:if="${!#strings.isEmpty(account.profile.location)}">
-                            <span style="">
-                                <i class="fa fa-location-arrow col-1"></i>
-                            </span>
-                            <span th:text="${account.profile.location}" class="col-9"></span>
-                        </p>
-                        <p th:if="${isOwner}">
-                            <span style="font-size: 20px">
-                                <i class="fa fa-envelope-o col-1"></i>
-                            </span>
-                            <span th:text="${account.email}" class="col-9"></span>
-                        </p>
-                        <p th:if="${isOwner || account.valid}">
-                            <span style="font-size: 20px">
-                                <i class="fa fa-calendar-o col-1"></i>
-                            </span>
-                            <span th:if="${isOwner && !account.valid}" class="col-9">
-                                <a href="#" th:href="@{'/check-email?email=' + ${account.email}}">가입을 완료하려면 이메일을 확인하세요.</a>
-                            </span>
-                            <span th:text="${#temporals.format(account.joinedAt, 'yyyy년 M월 가입')}" class="col-9"></span>
-                        </p>
-                        <div th:if="${isOwner}">
-                            <a class="btn btn-outline-primary" href="#" th:href="@{/settings/profile}">프로필 수정</a>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="v-pills-study" role="tabpanel" aria-labelledby="v-pills-profile-tab">
-                        Study
-                    </div>
-                </div>
-            </div>
-        </div>
+<template>
+  <el-card class="mypage-container">
+    <!-- 프로필 정보 -->
+    <div class="profile-info">
+      <el-avatar :size="80" icon="UserFilled" class="avatar" />
+      <div class="info-text">
+        <h3>{{ user.nickname }}</h3>
+        <p>{{ user.email }}</p>
+        <el-tag size="small" type="success">{{ user.grade }}</el-tag>
+      </div>
     </div>
-</div>
-</body>
-</html>
+
+    <!-- 요약 카드 -->
+    <div class="summary-box">
+      <el-card class="summary-item" shadow="hover">
+        <div class="label">주문</div>
+        <div class="value">{{ summary.orders }}</div>
+      </el-card>
+      <el-card class="summary-item" shadow="hover">
+        <div class="label">쿠폰</div>
+        <div class="value">{{ summary.coupons }}</div>
+      </el-card>
+      <el-card class="summary-item" shadow="hover">
+        <div class="label">적립금</div>
+        <div class="value">{{ summary.points }}</div>
+      </el-card>
+      <el-card class="summary-item" shadow="hover">
+        <div class="label">리뷰</div>
+        <div class="value">{{ summary.reviews }}</div>
+      </el-card>
+    </div>
+
+    <!-- 탭 영역 -->
+    <el-tabs v-model="state.activeTab" type="border-card" class="tabs">
+      <el-tab-pane label="구매내역" name="orders">
+        <el-table :data="state.orderList" stripe style="width: 100%">
+          <el-table-column prop="date" label="구매일자" width="180" />
+          <el-table-column prop="product" label="상품명" />
+          <el-table-column prop="price" label="금액" width="120" />
+          <el-table-column prop="status" label="상태" width="100" />
+        </el-table>
+      </el-tab-pane>
+
+      <el-tab-pane label="문의내역" name="inquiries">
+        <el-table :data="state.inquiryList" stripe style="width: 100%">
+          <el-table-column prop="date" label="문의일자" width="180" />
+          <el-table-column prop="subject" label="제목" />
+          <el-table-column prop="status" label="답변상태" width="100" />
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
+  </el-card>
+</template>
+
+<script setup lang="ts">
+  import { reactive } from 'vue'
+
+  const user = reactive({
+    email: 'user@example.com',
+    nickname: '모멘토유저',
+    grade: '일반회원',
+  })
+
+  const summary = reactive({
+    orders: 3,
+    coupons: 2,
+    points: '5,000P',
+    reviews: 1,
+  })
+
+  const state = reactive({
+    activeTab: 'orders',
+    orderList: [
+      { date: '2024-04-01', product: '유기농 젤라또 3종', price: '12,000원', status: '배송완료' },
+      { date: '2024-04-15', product: '레몬 젤라또', price: '8,000원', status: '배송중' },
+    ],
+    inquiryList: [
+      { date: '2024-04-05', subject: '배송 언제 오나요?', status: '답변완료' },
+      { date: '2024-04-17', subject: '상품 교환 가능할까요?', status: '처리중' },
+    ],
+  })
+</script>
+
+<style scoped>
+    .mypage-container {
+        max-width: 860px;
+        margin: 40px auto;
+        padding: 30px;
+    }
+
+    .profile-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .avatar {
+        margin-right: 20px;
+        background-color: #f5f7fa;
+    }
+
+    .info-text h3 {
+        margin: 0;
+        font-weight: bold;
+    }
+
+    .info-text p {
+        margin: 2px 0 8px;
+        color: #666;
+    }
+
+    .summary-box {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        gap: 10px;
+    }
+
+    .summary-item {
+        flex: 1;
+        text-align: center;
+        padding: 16px 0;
+    }
+
+    .summary-item .label {
+        font-size: 14px;
+        color: #888;
+    }
+
+    .summary-item .value {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 6px;
+    }
+
+    .tabs {
+        margin-top: 20px;
+    }
+</style>

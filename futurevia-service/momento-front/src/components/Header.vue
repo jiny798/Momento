@@ -36,19 +36,29 @@ onBeforeMount(() => {
 
 <template>
   <div class="header">
-    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+    <el-menu
+      :ellipsis="false"
+      :default-active="activeIndex"
+      class="el-menu-demo header-menu"
+      mode="horizontal"
+      @select="handleSelect"
+    >
       <el-menu-item index="1">
-        <el-icon><IceCream /></el-icon>
-        Momento
+        <router-link to="/">
+          <el-icon> <IceCream /></el-icon>
+          Momento
+        </router-link>
       </el-menu-item>
-      <el-menu-item index="2">
+      <el-menu-item class="food-menu" index="2">
         <router-link to="/products">Gelato & Cookie</router-link>
       </el-menu-item>
+
+      <div class="menu-spacer"></div>
 
       <el-sub-menu index="4">
         <template #title>내정보</template>
         <el-menu-item index="4-1">주문내역</el-menu-item>
-        <el-menu-item index="4-2">프로필</el-menu-item>
+        <el-menu-item v-if="state.profile !== null" index="4-2">프로필</el-menu-item>
         <el-menu-item v-if="state.profile === null" index="4-3">
           <router-link to="/login">로그인</router-link>
         </el-menu-item>
@@ -59,10 +69,6 @@ onBeforeMount(() => {
 </template>
 
 <style scoped lang="scss">
-.el-menu--horizontal > .el-menu-item:nth-child(4) {
-  margin-right: auto;
-}
-
 .custom-disabled {
   pointer-events: none; /* 클릭 방지 */
   color: #606266 !important; /* 기본 색상 유지 */
@@ -78,5 +84,14 @@ onBeforeMount(() => {
   font-size: 2rem;
   font-weight: 300;
   margin-left: 5px;
+}
+
+.header-menu {
+  display: flex;
+  align-items: center;
+}
+
+.menu-spacer {
+  flex-grow: 2;
 }
 </style>
