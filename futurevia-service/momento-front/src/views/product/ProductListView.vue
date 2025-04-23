@@ -45,17 +45,33 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
+import Paging from '@/entity/data/Paging'
+import type Post from '@/entity/post/Post'
+import { container } from 'tsyringe'
+import ProductRepository from '@/repository/ProductRepository'
+import type Product from '@/entity/product/Product'
 
-interface Product {
-  id: number
-  name: string
-  price: number
-  image: string
-  link: string
+const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
+
+type StateType = {
+  productList: Paging<Product>
 }
 
 const selectedSort = ref('')
+const state = reactive<StateType>({
+  productList: new Paging<Product>(),
+})
+
+function getList(page = 1) {
+  PRODUCT_REPOSITORY.getList(page).then((productList) => {
+    state.productList = productList
+  })
+}
+
+onMounted(() => {
+  // getList()
+})
 
 const products = ref<Product[]>([
   {

@@ -20,7 +20,6 @@ public class  ProductResponse {
         this.stockQuantity = product.getStockQuantity();
         this.details = product.getDetails();
         this.createdAt = product.getCreatedAt();
-
     }
 
 

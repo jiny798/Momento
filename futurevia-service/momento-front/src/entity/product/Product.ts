@@ -5,9 +5,7 @@ export default class Product {
   public id = 0
   public title = ''
   public price = ''
-  public shippingFee = ''
-  public minOrderQuantity = ''
-  public stockQuantity = ''
+  public stockQuantity = 0
   public details = ''
   public imageUrls = ''
 

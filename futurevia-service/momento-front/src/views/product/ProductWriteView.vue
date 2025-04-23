@@ -99,7 +99,12 @@ const router = useRouter()
 
 function write() {
   console.log(getUploadedImageUrls())
+
+  // 대표 이미지
   state.productWrite.imageUrls = getUploadedImageUrls()
+
+  state.productWrite.details = editorInstance?.getHTML()
+
   PRODUCT_REPOSITORY.write(state.productWrite)
     .then(() => {
       ElMessage({ type: 'success', message: '글 등록이 완료되었습니다.' })

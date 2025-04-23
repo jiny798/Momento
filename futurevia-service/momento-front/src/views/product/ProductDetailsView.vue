@@ -52,14 +52,14 @@
           <table class="order-list">
             <thead>
               <tr>
-                <th>상품명</th>
+                <th>맛</th>
                 <th>수량</th>
                 <th>가격</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>유기농 달걀</td>
+                <td>리조</td>
                 <td>
                   <input type="number" v-model.number="quantity" min="1" />
                 </td>
@@ -74,13 +74,38 @@
           </div>
 
           <div class="action-buttons">
-            <button class="btn-buy">BUY IT NOW</button>
-            <button class="btn-cart">CART</button>
-            <button class="btn-wish">WISH LIST</button>
+            <button class="btn-buy">구매하기</button>
+            <button class="btn-cart">장바구니 담기</button>
           </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="detail-tab-wrapper">
+    <!--상세정보/후기/문의 탭-->
+    <el-tabs v-model="activeTab" class="product-tabs" stretch>
+      <el-tab-pane label="상세정보" name="detail">
+        <!-- 상세정보 콘텐츠 -->
+        <div class="tab-content">
+          <p>여기에 상품 상세 설명이 들어갑니다.</p>
+        </div>
+      </el-tab-pane>
+
+      <el-tab-pane :label="`상품후기 (${reviewCount})`" name="review">
+        <!-- 상품후기 콘텐츠 -->
+        <div class="tab-content">
+          <p>작성된 후기가 없습니다.</p>
+        </div>
+      </el-tab-pane>
+
+      <el-tab-pane :label="`상품문의 (${qnaCount})`" name="qna">
+        <!-- 상품문의 콘텐츠 -->
+        <div class="tab-content">
+          <p>등록된 문의가 없습니다.</p>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -90,6 +115,10 @@ import { ref } from 'vue'
 const quantity = ref(1)
 const price = 6000
 const imageUrl = ref('/g1.JPG')
+
+const activeTab = ref('detail')
+const reviewCount = ref(0)
+const qnaCount = ref(0)
 
 function formatPrice(price: number): string {
   return price.toLocaleString('ko-KR') + '원'
@@ -116,6 +145,10 @@ ul {
   justify-content: center;
 }
 
+.detail-tab-wrapper {
+  justify-items: center;
+}
+
 .detail-area {
   display: flex;
   flex-wrap: wrap;
@@ -124,6 +157,13 @@ ul {
   color: #333;
   line-height: 1.6;
   max-width: 1200px;
+  width: 100%;
+}
+
+.product-tabs {
+  padding: 2rem;
+  max-width: 1200px;
+  justify-content: center !important;
   width: 100%;
 }
 

@@ -5,6 +5,7 @@ import HomeView from '@/views/HomeView.vue'
 import ProductWriteView from '@/views/product/ProductWriteView.vue'
 import ProductListView from '@/views/product/ProductListView.vue'
 import ProductDetailsView from '@/views/product/ProductDetailsView.vue'
+import ProfileView from '@/views/user/ProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,6 +19,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+    },
+    {
+      path: '/profile',
+      name: 'my page',
+      component: ProfileView,
     },
     {
       path: '/write',
