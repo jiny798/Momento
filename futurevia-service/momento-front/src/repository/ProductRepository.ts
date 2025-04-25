@@ -23,7 +23,7 @@ export default class ProductRepository {
   public getList(page: number) {
     return this.httpRepository.getList<Product>(
       {
-        path: `/api/products?page=${page}&size=5`,
+        path: `/api/products?page=${page}&size=10`,
       },
       Product,
     )

@@ -33,10 +33,7 @@ import Content from '@/components/Content.vue'
 <style>
 html {
   font-size: 16px;
-  color: #383838;
 }
 
-body {
-  background-color: #f9f9f9;
-}
+
 </style>
