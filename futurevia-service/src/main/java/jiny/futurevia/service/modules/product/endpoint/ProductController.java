@@ -51,7 +51,7 @@ public class ProductController {
     /*
      * 상품 정보
      */
-    @GetMapping("/posts/{postId}")
+    @GetMapping("/products/{postId}")
     public ProductResponse get(@PathVariable(name = "postId") Long postId) throws Exception {
         return productService.get(postId);
     }

@@ -51,6 +51,7 @@ const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
 const router = useRouter()
 
 function goProductDetail(productId: number) {
+  console.log('productId: ' + productId)
   router.push({ name: 'product', params: { productId } })
 }
 
@@ -66,7 +67,7 @@ const state = reactive<StateType>({
 function getList(page = 1) {
   PRODUCT_REPOSITORY.getList(page).then((productList) => {
     state.productList = productList
-    console.log('productList ' + state.productList.items[0].price)
+    console.log('productList ' + JSON.stringify(state.productList.items[0], null, 2))
   })
 }
 

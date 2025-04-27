@@ -19,7 +19,7 @@
 
       <div class="info-area">
         <div class="heading-area">
-          <h1>젤라또 포장 - 컵</h1>
+          <h1>{{ state.product.title }}</h1>
           <!--          <span class="delivery">(배송 가능상품)</span>-->
         </div>
 
@@ -27,11 +27,13 @@
           <tbody>
             <tr>
               <th>상품명</th>
-              <td>젤라또 컵 6EA</td>
+              <td>{{ state.product.title }}</td>
             </tr>
             <tr>
               <th>판매가</th>
-              <td><strong>28,000원</strong></td>
+              <td>
+                <strong>{{ state.product.price }}</strong>
+              </td>
             </tr>
             <tr>
               <th>국내·해외배송</th>
@@ -137,7 +139,7 @@
       <el-tab-pane label="상세정보" name="detail">
         <!-- 상세정보 콘텐츠 -->
         <div class="tab-content">
-          <p>여기에 상품 상세 설명이 들어갑니다.</p>
+          <div v-html="state.product.details"></div>
         </div>
       </el-tab-pane>
 
@@ -159,7 +161,37 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, defineProps, reactive } from 'vue'
+import { container } from 'tsyringe'
+import ProductRepository from '@/repository/ProductRepository'
+import Product from '@/entity/product/Product'
+import Paging from '@/entity/data/Paging'
+
+const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
+
+const props = defineProps<{
+  productId: number
+}>()
+
+type StateType = {
+  product: Product
+}
+
+const state = reactive<StateType>({
+  product: new Product(),
+})
+
+console.log('받은 productId:', props.productId)
+
+// 상품 조회
+function get(productId) {
+  PRODUCT_REPOSITORY.get(productId).then((product) => {
+    state.product = product
+    console.log('product : ' + JSON.stringify(state.product, null, 2))
+  })
+}
+
+get(props.productId)
 
 const price = 6000
 const imageUrl = ref('/g1.JPG')
