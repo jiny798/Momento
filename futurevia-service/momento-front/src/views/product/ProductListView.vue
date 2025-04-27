@@ -8,7 +8,7 @@
     <ul class="product-grid">
       <li v-for="product in state.productList.items" :key="product.id" class="product-item">
         <div class="thumbnail">
-          <a>
+          <a @click="goProductDetail(product.id)" style="cursor: pointer">
             <img :src="product.images?.[0]" class="product-image" alt="" />
           </a>
           <div class="icon__box">
@@ -40,6 +40,7 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Paging from '@/entity/data/Paging'
 import type Post from '@/entity/post/Post'
 import { container } from 'tsyringe'
@@ -47,6 +48,11 @@ import ProductRepository from '@/repository/ProductRepository'
 import type Product from '@/entity/product/Product'
 
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
+const router = useRouter()
+
+function goProductDetail(productId: number) {
+  router.push({ name: 'product', params: { productId } })
+}
 
 type StateType = {
   productList: Paging<Product>
