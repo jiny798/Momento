@@ -1,12 +1,12 @@
 package jiny.futurevia.service.modules.product.endpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jiny.futurevia.service.WithAccount;
+import jiny.futurevia.service.modules.security.WithAccount;
 import jiny.futurevia.service.modules.product.application.ImageService;
 import jiny.futurevia.service.modules.product.domain.Product;
 import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductCreate;
 import jiny.futurevia.service.modules.product.infra.repository.ProductRepository;
-import org.junit.jupiter.api.Assertions;
+import jiny.futurevia.service.modules.security.WithAdmin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,6 @@ import java.io.InputStream;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,7 +50,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @WithAccount("jiny798")
+    @WithAdmin("test123456")
     @DisplayName("상품 등록: 정상작동")
     public void createPost() throws Exception {
         // given
@@ -59,11 +58,6 @@ class ProductControllerTest {
                 .title("제목입니다")
                 .price(1000L)
                 .details("상품설명")
-                .isDefect(false)
-                .minOrderQuantity(1L)
-                .shippingFee(3000L)
-                .shippingMethod("택배배송")
-                .stockQuantity(2L)
                 .build();
         String json = mapper.writeValueAsString(productCreate);
 
@@ -85,7 +79,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @WithAccount("jiny798")
+    @WithAdmin("test123456")
     @DisplayName("상품 등록: 이미지 등록")
     public void image() throws Exception {
         // 테스트 리소스 경로: src/test/resources/test-image.jpg
@@ -93,7 +87,7 @@ class ProductControllerTest {
         InputStream inputStream = resource.getInputStream();
 
         MockMultipartFile file = new MockMultipartFile(
-                "files",
+                "file",
                 "test-image.jpg",
                 "image/jpeg",
                 inputStream

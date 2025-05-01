@@ -56,18 +56,18 @@ function goProductDetail(productId: number) {
 }
 
 type StateType = {
-  productList: Paging<Product>
+  productPage: Paging<Product>
 }
 
 const selectedSort = ref('')
 const state = reactive<StateType>({
-  productList: new Paging<Product>(),
+  productPage: new Paging<Product>(),
 })
 
 function getList(page = 1) {
-  PRODUCT_REPOSITORY.getList(page).then((productList) => {
-    state.productList = productList
-    console.log('productList ' + JSON.stringify(state.productList.items[0], null, 2))
+  PRODUCT_REPOSITORY.getList(page).then((responsePage) => {
+    state.productPage = responsePage
+    console.log('productList ' + JSON.stringify(state.productPage.items[0], null, 2))
   })
 }
 

@@ -293,14 +293,14 @@ const getUploadedImageUrls = () => {
   border-radius: 8px;
 }
 
-.menu-bar {
+.flavor-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 16px;
 }
 
-.menu-bar button {
+.flavor-bar button {
   padding: 6px 12px;
   font-size: 14px;
   border: 1px solid #ccc;
@@ -310,11 +310,11 @@ const getUploadedImageUrls = () => {
   transition: all 0.2s ease;
 }
 
-.menu-bar button:hover {
+.flavor-bar button:hover {
   background-color: #eee;
 }
 
-.menu-bar button.active {
+.flavor-bar button.active {
   background-color: #007aff;
   color: #fff;
   border-color: #007aff;

@@ -1,18 +1,17 @@
-package jiny.futurevia.service;
+package jiny.futurevia.service.modules.security;
 
 import jiny.futurevia.service.infra.security.token.RestAuthenticationToken;
 import jiny.futurevia.service.modules.account.application.AccountService;
+import jiny.futurevia.service.modules.account.domain.dto.AccountContext;
 import jiny.futurevia.service.modules.account.endpoint.dto.SignUpForm;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,15 +29,22 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         // 마지막 계정이 컨트롤러 인자 @CurrentUser 에 전달된다
         for (String nickname : nicknames) {
-            SignUpForm signUpForm = new SignUpForm();
-            signUpForm.setNickname(nickname);
-            signUpForm.setEmail(nickname + "@jiny.com");
-            signUpForm.setPassword("jiny1234");
-            accountService.signUp(signUpForm);
+            AccountContext accountContext = null;
+            try{
+                accountContext = (AccountContext) accountService.loadUserByUsername(nickname);
+            }catch (UsernameNotFoundException exception){
+                SignUpForm signUpForm = new SignUpForm();
+                signUpForm.setNickname(nickname);
+                signUpForm.setEmail(nickname + "@jiny.com");
+                signUpForm.setPassword("jiny1234");
+                accountService.signUp(signUpForm);
+                accountContext = (AccountContext) accountService.loadUserByUsername(nickname);
+            }
 
-            UserDetails principal = accountService.loadUserByUsername(nickname);
-            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
-            Authentication authentication = new RestAuthenticationToken(authorities, principal, null);
+            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+            //            Authentication authentication = new RestAuthenticationToken(authorities, principal, null);
+            Authentication authentication = new RestAuthenticationToken(authorities, accountContext.getAccount(), null);
+
             context.setAuthentication(authentication);
         }
         return context;

@@ -1,4 +1,4 @@
-package jiny.futurevia.service;
+package jiny.futurevia.service.modules.security;
 
 import org.springframework.security.test.context.support.WithSecurityContext;
 

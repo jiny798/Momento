@@ -34,9 +34,6 @@ public class Product {
     private Long price;
 
     @NotNull
-    private Long stockQuantity;
-
-    @NotNull
     @Lob
     private String details;
 
@@ -45,14 +42,17 @@ public class Product {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    private boolean active;
+
+
     public static Product from(ProductCreate productCreate) {
         Product product = new Product();
         product.title = productCreate.getTitle();
         product.price = productCreate.getPrice();
-        product.stockQuantity = productCreate.getStockQuantity();
         product.details = productCreate.getDetails();
         product.imageUrls = productCreate.getImageUrls();
         product.createdAt = LocalDateTime.now();
+        product.active = true;
         return product;
     }
 

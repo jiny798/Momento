@@ -12,10 +12,6 @@ import Content from '@/components/Content.vue'
   </el-row>
 
   <el-row>
-    <el-col> </el-col>
-  </el-row>
-
-  <el-row>
     <el-col
       :span="22"
       :offset="1"
@@ -34,6 +30,4 @@ import Content from '@/components/Content.vue'
 html {
   font-size: 16px;
 }
-
-
 </style>

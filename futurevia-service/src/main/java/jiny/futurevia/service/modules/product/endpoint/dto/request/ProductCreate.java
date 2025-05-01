@@ -23,10 +23,6 @@ public class ProductCreate {
 	@NotNull
 	private Long price;
 
-	private Long minOrderQuantity;
-
-	private Long stockQuantity;
-
 	@NotNull
 	@Lob
 	private String details;

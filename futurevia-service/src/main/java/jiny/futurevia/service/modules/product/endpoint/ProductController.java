@@ -42,6 +42,7 @@ public class ProductController {
     /*
      * 상품 이미지 등록
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/images")
     public String uploadImage(@RequestParam("file") MultipartFile file) {
         String url = imageService.upload(file); // 예: AWS S3, 로컬 경로 등
@@ -64,12 +65,18 @@ public class ProductController {
         return productService.getList(postSearch);
     }
 
+    /*
+     * 상품 편집
+     */
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
 //    @PatchMapping("/products/{productId}")
 //    public void edit(@PathVariable(name = "productId") Long productId, @RequestBody @Valid PostEdit postEdit) throws Exception {
 //        productService.edit(productId, postEdit);
 //    }
 
+    /*
+     * 상품 삭제
+     */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/products/{productId}")
     public void delete(@PathVariable(name = "productId") Long productId) throws Exception {
