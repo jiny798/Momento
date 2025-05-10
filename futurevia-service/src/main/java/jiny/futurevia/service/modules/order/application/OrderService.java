@@ -9,12 +9,20 @@ import jiny.futurevia.service.modules.order.domain.Delivery;
 import jiny.futurevia.service.modules.order.domain.DeliveryStatus;
 import jiny.futurevia.service.modules.order.domain.Order;
 import jiny.futurevia.service.modules.order.domain.OrderProduct;
+import jiny.futurevia.service.modules.order.endpoint.dto.RequestOrder;
+import jiny.futurevia.service.modules.order.endpoint.dto.RequestProduct;
 import jiny.futurevia.service.modules.order.infra.repository.OrderRepository;
 import jiny.futurevia.service.modules.product.domain.Product;
+import jiny.futurevia.service.modules.product.infra.repository.FlavorRepository;
 import jiny.futurevia.service.modules.product.infra.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -22,22 +30,51 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final AccountRepository accountRepository;
+    private final FlavorRepository flavorRepository;
 
     @Transactional
-    public Long order(Long userId, Long itemId, int count) {
-
+    public Long order(Long userId, RequestOrder requestOrders) {
+        List<RequestProduct> requestProducts = requestOrders.getRequestProductList();
         Account account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
-        Product product = productRepository.findById(itemId).orElseThrow(ProductNotFound::new);
+        List<OrderProduct> orderProducts = new ArrayList<>();
+        Order order = null;
+        Delivery delivery = generateDelivery(account, DeliveryStatus.READY);
 
-        Delivery delivery = new Delivery();
-        delivery.setAddress(account.getAddress());
-        delivery.setStatus(DeliveryStatus.READY);
+        for (RequestProduct requestProduct : requestProducts) {
+            Product product = productRepository.findById(requestProduct.getProductId()).orElseThrow(ProductNotFound::new);
+            List<String> flavors = requestProduct.getFlavors();
 
-        OrderProduct orderProduct = OrderProduct.createOrderProduct(product, product.getPrice(), count);
-        Order order = Order.createOrder(account, delivery, orderProduct);
+            // 주문상품에 대한 정보 저장
+            OrderProduct orderProduct = OrderProduct.createOrderProduct(product, product.getPrice(), requestProduct.getCount());
+            // 주문상품의 맛 추가
+            if (flavors != null && !flavors.isEmpty()) {
+                orderProduct.addOption(flavors);
+            }
+            // 주문상품 추가
+            orderProducts.add(orderProduct);
+            // 주문 생성
+            order = Order.createOrder(account, delivery, orderProducts);
+
+        }
+
+        if (order == null) {
+            throw new RuntimeException("주문에 실패하였습니다");
+        }
 
         orderRepository.save(order);
         return order.getId();
+    }
+
+    @Transactional
+    public void addCart(Long userId, RequestProduct requestProduct) {
+
+    }
+
+    private static Delivery generateDelivery(Account account, DeliveryStatus deliveryStatus) {
+        Delivery delivery = new Delivery();
+        delivery.setAddress(account.getAddress());
+        delivery.setStatus(deliveryStatus);
+        return delivery;
     }
 
     @Transactional

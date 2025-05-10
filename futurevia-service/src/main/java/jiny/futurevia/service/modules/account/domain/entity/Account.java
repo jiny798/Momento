@@ -71,8 +71,6 @@ public class Account extends AuditingEntity {
     @OneToMany(mappedBy = "account")
     private List<Order> orders = new ArrayList<>();
 
-
-
     public static Account from(String email, String nickname, String password, Set<Role> roles) {
         Account account = new Account();
         account.email = email;

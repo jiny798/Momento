@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter @Setter
 @Table(name = "order_product")
@@ -27,6 +29,7 @@ public class OrderProduct {
 
     private Long orderPrice; //주문 가격
     private int count;
+    private String option;
 
     public static OrderProduct createOrderProduct(Product product, Long orderPrice, int count) {
         OrderProduct orderProduct = new OrderProduct();
@@ -38,5 +41,11 @@ public class OrderProduct {
 
     public Long getTotalPrice() {
         return getOrderPrice() * getCount();
+    }
+
+    public void addOption(List<String> flavors) {
+        for(String flavor : flavors) {
+            option += flavor;
+        }
     }
 }

@@ -53,7 +53,7 @@ public class Order {
         delivery.setOrder(this);
     }
 
-    public static Order createOrder(Account account, Delivery delivery, OrderProduct... orderProducts) {
+    public static Order createOrder(Account account, Delivery delivery, List<OrderProduct> orderProducts) {
         Order order = new Order();
         order.setAccount(account);
         order.setDelivery(delivery);
