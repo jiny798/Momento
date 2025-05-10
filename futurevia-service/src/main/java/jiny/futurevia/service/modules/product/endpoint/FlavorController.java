@@ -21,7 +21,7 @@ public class FlavorController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/flavors")
-    public ResponseEntity<Void> post(@RequestBody @Valid FlavorRequest request) throws Exception {
+    public ResponseEntity<Void> createFlavor(@RequestBody @Valid FlavorRequest request) throws Exception {
         flavorService.save(request.name);
         return ResponseEntity.ok().build();
     }

@@ -3,6 +3,7 @@ package jiny.futurevia.service.infra.security.provider;
 import jiny.futurevia.service.infra.security.token.RestAuthenticationToken;
 import jiny.futurevia.service.modules.account.domain.dto.AccountContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component("restAuthenticationProvider")
 public class RestAuthenticationProvider implements AuthenticationProvider {

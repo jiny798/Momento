@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import jiny.futurevia.service.modules.account.endpoint.dto.NotificationForm;
 import jiny.futurevia.service.modules.account.endpoint.dto.ProfileDto;
+import jiny.futurevia.service.modules.order.domain.Address;
+import jiny.futurevia.service.modules.order.domain.Order;
 import jiny.futurevia.service.modules.product.domain.Product;
 import jiny.futurevia.service.modules.study.domain.entity.Study;
 import jiny.futurevia.service.modules.tag.domain.entity.Tag;
@@ -25,24 +27,51 @@ public class Account extends AuditingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
+
     private Long id;
 
-    /*** 기본 정보 ***/
     @Column(unique = true)
     private String email;
+
     @Column(unique = true)
     private String nickname;
+
     private String password;
     private LocalDateTime joinedAt;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "account")
     private List<Product> posts;
 
-    @ManyToMany @ToString.Exclude
+    @ToString.Exclude
+    @ManyToMany
     private Set<Tag> tags = new HashSet<>();
 
-    @ManyToMany @ToString.Exclude
+    @ToString.Exclude
+    @ManyToMany
     private Set<Zone> zones = new HashSet<>();
+
+    private boolean isValid;
+    private String emailToken;
+    private LocalDateTime emailTokenGeneratedAt;
+
+    @Embedded
+    private Profile profile = new Profile();;
+
+    @Embedded
+    private NotificationSetting notificationSetting = new NotificationSetting();
+
+    @ToString.Exclude
+    @JoinTable(name = "account_roles", joinColumns = {@JoinColumn(name = "account_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    private Set<Role> userRoles = new HashSet<>();
+
+    @Embedded
+    private Address address;
+
+    @OneToMany(mappedBy = "account")
+    private List<Order> orders = new ArrayList<>();
+
+
 
     public static Account from(String email, String nickname, String password, Set<Role> roles) {
         Account account = new Account();
@@ -64,23 +93,6 @@ public class Account extends AuditingEntity {
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
-
-    /*** 인증 관련 ***/
-    private boolean isValid;
-    private String emailToken;
-    private LocalDateTime emailTokenGeneratedAt;
-
-    @Embedded
-    private Profile profile = new Profile();;
-
-    @Embedded
-    private NotificationSetting notificationSetting = new NotificationSetting();
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
-    @JoinTable(name = "account_roles", joinColumns = {@JoinColumn(name = "account_id")}, inverseJoinColumns = {
-            @JoinColumn(name = "role_id")})
-    @ToString.Exclude
-    private Set<Role> userRoles = new HashSet<>();
 
     public void updateProfile(ProfileDto profile) {
         if (this.profile == null) {

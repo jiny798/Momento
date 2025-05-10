@@ -15,6 +15,7 @@ public class  ProductResponse {
     private final String details;
     private final List<String> images;
     private final LocalDateTime createdAt;
+    private final String category;
 
     public ProductResponse(Product product) {
         this.id = product.getId();
@@ -23,6 +24,7 @@ public class  ProductResponse {
         this.details = product.getDetails();
         this.createdAt = product.getCreatedAt();
         this.images = product.getImageUrls();
+        this.category = product.getCategory().getName();
     }
 
 

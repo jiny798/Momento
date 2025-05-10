@@ -70,17 +70,27 @@ public class AccountService implements UserDetailsService{
 		return new AccountContext(account, authorities);
 	}
 
-	public Account signUp(SignUpForm signUpForm) {
-		Account newAccount = saveNewAccount(signUpForm);
+	public Account signUpUser(SignUpForm signUpForm) {
+		Role role = roleRepository.findByRoleName("ROLE_USER");
+		Set<Role> roles = new HashSet<>();
+		roles.add(role);
+
+		Account newAccount = saveNewAccount(signUpForm, roles);
 //		sendVerificationEmail(newAccount);
 		return newAccount;
 	}
 
-	private Account saveNewAccount(SignUpForm signUpForm) {
+	// test
+	public Account signUpAdmin(SignUpForm signUpForm) {
 		Role role = roleRepository.findByRoleName("ROLE_ADMIN");
 		Set<Role> roles = new HashSet<>();
 		roles.add(role);
 
+		Account newAccount = saveNewAccount(signUpForm, roles);
+		return newAccount;
+	}
+
+	private Account saveNewAccount(SignUpForm signUpForm, Set<Role> roles) {
 		Account account = Account.from(signUpForm.getEmail(),
 				signUpForm.getNickname(),
 				passwordEncoder.encode(signUpForm.getPassword()),

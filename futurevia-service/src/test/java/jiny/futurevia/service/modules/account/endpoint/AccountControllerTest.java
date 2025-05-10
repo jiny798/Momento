@@ -1,5 +1,6 @@
 package jiny.futurevia.service.modules.account.endpoint;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jiny.futurevia.service.infra.IntegrationTest;
 import jiny.futurevia.service.modules.account.application.AccountService;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
@@ -18,9 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.then;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
@@ -32,155 +36,54 @@ import jiny.futurevia.service.modules.account.infra.repository.AccountRepository
 
 import org.springframework.transaction.annotation.Transactional;
 
-@IntegrationTest
+@SpringBootTest
+@AutoConfigureMockMvc
 class AccountControllerTest {
-//	@Autowired
-//	MockMvc mockMvc;
-//	@Autowired
-//	AccountRepository accountRepository;
-//	@Autowired
-//	AccountService accountService;
-//
-//	@MockBean
-//	EmailService emailService;
-//
-//	@BeforeEach
-//	void beforeEach() {
-//		SignUpForm signUpForm = new SignUpForm();
-//		signUpForm.setNickname("jiny1234");
-//		signUpForm.setEmail("jiny1234@jiny.com");
-//		signUpForm.setPassword("jiny1234");
-//		accountService.signUp(signUpForm);
-//	}
-//
-//	@AfterEach
-//	void afterEach() {
-//		accountRepository.deleteAll();
-//	}
-//
-//
-//	@Test
-//	@DisplayName("회원 가입 화면 진입")
-//	void signUpForm() throws Exception {
-//		mockMvc.perform(get("/sign-up"))
-//			.andDo(print())
-//			.andExpect(status().isOk())
-//			.andExpect(view().name("account/sign-up"))
-//			.andExpect(model().attributeExists("signUpForm"))
-//			.andExpect(unauthenticated());
-//
-//	}
-//
-//	@Test
-//	@DisplayName("회원 가입 오류")
-//	void signUpSubmitWithError() throws Exception {
-//		mockMvc.perform(post("/sign-up")
-//				.param("nickname", "nickname")
-//				.param("email", "email@email") // 이메일 오류
-//				.param("password", "1234!67") // 비밀번호 8자리 미만
-//				.with(csrf()))
-//			.andDo(print())
-//			.andExpect(status().isOk())
-//			.andExpect(view().name("account/sign-up"));
-//	}
-//
-//	@Test
-//	@DisplayName("회원 가입 정상 처리 : 회원 저장")
-//	void signUpSubmit() throws Exception {
-//
-//		String password = "abcd1234!@";
-//		mockMvc.perform(post("/sign-up")
-//				.param("nickname", "nickname")
-//				.param("email", "dareme798@naver.com")
-//				.param("password", password)
-//				.with(csrf()))
-//			.andDo(print())
-//			.andExpect(status().is3xxRedirection())
-//			.andExpect(view().name("redirect:/"));
-//		//                .andExpect(authenticated().withUsername("nickname"));
-//
-//		Assertions.assertTrue(accountRepository.existsByEmail("dareme798@naver.com"));
-//
-//		Account account = accountRepository.findByEmail("dareme798@naver.com");
-//		Assertions.assertNotEquals(account.getPassword(), password);
-//		Assertions.assertNotNull(account.getEmailToken());
-//
-////		then(emailService)
-////				.should()
-////				.sendEmail(ArgumentMatchers.any(EmailMessage.class));
-//	}
-//
-//	@DisplayName("인증 메일 확인: 잘못된 링크")
-//	@Test
-//	void verifyEmailWithWrongLink() throws Exception {
-//		mockMvc.perform(get("/check-email-token")
-//				.param("token", "token")
-//				.param("email", "email"))
-//			.andExpect(status().isOk())
-//			.andExpect(view().name("account/email-verification"))
-//			.andExpect(model().attributeExists("error"));
-//	}
-//
-//	@DisplayName("인증 메일 확인: 유효한 링크")
-//	@Test
-//	@Transactional
-//	void verifyEmail() throws Exception {
-//		Account newAccount = accountRepository.findByEmail("jiny1234@jiny.com");
-//		mockMvc.perform(get("/check-email-token")
-//				.param("token", newAccount.getEmailToken())
-//				.param("email", newAccount.getEmail()))
-//			.andExpect(status().isOk())
-//			.andExpect(view().name("account/email-verification"))
-//			.andExpect(model().attributeDoesNotExist("error"))
-//			.andExpect(model().attributeExists("numberOfUsers", "nickname"));
-//		//                .andExpect(authenticated().withUsername("nickname"));
-//	}
-//
-//	@Test
-//	@DisplayName("이메일 로그인 정상 처리")
-//	void login_with_email() throws Exception {
-//		mockMvc.perform(post("/login")
-//				.param("username", "jiny1234@jiny.com")
-//				.param("password", "jiny1234")
-//				.with(csrf()))
-//			.andExpect(status().is3xxRedirection())
-//			.andExpect(redirectedUrl("/"))
-//			.andExpect(authenticated().withUsername("jiny1234"));
-//	}
-//
-//
-//	@Test
-//	@DisplayName("닉네임 로그인 정상 처리")
-//	void login_with_nickname() throws Exception {
-//		mockMvc.perform(post("/login")
-//				.param("username", "jiny1234")
-//				.param("password", "jiny1234")
-//				.with(csrf()))
-//			.andExpect(status().is3xxRedirection())
-//			.andExpect(redirectedUrl("/"))
-//			.andExpect(authenticated().withUsername("jiny1234"));
-//	}
-//
-//	@Test
-//	@DisplayName("로그인 실패")
-//	void login_fail() throws Exception {
-//		mockMvc.perform(post("/login")
-//				.param("username", "jiny1234")
-//				.param("password", "jiny12345")
-//				.with(csrf()))
-//			.andExpect(status().is3xxRedirection())
-//			.andExpect(redirectedUrl("/login?error"))
-//			.andExpect(unauthenticated());
-//	}
-//
-//	@Test
-//	@DisplayName("로그아웃")
-//	void logout() throws Exception {
-//		mockMvc.perform(post("/logout")
-//				.with(csrf()))
-//			.andExpect(status().is3xxRedirection())
-//			.andExpect(redirectedUrl("/login?logout"))
-//			.andExpect(unauthenticated());
-//	}
+	@Autowired
+	MockMvc mockMvc;
+
+	@Autowired
+	AccountRepository accountRepository;
+
+	@Autowired
+	AccountService accountService;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @BeforeEach
+    void setUp() {
+        accountRepository.deleteAll();
+    }
+
+    @AfterEach
+    void setUpAfterTest() {
+        accountRepository.deleteAll();
+    }
+
+	@Test
+	@DisplayName("회원 가입 : 정상처리")
+	void signUpSubmitWithError() throws Exception {
+        // given
+        SignUpForm signUpForm = new SignUpForm();
+        signUpForm.setNickname("nickname2");
+        signUpForm.setEmail("email2@test.test");
+        signUpForm.setPassword("password2");
+        String signUpData = mapper.writeValueAsString(signUpForm);
+
+        // when
+		mockMvc.perform(post("/api/sign-up")
+                        .contentType(APPLICATION_JSON)
+                        .content(signUpData))
+			.andExpect(status().isOk())
+			.andDo(print());
+
+        //then
+        assertEquals(1, accountRepository.count());
+        Account account = accountRepository.findByEmail(signUpForm.getEmail());
+        assertEquals(account.getNickname(), signUpForm.getNickname());
+        assertEquals(account.getEmail(), signUpForm.getEmail());
+
+	}
 
 }

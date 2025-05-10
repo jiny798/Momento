@@ -22,6 +22,12 @@ export default class HttpRepository {
     })
   }
 
+  public async getAll<T>(config: HttpRequestConfig, clazz: { new (...args: any[]): T }): Promise<T[]> {
+    return this.httpClient.request({ ...config, method: 'GET' }).then((response) => {
+      return plainToInstance<T, any>(clazz, response ?? []) as T[]
+    })
+  }
+
   public async post<T>(config: HttpRequestConfig, clazz: { new (...args: any[]): T } | null = null): Promise<T> {
     return this.httpClient
       .request({ ...config, method: 'POST' })

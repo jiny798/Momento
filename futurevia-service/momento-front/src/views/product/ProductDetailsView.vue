@@ -161,13 +161,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, defineProps, reactive } from 'vue'
+import { ref, computed, defineProps, reactive, onMounted } from 'vue'
 import { container } from 'tsyringe'
 import ProductRepository from '@/repository/ProductRepository'
 import Product from '@/entity/product/Product'
-import Paging from '@/entity/data/Paging'
+import CategoryRepository from '@/repository/CategoryRepository'
+import Category from '@/entity/product/Category'
 
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
+const CATEGORY_REPOSITORY = container.resolve(CategoryRepository)
 
 const props = defineProps<{
   productId: number
@@ -175,13 +177,13 @@ const props = defineProps<{
 
 type StateType = {
   product: Product
+  category: Category
 }
 
 const state = reactive<StateType>({
   product: new Product(),
+  category: new Category(),
 })
-
-console.log('받은 productId:', props.productId)
 
 // 상품 조회
 function get(productId) {
@@ -195,10 +197,7 @@ get(props.productId)
 
 const price = 6000
 const imageUrl = ref('/g1.JPG')
-
 const activeTab = ref('detail')
-const reviewCount = ref(0)
-const qnaCount = ref(0)
 
 // 맛선택
 const flavorOptions = ['초콜릿', '바닐라', '딸기', '망고', '피스타치오', '레몬']
@@ -213,6 +212,12 @@ const quantity = computed(() => {
 function formatPrice(price: number): string {
   return price.toLocaleString('ko-KR') + '원'
 }
+
+onMounted(() => {
+  CATEGORY_REPOSITORY.getAll().then((res) => {
+    state.category = res
+  })
+})
 </script>
 
 <style scoped>

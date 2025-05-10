@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="formRef" :rules="rules" label-width="120px" label-position="top" class="product-form">
+  <el-form ref="formRef" label-width="120px" label-position="top" class="product-form">
     <!-- 제목 -->
     <el-form-item label="상품 제목" prop="title">
       <el-input v-model="state.productWrite.title" maxlength="30" show-word-limit placeholder="제목을 입력해주세요" />
@@ -20,11 +20,11 @@
     </el-form-item>
 
     <!-- 카테고리 -->
-    <!--    <el-form-item label="카테고리" prop="category">-->
-    <!--      <el-select placeholder="카테고리를 선택해주세요">-->
-    <!--        <el-option v-for="item in categories" :key="item.id" :label="item.name" :value="item.id" />-->
-    <!--      </el-select>-->
-    <!--    </el-form-item>-->
+    <el-form-item label="카테고리" prop="category">
+      <el-select v-model="form.category" value-key="id" placeholder="카테고리를 선택해주세요">
+        <el-option v-for="item in state.categories" :key="item.id" :label="item.name" :value="item.name" />
+      </el-select>
+    </el-form-item>
 
     <!-- 가격 -->
     <el-form-item label="가격" prop="price">
@@ -37,14 +37,13 @@
       />
     </el-form-item>
 
-    <el-form-item label="수량" prop="price">
-      <el-input
-        v-model="state.productWrite.stockQuantity"
-        placeholder="숫자만 입력"
-        @input="formatPrice"
-        suffix-icon="el-icon-money"
-      />
-    </el-form-item>
+    <!--    <el-form-item label="카테고리" prop="price">-->
+    <!--      <el-select v-model="select" placeholder="Select" style="width: 100%">-->
+    <!--        <el-option label="Restaurant" value="1" />-->
+    <!--        <el-option label="Order No." value="2" />-->
+    <!--        <el-option label="Tel" value="3" />-->
+    <!--      </el-select>-->
+    <!--    </el-form-item>-->
 
     <!-- 상세 조건 -->
     <div ref="editorRoot" />
@@ -79,7 +78,12 @@ import { container } from 'tsyringe'
 import { useRouter } from 'vue-router'
 import type HttpError from '@/http/HttpError'
 import ProductRepository from '@/repository/ProductRepository'
+import CategoryRepository from '@/repository/CategoryRepository'
+import Category from '@/entity/product/Category'
+import Paging from '@/entity/data/Paging'
+import type Product from '@/entity/product/Product'
 
+const select = ref('')
 const editorRoot = ref<HTMLDivElement | null>(null)
 let editorInstance: Editor | null = null
 const showPopup = ref(false)
@@ -88,12 +92,29 @@ const popupY = ref(0)
 const selectedImage = ref<HTMLImageElement | null>(null)
 const inputWidth = ref('')
 const inputHeight = ref('')
+const isRegister = ref(true)
+const loading = ref(false)
+const formRef = ref()
+const form = ref({
+  title: '',
+  category: '',
+  price: '',
+  description: '',
+  agree: false,
+})
 
-const state = reactive({
+type StateType = {
+  productWrite: ProductWrite
+  categories: Category[]
+}
+
+const state = reactive<StateType>({
   productWrite: new ProductWrite(),
+  categories: [],
 })
 
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
+const CATEGORY_REPOSITORY = container.resolve(CategoryRepository)
 
 const router = useRouter()
 
@@ -102,9 +123,10 @@ function write() {
 
   // 대표 이미지
   state.productWrite.imageUrls = getUploadedImageUrls()
-
   state.productWrite.details = editorInstance?.getHTML()
+  state.productWrite.category = form.value.category
 
+  console.log(state.productWrite)
   PRODUCT_REPOSITORY.write(state.productWrite)
     .then(() => {
       ElMessage({ type: 'success', message: '글 등록이 완료되었습니다.' })
@@ -117,6 +139,10 @@ function write() {
 
 // 에디터
 onMounted(() => {
+  CATEGORY_REPOSITORY.getAll().then((responseList) => {
+    state.categories = responseList
+  })
+
   if (editorRoot.value) {
     editorInstance = new Editor({
       el: editorRoot.value,
@@ -134,6 +160,7 @@ onMounted(() => {
             const response = await fetch('http://localhost:8080/api/images', {
               method: 'POST',
               body: formData,
+              credentials: 'include',
             })
             const imageUrl = await response.text()
             callback(imageUrl, blob.name)
@@ -198,31 +225,6 @@ onBeforeUnmount(() => {
   editorInstance?.destroy()
 })
 
-const isRegister = ref(true)
-const loading = ref(false)
-const formRef = ref()
-const form = ref({
-  title: '',
-  category: '',
-  price: '',
-  description: '',
-  agree: false,
-})
-
-const categories = ref([
-  { id: 1, name: '젤라또' },
-  { id: 2, name: '쿠키' },
-])
-const grades = ['상', '중', '하']
-
-const rules = {
-  title: [{ required: true, message: '제목을 입력해주세요', trigger: 'blur' }],
-  category: [{ required: true, message: '카테고리를 선택해주세요', trigger: 'change' }],
-  price: [{ required: true, message: '가격을 입력해주세요', trigger: 'blur' }],
-  description: [{ required: true, message: '상세조건을 입력해주세요', trigger: 'blur' }],
-  agree: [{ required: true, message: '동의가 필요합니다', trigger: 'change' }],
-}
-
 const formatPrice = () => {
   const number = Number(form.value.price.replace(/,/g, ''))
   if (!isNaN(number)) {
@@ -244,6 +246,7 @@ const handleUpload = async ({ file, onSuccess, onError }: any) => {
     const res = await fetch('http://localhost:8080/api/images', {
       method: 'POST',
       body: formData,
+      credentials: 'include',
     })
     const uploadedUrl = await res.text()
 

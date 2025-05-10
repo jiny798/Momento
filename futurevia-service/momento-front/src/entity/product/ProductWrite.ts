@@ -1,7 +1,7 @@
 export default class PostWrite {
   public title = ''
   public price = ''
-  public stockQuantity = ''
+  public category = ''
   public details = ''
   public imageUrls: string[] = []
 }

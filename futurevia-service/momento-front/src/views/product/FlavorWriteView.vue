@@ -5,7 +5,7 @@
 
       <form @submit.prevent="handleSubmit">
         <label for="flavorInput">맛 이름</label>
-        <input id="flavorInput" v-model="flavor" type="text" placeholder="예: 바닐라" required />
+        <input id="flavorInput" v-model="state.flavor.name" type="text" placeholder="예: 바닐라" required />
         <button type="submit">등록하기</button>
       </form>
 
@@ -16,58 +16,61 @@
       <div class="flavor-list">
         <h3>등록된 맛 리스트</h3>
         <ul>
-          <li v-for="item in flavorList" :key="item.id">
+          <li v-for="item in state.flavorList" :key="item.id">
             <span>{{ item.name }}</span>
-            <button class="btn-delete" @click="deleteFlavor(item.id)">삭제</button>
+            <!--            <button class="btn-delete" @click="deleteFlavor(item.id)">삭제</button>-->
           </li>
         </ul>
-        <p v-if="flavorList.length === 0">아직 등록된 맛이 없습니다.</p>
+        <p v-if="state.flavorList.length === 0">아직 등록된 맛이 없습니다.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { ref, onMounted, reactive } from 'vue'
+import FlavorRepository from '@/repository/FlavorRepository'
+import { container } from 'tsyringe'
+import Flavor from '@/entity/product/Flavor'
+import { ElMessage } from 'element-plus'
+import type HttpError from '@/http/HttpError'
 
-const flavor = ref('')
+const FLAVOR_REPOSITORY = container.resolve(FlavorRepository)
+
 const successMessage = ref('')
-const flavorList = ref<{ id: number; name: string }[]>([])
 
-const fetchFlavorList = async () => {
-  try {
-    const res = await axios.get('/api/flavors')
-    flavorList.value = res.data
-  } catch (e) {
-    console.error('맛 목록 조회 실패', e)
-  }
+type StateType = {
+  flavorList: Flavor[]
+  flavor: Flavor
 }
 
-const handleSubmit = async () => {
-  try {
-    await axios.post('/api/flavors', { name: flavor.value })
-    successMessage.value = `'${flavor.value}' 맛이 등록되었습니다!`
-    flavor.value = ''
-    fetchFlavorList()
-  } catch (e) {
-    console.error('등록 실패', e)
-    successMessage.value = '맛 등록에 실패했습니다.'
-  }
+const state = reactive<StateType>({
+  flavorList: [],
+  flavor: new Flavor(),
+})
+
+// 맛 저장
+function handleSubmit() {
+  FLAVOR_REPOSITORY.write(state.flavor)
+    .then(() => {
+      getAll()
+      ElMessage({ type: 'success', message: '글 등록이 완료되었습니다.' })
+    })
+    .catch((e: HttpError) => {
+      ElMessage({ type: 'error', message: e.getMessage() })
+    })
 }
 
-const deleteFlavor = async (id: number) => {
-  if (!confirm('정말 삭제하시겠습니까?')) return
-  try {
-    await axios.delete(`/api/flavors/${id}`)
-    fetchFlavorList()
-  } catch (e) {
-    console.error('삭제 실패', e)
-  }
+// 맛 리스트 불러오기
+function getAll() {
+  FLAVOR_REPOSITORY.getAll().then((responseList) => {
+    state.flavorList = responseList
+    console.log('responseList : ' + responseList)
+  })
 }
 
 onMounted(() => {
-  fetchFlavorList()
+  getAll()
 })
 </script>
 

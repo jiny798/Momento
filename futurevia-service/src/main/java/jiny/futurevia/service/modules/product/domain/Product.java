@@ -44,6 +44,9 @@ public class Product {
 
     private boolean active;
 
+    @ManyToOne
+    private Category category;
+
 
     public static Product from(ProductCreate productCreate) {
         Product product = new Product();
@@ -55,6 +58,7 @@ public class Product {
         product.active = true;
         return product;
     }
+
 
 
 

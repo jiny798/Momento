@@ -31,55 +31,6 @@ class PostControllerTest {
         productRepository.deleteAll();
     }
 
-    @Test
-    @WithMockUser(username = "jiny@abc.com" , roles = {"ADMIN"}, password = "jiny1234!")
-    @DisplayName("게시글 생성 : 정상작동")
-    public void createPost() throws Exception {
-        // given
-//        PostCreate postCreate = PostCreate.builder()
-//                .title("제목입니다.")
-//                .content("내용입니다.")
-//                .build();
-//        String json = mapper.writeValueAsString(postCreate);
-//
-//        //when
-//        mockMvc.perform(post("/api/posts")
-//                        .contentType(APPLICATION_JSON)
-//                        .content(json)
-//                )
-//                .andExpect(status().isOk())
-//                .andExpect(content().string(""))
-//                .andDo(print());
-//
-//        //then
-//        Assertions.assertEquals(1L, productRepository.count());
-
-//        Product post = postRepository.findAll().get(0);
-//        assertEquals("제목입니다.", post.getTitle());
-//        assertEquals("내용입니다.", post.getContent());
-    }
-
-    @Test
-    @WithMockUser(username = "jiny@abc.com" , roles = {"ADMIN"}, password = "jiny1234!")
-    @DisplayName("게시글 생성 : 제목누락")
-    public void createPostFailByTitle() throws Exception {
-        // given
-//        PostCreate postCreate = PostCreate.builder()
-//                .title("")
-//                .content("내용입니다.")
-//                .build();
-//        String json = mapper.writeValueAsString(postCreate);
-//
-//        mockMvc.perform(post("/api/posts")
-//                        .contentType(APPLICATION_JSON)
-//                        .content(json)
-//                )
-//                .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("$.code").value("400"))
-//                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-//                .andExpect(jsonPath("$.validations.title").value("제목을 입력하세요."))
-//                .andDo(print());
-    }
 
     @Test
     @DisplayName("글 1개 조회")

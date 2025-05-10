@@ -6,7 +6,7 @@
 
   <section>
     <ul class="product-grid">
-      <li v-for="product in state.productList.items" :key="product.id" class="product-item">
+      <li v-for="product in state.productPage.items" :key="product.id" class="product-item">
         <div class="thumbnail">
           <a @click="goProductDetail(product.id)" style="cursor: pointer">
             <img :src="product.images?.[0]" class="product-image" alt="" />
@@ -29,8 +29,8 @@
       <el-pagination
         :background="true"
         layout="prev, pager, next"
-        v-model:current-page="state.productList.page"
-        :total="state.productList.totalCount"
+        v-model:current-page="state.productPage.page"
+        :total="state.productPage.totalCount"
         :default-page-size="5"
         @current-change="(page: number) => getList(page)"
       />

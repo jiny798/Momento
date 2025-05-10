@@ -1,41 +1,6 @@
 package jiny.futurevia.service.modules.event.endpoint;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 import jiny.futurevia.service.infra.IntegrationTest;
-import jiny.futurevia.service.modules.event.domain.entity.Enrollment;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import jiny.futurevia.service.WithAccount;
-import jiny.futurevia.service.modules.account.domain.entity.Account;
-import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
-import jiny.futurevia.service.modules.event.application.EventService;
-import jiny.futurevia.service.modules.event.domain.entity.Event;
-import jiny.futurevia.service.modules.event.domain.entity.EventType;
-import jiny.futurevia.service.modules.event.form.EventForm;
-import jiny.futurevia.service.modules.event.infra.repository.EnrollmentRepository;
-import jiny.futurevia.service.modules.event.infra.repository.EventRepository;
-import jiny.futurevia.service.modules.study.application.StudyService;
-import jiny.futurevia.service.modules.study.domain.entity.Study;
-import jiny.futurevia.service.modules.study.form.StudyForm;
-import jiny.futurevia.service.modules.study.infra.repository.StudyRepository;
 
 @IntegrationTest
 class EventControllerTest {

@@ -52,17 +52,14 @@ public class AccountController {
         signUpForm.setEmail("abc798@gmail.com");
         signUpForm.setPassword("abc798!");
         signUpForm.setNickname("abc798");
-        Account account = accountService.signUp(signUpForm);
+        Account account = accountService.signUpAdmin(signUpForm);
         accountService.verify(account);
-
-//        loginService.login(account, request, response);
     }
 
     @PostMapping("/sign-up")
     public void signUpSubmit(@Valid @RequestBody SignUpForm signUpForm, Errors errors, HttpServletRequest request,
                                HttpServletResponse response) {
-        Account account = accountService.signUp(signUpForm);
-//        loginService.login(account, request, response);
+        Account account = accountService.signUpUser(signUpForm);
     }
 
     // 메일 인증 임시 주석
@@ -76,6 +73,8 @@ public class AccountController {
             model.addAttribute("error", "wrong.email");
             return "account/email-verification";
         }
+
+        
         if (!token.equals(account.getEmailToken())) {
             model.addAttribute("error", "wrong.token");
             return "account/email-verification";

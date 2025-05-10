@@ -1,36 +1,9 @@
 package jiny.futurevia.service.modules.study.endpoint;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jiny.futurevia.service.WithAccount;
 import jiny.futurevia.service.infra.IntegrationTest;
-import jiny.futurevia.service.modules.account.domain.entity.Account;
-import jiny.futurevia.service.modules.account.domain.entity.Zone;
-import jiny.futurevia.service.modules.account.endpoint.dto.TagForm;
-import jiny.futurevia.service.modules.account.endpoint.dto.ZoneForm;
-import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
-import jiny.futurevia.service.modules.study.application.StudyService;
-import jiny.futurevia.service.modules.study.domain.entity.Study;
-import jiny.futurevia.service.modules.study.form.StudyForm;
-import jiny.futurevia.service.modules.study.infra.repository.StudyRepository;
-import jiny.futurevia.service.modules.tag.domain.entity.Tag;
-import jiny.futurevia.service.modules.tag.infra.repository.TagRepository;
-import jiny.futurevia.service.modules.zone.infra.repository.ZoneRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @IntegrationTest
 class StudySettingsControllerTest {
