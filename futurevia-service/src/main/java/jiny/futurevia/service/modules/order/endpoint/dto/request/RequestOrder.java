@@ -1,4 +1,4 @@
-package jiny.futurevia.service.modules.order.endpoint.dto;
+package jiny.futurevia.service.modules.order.endpoint.dto.request;
 
 import lombok.*;
 

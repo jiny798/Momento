@@ -44,8 +44,10 @@ public class OrderProduct {
     }
 
     public void addOption(List<String> flavors) {
-        for(String flavor : flavors) {
-            option += flavor;
+        if(flavors != null && !flavors.isEmpty()) {
+            for(String flavor : flavors) {
+                option += flavor;
+            }
         }
     }
 }

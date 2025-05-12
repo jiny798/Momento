@@ -9,8 +9,8 @@ import jiny.futurevia.service.modules.order.domain.Delivery;
 import jiny.futurevia.service.modules.order.domain.DeliveryStatus;
 import jiny.futurevia.service.modules.order.domain.Order;
 import jiny.futurevia.service.modules.order.domain.OrderProduct;
-import jiny.futurevia.service.modules.order.endpoint.dto.RequestOrder;
-import jiny.futurevia.service.modules.order.endpoint.dto.RequestProduct;
+import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestOrder;
+import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestProduct;
 import jiny.futurevia.service.modules.order.infra.repository.OrderRepository;
 import jiny.futurevia.service.modules.product.domain.Product;
 import jiny.futurevia.service.modules.product.infra.repository.FlavorRepository;
@@ -20,9 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -63,11 +61,6 @@ public class OrderService {
 
         orderRepository.save(order);
         return order.getId();
-    }
-
-    @Transactional
-    public void addCart(Long userId, RequestProduct requestProduct) {
-
     }
 
     private static Delivery generateDelivery(Account account, DeliveryStatus deliveryStatus) {
