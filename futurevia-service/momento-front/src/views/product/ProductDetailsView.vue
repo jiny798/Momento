@@ -50,65 +50,10 @@
           <table class="order-list">
             <tbody>
               <!-- 맛선택 -->
-              <tr>
-                <td>맛 선택 1</td>
+              <tr v-for="(product, index) in state.product.optionCount">
+                <td>맛 선택 {{ index + 1 }}</td>
                 <td>
                   <select v-model="selectedFlavor1">
-                    <option disabled value="">맛을 선택하세요</option>
-                    <option v-for="flavor in flavorOptions" :key="flavor" :value="flavor">
-                      {{ flavor }}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>맛 선택 2</td>
-                <td>
-                  <select v-model="selectedFlavor2">
-                    <option disabled value="">맛을 선택하세요</option>
-                    <option v-for="flavor in flavorOptions" :key="flavor" :value="flavor">
-                      {{ flavor }}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>맛 선택 3</td>
-                <td>
-                  <select v-model="selectedFlavor2">
-                    <option disabled value="">맛을 선택하세요</option>
-                    <option v-for="flavor in flavorOptions" :key="flavor" :value="flavor">
-                      {{ flavor }}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>맛 선택 4</td>
-                <td>
-                  <select v-model="selectedFlavor2">
-                    <option disabled value="">맛을 선택하세요</option>
-                    <option v-for="flavor in flavorOptions" :key="flavor" :value="flavor">
-                      {{ flavor }}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>맛 선택 5</td>
-                <td>
-                  <select v-model="selectedFlavor2">
-                    <option disabled value="">맛을 선택하세요</option>
-                    <option v-for="flavor in flavorOptions" :key="flavor" :value="flavor">
-                      {{ flavor }}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td>맛 선택 6</td>
-                <td>
-                  <select v-model="selectedFlavor2">
                     <option disabled value="">맛을 선택하세요</option>
                     <option v-for="flavor in flavorOptions" :key="flavor" :value="flavor">
                       {{ flavor }}
@@ -126,7 +71,7 @@
 
           <div class="action-buttons">
             <button class="btn-buy">구매하기</button>
-            <button class="btn-cart">장바구니 담기</button>
+            <button class="btn-cart" @click="">장바구니 담기</button>
           </div>
         </div>
       </div>

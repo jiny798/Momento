@@ -6,6 +6,7 @@ export default class Product {
   public title = ''
   public price = 0
   public stockQuantity = 0
+  public optionCount = 0
   public details = ''
   public imageUrls = []
 

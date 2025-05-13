@@ -15,7 +15,8 @@ public class  ProductResponse {
     private final String details;
     private final List<String> images;
     private final LocalDateTime createdAt;
-    private final String category;
+    private final Integer optionCount;
+//    private final String category;
 
     public ProductResponse(Product product) {
         this.id = product.getId();
@@ -23,8 +24,9 @@ public class  ProductResponse {
         this.price = product.getPrice();
         this.details = product.getDetails();
         this.createdAt = product.getCreatedAt();
+        this.optionCount = product.getOptionCount();
         this.images = product.getImageUrls();
-        this.category = product.getCategory().getName();
+//        this.category = product.getCategory().getName();
     }
 
 

@@ -16,19 +16,21 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductCreate {
 
-	@NotBlank(message = "최소 1자 이상 입력주세요")
-	@Size(min = 1, max = 255, message = "최소 1자 이상 입력주세요")
-	private String title;
+    @NotBlank(message = "최소 1자 이상 입력주세요")
+    @Size(min = 1, max = 255, message = "최소 1자 이상 입력주세요")
+    private String title;
 
-	@NotNull
-	private Long price;
+    @NotNull
+    private Long price;
 
-	private String categorym	;
+    private String category;
 
-	@NotNull
-	@Lob
-	private String details;
+    private Integer optionCount;
 
-	private List<String> imageUrls;
+    @NotNull
+    @Lob
+    private String details;
+
+    private List<String> imageUrls;
 
 }

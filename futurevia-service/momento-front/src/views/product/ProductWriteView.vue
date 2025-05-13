@@ -26,6 +26,17 @@
       </el-select>
     </el-form-item>
 
+    <!-- 옵션 개수 -->
+    <el-form-item label="옵션 개수" prop="price">
+      <el-input
+        v-model="state.productWrite.optionCount"
+        placeholder="숫자만 입력"
+        @input="formatPrice"
+        run
+        suffix-icon="el-icon-money"
+      />
+    </el-form-item>
+
     <!-- 가격 -->
     <el-form-item label="가격" prop="price">
       <el-input

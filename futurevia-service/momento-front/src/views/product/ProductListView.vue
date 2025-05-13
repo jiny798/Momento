@@ -12,8 +12,9 @@
             <img :src="product.images?.[0]" class="product-image" alt="" />
           </a>
           <div class="icon__box">
-            <!--            <span class="wish">WISH</span>-->
-            <!--            <span class="cart">ADD</span>-->
+            <!--            <span class="wish"-->
+            <!--              ><el-icon><ShoppingCart /></el-icon-->
+            <!--            ></span>-->
           </div>
         </div>
         <div class="description">
@@ -74,14 +75,6 @@ function getList(page = 1) {
 onMounted(() => {
   getList()
 })
-
-// const tempProductList = ref<Product[]>([
-//   {
-//     id: 1,
-//     title: '산지직송 유기농 채소',
-//     price: 50000,
-//   },
-// ])
 </script>
 
 <style scoped>
@@ -140,7 +133,7 @@ ul {
 }
 
 .icon__box span {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid #ccc;
   font-size: 12px;
   padding: 2px 6px;
