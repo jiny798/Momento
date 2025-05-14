@@ -53,10 +53,10 @@
               <tr v-for="(product, index) in state.product.optionCount">
                 <td>맛 선택 {{ index + 1 }}</td>
                 <td>
-                  <select v-model="selectedFlavor1">
+                  <select v-model="selectedFlavors[index]">
                     <option disabled value="">맛을 선택하세요</option>
-                    <option v-for="flavor in flavorOptions" :key="flavor" :value="flavor">
-                      {{ flavor }}
+                    <option v-for="flavor in state.flavorList" :key="flavor" :value="flavor">
+                      {{ flavor.name }}
                     </option>
                   </select>
                 </td>
@@ -71,7 +71,7 @@
 
           <div class="action-buttons">
             <button class="btn-buy">구매하기</button>
-            <button class="btn-cart" @click="">장바구니 담기</button>
+            <button class="btn-cart" @click="addCart">장바구니 담기</button>
           </div>
         </div>
       </div>
@@ -112,10 +112,16 @@ import ProductRepository from '@/repository/ProductRepository'
 import Product from '@/entity/product/Product'
 import CategoryRepository from '@/repository/CategoryRepository'
 import Category from '@/entity/product/Category'
+import FlavorRepository from '@/repository/FlavorRepository'
+import Flavor from '@/entity/product/Flavor'
+import OrderRepository from '@/repository/OrderRepository'
+import RequestProduct from '@/entity/order/RequestProduct'
 
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
 const CATEGORY_REPOSITORY = container.resolve(CategoryRepository)
-
+const FLAVOR_REPOSITORY = container.resolve(FlavorRepository)
+const ORDER_REPOSITORY = container.resolve(OrderRepository)
+const selectedFlavors = ref<string[]>([])
 const props = defineProps<{
   productId: number
 }>()
@@ -123,11 +129,15 @@ const props = defineProps<{
 type StateType = {
   product: Product
   category: Category
+  flavorList: Flavor[]
+  requestProduct: RequestProduct
 }
 
 const state = reactive<StateType>({
   product: new Product(),
   category: new Category(),
+  flavorList: [],
+  requestProduct: new RequestProduct(),
 })
 
 // 상품 조회
@@ -137,32 +147,37 @@ function get(productId) {
     console.log('product : ' + JSON.stringify(state.product, null, 2))
   })
 }
-
 get(props.productId)
 
-const price = 6000
+// 맛 옵션 조회
+function getFlavors() {
+  FLAVOR_REPOSITORY.getAll().then((flavors) => {
+    state.flavorList = flavors
+  })
+}
+getFlavors()
+
 const imageUrl = ref('/g1.JPG')
 const activeTab = ref('detail')
-
-// 맛선택
-const flavorOptions = ['초콜릿', '바닐라', '딸기', '망고', '피스타치오', '레몬']
-const selectedFlavor1 = ref('')
-const selectedFlavor2 = ref('')
-
-// 선택한 맛에 따라 quantity 자동 설정
-const quantity = computed(() => {
-  return selectedFlavor1.value && selectedFlavor2.value ? 2 : 1
-})
-
-function formatPrice(price: number): string {
-  return price.toLocaleString('ko-KR') + '원'
-}
 
 onMounted(() => {
   CATEGORY_REPOSITORY.getAll().then((res) => {
     state.category = res
   })
 })
+
+// 장바구니
+function addCart() {
+  state.requestProduct.productId = state.product.id
+  state.requestProduct.count = 1
+  state.requestProduct.flavors.length = 0
+  selectedFlavors.value.forEach((flavor) => {
+    console.log('@@')
+    state.requestProduct.flavors.push(flavor.name)
+  })
+
+  ORDER_REPOSITORY.addCart(state.requestProduct)
+}
 </script>
 
 <style scoped>

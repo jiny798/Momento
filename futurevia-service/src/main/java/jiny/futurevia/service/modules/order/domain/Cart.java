@@ -33,14 +33,16 @@ public class Cart {
         cart.setAccount(account);
         cart.setProductId(productId);
         cart.setCount(count);
+        cart.setOption("");
         return cart;
     }
 
     public void addOption(List<String> flavors) {
         if (flavors != null && !flavors.isEmpty()) {
             for (String flavor : flavors) {
-                option += flavor;
+                option += flavor + ",";
             }
+            option = option.substring(0, option.length() - 1);
         }
     }
 

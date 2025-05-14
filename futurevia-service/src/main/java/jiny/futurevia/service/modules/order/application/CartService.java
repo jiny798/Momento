@@ -36,6 +36,8 @@ public class CartService {
 
         Cart cart = Cart.create(account, product.getId(), requestProduct.getCount());
         cart.addOption(flavors);
+
+        cartRepository.save(cart);
     }
 
     public List<ResponseProduct> getCartList(Long userId) {

@@ -33,6 +33,7 @@ public class OrderController {
 
     @PostMapping("/cart")
     public void addCart(@AuthenticationPrincipal Account account, @RequestBody RequestProduct requestProduct) {
+        log.info("add cart {}", requestProduct);
         cartService.addCart(account.getId(), requestProduct);
     }
 
