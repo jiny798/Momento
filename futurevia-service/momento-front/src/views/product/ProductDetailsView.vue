@@ -1,102 +1,53 @@
 <template>
-  <div class="detail-area-wrapper">
-    <div class="detail-area">
-      <div class="img-area">
-        <div class="prd-img">
-          <img class="big-image" :src="imageUrl" alt="유기농 달걀" loading="lazy" />
-          <span id="zoomMouseGuide"> </span>
-
-          <span class="wish">
-            <!-- 관심 상품 표시  -->
-          </span>
-        </div>
+  <div class="product-detail-wrapper">
+    <div class="product-detail">
+      <!-- 이미지 영역 -->
+      <div class="image-area">
+        <img class="main-image" :src="imageUrl" alt="상품 이미지" />
         <ul class="thumb-list">
           <li>
-            <img :src="imageUrl" class="thumb-image" alt="" />
+            <img :src="imageUrl" class="thumb-image" alt="썸네일 이미지" />
           </li>
         </ul>
       </div>
 
+      <!-- 정보 영역 -->
       <div class="info-area">
-        <div class="heading-area">
-          <h1>{{ state.product.title }}</h1>
-          <!--          <span class="delivery">(배송 가능상품)</span>-->
+        <h1 class="product-title">{{ state.product.title }}</h1>
+        <p class="product-price">{{ state.product.price.toLocaleString() }}원</p>
+
+        <dl class="product-meta">
+          <div>
+            <dt>배송</dt>
+            <dd>국내배송 / 2,500원 (5만원 이상 무료)</dd>
+          </div>
+        </dl>
+
+        <!-- 맛 선택 -->
+        <div class="flavor-select" v-for="(f, index) in state.product.optionCount" :key="index">
+          <label>맛 선택 {{ index + 1 }}</label>
+          <select v-model="selectedFlavors[index]">
+            <option disabled value="">맛을 선택하세요</option>
+            <option v-for="flavor in state.flavorList" :key="flavor.name" :value="flavor">
+              {{ flavor.name }}
+            </option>
+          </select>
         </div>
 
-        <table class="product-detail nomal-font">
-          <tbody>
-            <tr>
-              <th>상품명</th>
-              <td>{{ state.product.title }}</td>
-            </tr>
-            <tr>
-              <th>판매가</th>
-              <td>
-                <strong>{{ state.product.price }}</strong>
-              </td>
-            </tr>
-            <tr>
-              <th>국내·해외배송</th>
-              <td>국내배송</td>
-            </tr>
-            <tr>
-              <th>배송비</th>
-              <td><strong>2,500원</strong> (50,000원 이상 구매 시 무료)</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="order-section">
-          <table class="order-list">
-            <tbody>
-              <!-- 맛선택 -->
-              <tr v-for="(product, index) in state.product.optionCount">
-                <td>맛 선택 {{ index + 1 }}</td>
-                <td>
-                  <select v-model="selectedFlavors[index]">
-                    <option disabled value="">맛을 선택하세요</option>
-                    <option v-for="flavor in state.flavorList" :key="flavor" :value="flavor">
-                      {{ flavor.name }}
-                    </option>
-                  </select>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!--          <div class="total-price">-->
-          <!--            <strong>TOTAL:</strong>-->
-          <!--            <span>{{ formatPrice(price * quantity) }}</span>-->
-          <!--          </div>-->
-
-          <div class="action-buttons">
-            <button class="btn-buy">구매하기</button>
-            <button class="btn-cart" @click="addCart">장바구니 담기</button>
-          </div>
+        <!-- 버튼 -->
+        <div class="button-group">
+          <button class="btn-primary">구매하기</button>
+          <button class="btn-secondary" @click="addCart">장바구니</button>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="detail-tab-wrapper">
-    <!--상세정보/후기/문의 탭-->
-    <el-tabs v-model="activeTab" class="product-tabs" stretch>
+    <!-- 상세 정보 탭 -->
+    <el-tabs v-model="activeTab" class="detail-tab">
       <el-tab-pane label="상세정보" name="detail">
-        <!-- 상세정보 콘텐츠 -->
-        <div class="tab-content">
-          <div v-html="state.product.details"></div>
-        </div>
+        <div class="tab-content" v-html="state.product.details"></div>
       </el-tab-pane>
-
-      <!--      <el-tab-pane :label="`상품후기 (${reviewCount})`" name="review">-->
-      <!--        &lt;!&ndash; 상품후기 콘텐츠 &ndash;&gt;-->
-      <!--        <div class="tab-content">-->
-      <!--          <p>작성된 후기가 없습니다.</p>-->
-      <!--        </div>-->
-      <!--      </el-tab-pane>-->
-
-      <el-tab-pane :label="`배송정보`" name="qna">
-        <!-- 상품문의 콘텐츠 (${qnaCount}) -->
+      <el-tab-pane label="배송정보" name="shipping">
         <div class="tab-content">
           <p>등록된 문의가 없습니다.</p>
         </div>
@@ -106,138 +57,85 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, defineProps, reactive, onMounted } from 'vue'
+import { ref, reactive, defineProps, onMounted } from 'vue'
 import { container } from 'tsyringe'
 import ProductRepository from '@/repository/ProductRepository'
-import Product from '@/entity/product/Product'
-import CategoryRepository from '@/repository/CategoryRepository'
-import Category from '@/entity/product/Category'
 import FlavorRepository from '@/repository/FlavorRepository'
-import Flavor from '@/entity/product/Flavor'
+import CategoryRepository from '@/repository/CategoryRepository'
 import OrderRepository from '@/repository/OrderRepository'
+import Product from '@/entity/product/Product'
+import Flavor from '@/entity/product/Flavor'
+import Category from '@/entity/product/Category'
 import RequestProduct from '@/entity/order/RequestProduct'
 
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
-const CATEGORY_REPOSITORY = container.resolve(CategoryRepository)
 const FLAVOR_REPOSITORY = container.resolve(FlavorRepository)
+const CATEGORY_REPOSITORY = container.resolve(CategoryRepository)
 const ORDER_REPOSITORY = container.resolve(OrderRepository)
+
 const selectedFlavors = ref<string[]>([])
-const props = defineProps<{
-  productId: number
-}>()
+const activeTab = ref('detail')
+const imageUrl = ref('/g1.JPG')
 
-type StateType = {
-  product: Product
-  category: Category
-  flavorList: Flavor[]
-  requestProduct: RequestProduct
-}
+const props = defineProps<{ productId: number }>()
 
-const state = reactive<StateType>({
+const state = reactive({
   product: new Product(),
   category: new Category(),
-  flavorList: [],
+  flavorList: [] as Flavor[],
   requestProduct: new RequestProduct(),
 })
 
-// 상품 조회
-function get(productId) {
-  PRODUCT_REPOSITORY.get(productId).then((product) => {
-    state.product = product
-    console.log('product : ' + JSON.stringify(state.product, null, 2))
-  })
-}
-get(props.productId)
+PRODUCT_REPOSITORY.get(props.productId).then((product) => (state.product = product))
+FLAVOR_REPOSITORY.getAll().then((flavors) => (state.flavorList = flavors))
+CATEGORY_REPOSITORY.getAll().then((res) => (state.category = res))
 
-// 맛 옵션 조회
-function getFlavors() {
-  FLAVOR_REPOSITORY.getAll().then((flavors) => {
-    state.flavorList = flavors
-  })
-}
-getFlavors()
-
-const imageUrl = ref('/g1.JPG')
-const activeTab = ref('detail')
-
-onMounted(() => {
-  CATEGORY_REPOSITORY.getAll().then((res) => {
-    state.category = res
-  })
-})
-
-// 장바구니
 function addCart() {
   state.requestProduct.productId = state.product.id
   state.requestProduct.count = 1
   state.requestProduct.flavors.length = 0
-  selectedFlavors.value.forEach((flavor) => {
-    console.log('@@')
-    state.requestProduct.flavors.push(flavor.name)
-  })
-
+  selectedFlavors.value.forEach((flavor) => state.requestProduct.flavors.push(flavor.name))
   ORDER_REPOSITORY.addCart(state.requestProduct)
 }
 </script>
 
 <style scoped>
-@import url('https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
-
-.nomal-font {
-  font-weight: normal;
-  text-align: left;
+.product-detail-wrapper {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 16px;
+  font-family: 'Pretendard', sans-serif;
 }
 
-.important-font {
-  font-weight: bold;
-  text-align: left;
-}
-.order-section {
-  border-top: 1px solid #ccc;
-}
-ul {
-  padding-left: 0;
-  margin: 0; /* 필요에 따라 */
-  list-style: none;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-.detail-area-wrapper {
-  display: flex;
-  justify-content: center;
-}
-
-.detail-tab-wrapper {
-  justify-items: center;
-}
-
-.detail-area {
+.product-detail {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
-  padding: 2rem;
-  color: #333;
-  line-height: 1.6;
-  max-width: 1200px;
-  width: 100%;
+  gap: 40px;
 }
 
-.product-tabs {
-  padding: 2rem;
-  max-width: 1200px;
-  justify-content: center !important;
-  width: 100%;
-}
-
-.img-area {
+.image-area {
   flex: 1;
   min-width: 300px;
+}
+
+.main-image {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.thumb-list {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.thumb-image {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
 }
 
 .info-area {
@@ -245,94 +143,98 @@ ul {
   min-width: 300px;
 }
 
-.big-image {
-  width: 100%;
-  max-width: 550px;
-  border: 1px solid #ddd;
-}
-
-#zoomMouseGuide img {
-  width: 170px;
-  position: absolute;
-  top: -27px;
-  right: 0;
-}
-
-.thumb-list {
-  margin-top: 1rem;
-}
-
-.thumb-list img {
-  width: 80px;
-  border: 1px solid #eee;
-}
-
-.heading-area h1 {
+.product-title {
   font-size: 24px;
   font-weight: 700;
+  margin-bottom: 12px;
 }
 
-.delivery {
-  color: #777;
+.product-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 16px;
+}
+
+.product-meta {
   font-size: 14px;
+  color: #666;
+  margin-bottom: 24px;
 }
 
-.product-detail {
-  width: 100%;
-  margin-top: 1rem;
-  border-collapse: collapse;
-}
-
-.product-detail th,
-.product-detail td {
-  padding: 0.6rem;
-  font-size: 13px;
-}
-
-.order-list {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.order-list th,
-.order-list td {
-  padding: 0.75rem;
-  font-size: 14px;
-}
-
-.total-price {
-  margin-top: 1rem;
-  font-size: 1.2rem;
-}
-
-.action-buttons {
-  margin-top: 1.5rem;
-}
-
-.action-buttons button {
-  background: #111;
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  margin-right: 1rem;
-  cursor: pointer;
+.product-meta dt {
   font-weight: 500;
-  transition: background 0.3s;
+  margin-right: 8px;
 }
 
-.action-buttons button:hover {
-  background: #444;
+.product-meta div {
+  display: flex;
+  margin-bottom: 6px;
+}
+
+.flavor-select {
+  margin-bottom: 12px;
+}
+
+.flavor-select label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
 }
 
 select {
-  border: 1px solid #ccc; /* 얇은 1px, 연한 회색 */
-  border-radius: 4px; /* 모서리 둥글게 (선택사항) */
-  padding: 0.1rem; /* 내부 여백 */
-  outline: none; /* 포커스 시 기본 파란 테두리 제거 */
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
 }
 
-select:focus {
-  border-color: #999; /* 선택했을 때 좀 더 진한 회색 */
+.button-group {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background-color: #111;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #444;
+}
+
+.btn-secondary {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #eaeaea;
+}
+
+.detail-tab {
+  margin-top: 60px;
+}
+
+.tab-content {
+  padding: 24px;
+  font-size: 15px;
+  color: #333;
+  line-height: 1.6;
 }
 </style>
