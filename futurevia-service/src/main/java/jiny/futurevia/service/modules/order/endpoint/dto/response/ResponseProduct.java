@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ResponseProduct {
     private Long productId;
+    private String image;
     private String productName;
     private Long price;
     private Integer count;

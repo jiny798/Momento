@@ -49,6 +49,7 @@ public class CartService {
             ResponseProduct responseProduct = ResponseProduct.builder()
                     .productId(product.getId())
                     .productName(product.getTitle())
+                    .image(!product.getImageUrls().isEmpty() ? product.getImageUrls().get(0) : null)
                     .price(product.getPrice())
                     .count(cart.getCount())
                     .option(cart.getOption())

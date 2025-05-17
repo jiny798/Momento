@@ -5,7 +5,7 @@ import NewArrivals from '@/components/NewArrivals.vue'
 
 <template>
   <div>
-    <MainBanner></MainBanner>
+    <!--    <MainBanner></MainBanner>-->
     <NewArrivals></NewArrivals>
   </div>
 </template>

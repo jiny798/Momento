@@ -1,30 +1,51 @@
+<template>
+  <header class="header-wrapper">
+    <nav class="header-nav">
+      <router-link to="/" class="logo">
+        <el-icon><IceCream /></el-icon>
+        <span class="brand">Momento</span>
+      </router-link>
+
+      <router-link to="/products" class="nav-link">Shop</router-link>
+
+      <div class="nav-right">
+        <template v-if="state.profile">
+          <!--          <router-link to="/cart" class="nav-icon">-->
+          <!--            <el-icon><ShoppingCart /></el-icon>-->
+          <!--          </router-link>-->
+          <el-dropdown>
+            <span class="user-menu">{{ state.profile.nickname }}</span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="router.push('/cart')"> 장바구니 </el-dropdown-item>
+                <el-dropdown-item @click="router.push('/profile')">마이페이지</el-dropdown-item>
+                <el-dropdown-item divided @click="logout">로그아웃</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+        <template v-else>
+          <el-button size="small" @click="router.push('/login')">로그인</el-button>
+        </template>
+      </div>
+    </nav>
+  </header>
+</template>
+
 <script lang="ts" setup>
-import { onBeforeMount, reactive, ref } from 'vue'
+import { onBeforeMount, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { container } from 'tsyringe'
 import type UserProfile from '@/entity/user/UserProfile'
 import UserRepository from '@/repository/UserRepository'
 import ProfileRepository from '@/repository/ProfileRepository'
+import { IceCream, ShoppingCart } from '@element-plus/icons-vue'
 
 const USER_REPOSITORY = container.resolve(UserRepository)
 const PROFILE_REPOSITORY = container.resolve(ProfileRepository)
-
 const router = useRouter()
-const activeIndex = ref('1')
-const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-  if (key === '4-3') {
-    router.push('/login')
-  }
-}
 
-type StateType = {
-  profile: UserProfile | null
-}
-
-const state = reactive<StateType>({
-  profile: null,
-})
+const state = reactive<{ profile: UserProfile | null }>({ profile: null })
 
 onBeforeMount(() => {
   USER_REPOSITORY.getProfile().then((profile) => {
@@ -32,66 +53,68 @@ onBeforeMount(() => {
     state.profile = profile
   })
 })
+
+function logout() {
+  console.log('로그아웃 처리')
+  state.profile = null
+  router.push('/')
+}
 </script>
 
-<template>
-  <div class="header">
-    <el-menu
-      :ellipsis="false"
-      :default-active="activeIndex"
-      class="el-menu-demo header-menu"
-      mode="horizontal"
-      @select="handleSelect"
-    >
-      <el-menu-item index="1">
-        <router-link to="/">
-          <el-icon> <IceCream /></el-icon>
-          Momento
-        </router-link>
-      </el-menu-item>
-      <el-menu-item class="food-menu" index="2">
-        <router-link to="/products">Gelato & Cookie</router-link>
-      </el-menu-item>
+<style scoped>
+.header-wrapper {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 12px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
 
-      <div class="menu-spacer"></div>
-
-      <el-sub-menu index="4">
-        <template #title>내정보</template>
-        <el-menu-item index="4-1">주문내역</el-menu-item>
-        <el-menu-item v-if="state.profile !== null" index="4-2">프로필</el-menu-item>
-        <el-menu-item v-if="state.profile === null" index="4-3">
-          <router-link to="/login">로그인</router-link>
-        </el-menu-item>
-        <el-menu-item index="4-4" v-if="state.profile !== null">로그아웃</el-menu-item>
-      </el-sub-menu>
-    </el-menu>
-  </div>
-</template>
-
-<style scoped lang="scss">
-.custom-disabled {
-  pointer-events: none; /* 클릭 방지 */
-  color: #606266 !important; /* 기본 색상 유지 */
-  opacity: 1 !important; /* 흐려지지 않도록 설정 */
+.header-nav {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .logo {
-  width: 52px;
-  object-fit: cover;
-}
-
-.title {
-  font-size: 2rem;
-  font-weight: 300;
-  margin-left: 5px;
-}
-
-.header-menu {
   display: flex;
   align-items: center;
+  gap: 6px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  text-decoration: none;
 }
 
-.menu-spacer {
-  flex-grow: 2;
+.nav-link {
+  margin-left: 24px;
+  font-size: 15px;
+  color: #444;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: #222;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-icon {
+  font-size: 18px;
+  color: #333;
+}
+
+.user-menu {
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
 }
 </style>

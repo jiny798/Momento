@@ -38,7 +38,7 @@ public class OrderController {
     }
 
     @GetMapping("/cart")
-    public List<ResponseProduct> showCartList(@AuthenticationPrincipal Account account, @RequestBody RequestProduct requestProduct) {
+    public List<ResponseProduct> showCartList(@AuthenticationPrincipal Account account) {
         return cartService.getCartList(account.getId());
     }
 

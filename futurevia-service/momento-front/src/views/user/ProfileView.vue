@@ -1,72 +1,56 @@
 <template>
-  <el-card class="mypage-container">
-    <!-- 프로필 정보 영역 -->
-    <div class="profile-info">
-      <el-avatar :size="80" icon="UserFilled" class="avatar" />
-
-      <div class="info-text">
-        <h3>{{ user.nickname }}</h3>
-        <p>{{ user.email }}</p>
-        <el-tag type="success" size="small">{{ user.grade }}</el-tag>
+  <div class="mypage-container">
+    <!-- 프로필 정보 -->
+    <section class="profile-section">
+      <div class="profile-left">
+        <el-avatar :size="72" icon="UserFilled" class="avatar" />
+        <div class="info-text">
+          <h3>{{ user.nickname }}</h3>
+          <p class="email">{{ user.email }}</p>
+        </div>
       </div>
+      <el-button class="edit-btn" size="small" @click="goToProfileEdit">프로필 수정</el-button>
+    </section>
 
-      <!-- 프로필 수정 버튼 -->
-      <el-button class="edit-profile-btn" type="primary" size="small" @click="goToProfileEdit"> 프로필 수정 </el-button>
-    </div>
+    <!-- 상단 요약 정보 -->
+    <section class="summary-section">
+      <div class="summary-item" v-for="(value, key) in summary" :key="key">
+        <p class="label">{{ keyLabel(key) }}</p>
+        <p class="value">{{ value }}</p>
+      </div>
+    </section>
 
-    <!-- 요약 박스 -->
-    <div class="summary-box">
-      <el-card class="summary-item" shadow="hover">
-        <div class="label">주문</div>
-        <div class="value">{{ summary.orders }}</div>
-      </el-card>
-      <el-card class="summary-item" shadow="hover">
-        <div class="label">쿠폰</div>
-        <div class="value">{{ summary.coupons }}</div>
-      </el-card>
-      <el-card class="summary-item" shadow="hover">
-        <div class="label">적립금</div>
-        <div class="value">{{ summary.points }}</div>
-      </el-card>
-      <el-card class="summary-item" shadow="hover">
-        <div class="label">리뷰</div>
-        <div class="value">{{ summary.reviews }}</div>
-      </el-card>
-    </div>
-
-    <!-- 탭 리스트 -->
-    <el-tabs v-model="state.activeTab" type="border-card" class="tabs">
+    <!-- 탭 영역 -->
+    <el-tabs v-model="state.activeTab" class="tabs" stretch>
       <el-tab-pane label="구매내역" name="orders">
         <el-table :data="state.orderList" stripe style="width: 100%">
-          <el-table-column prop="date" label="구매일자" width="180" />
+          <el-table-column prop="date" label="구매일자" width="160" />
           <el-table-column prop="product" label="상품명" />
-          <el-table-column prop="price" label="금액" width="120" />
+          <el-table-column prop="price" label="금액" width="100" />
           <el-table-column prop="status" label="상태" width="100" />
         </el-table>
       </el-tab-pane>
 
       <el-tab-pane label="문의내역" name="inquiries">
         <el-table :data="state.inquiryList" stripe style="width: 100%">
-          <el-table-column prop="date" label="문의일자" width="180" />
+          <el-table-column prop="date" label="문의일자" width="160" />
           <el-table-column prop="subject" label="제목" />
-          <el-table-column prop="status" label="답변상태" width="100" />
+          <el-table-column prop="status" label="상태" width="100" />
         </el-table>
       </el-tab-pane>
     </el-tabs>
-  </el-card>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { reactive } from 'vue'
 
-// 사용자 프로필 정보
 const user = reactive({
   email: 'user@example.com',
   nickname: '모멘토유저',
   grade: '일반회원',
 })
 
-// 상단 요약 정보
 const summary = reactive({
   orders: 3,
   coupons: 2,
@@ -74,7 +58,6 @@ const summary = reactive({
   reviews: 1,
 })
 
-// 탭 리스트 데이터
 const state = reactive({
   activeTab: 'orders',
   orderList: [
@@ -87,77 +70,85 @@ const state = reactive({
   ],
 })
 
-// 프로필 수정 버튼 클릭
-const goToProfileEdit = () => {
+function goToProfileEdit() {
   alert('프로필 수정 페이지 진입')
-  // useRouter().push('/settings/profile')
+}
+
+function keyLabel(key: string) {
+  const map = { orders: '주문', coupons: '쿠폰', points: '포인트', reviews: '리뷰' }
+  return map[key as keyof typeof map] || key
 }
 </script>
 
 <style scoped>
 .mypage-container {
-  max-width: 860px;
-  margin: 40px auto;
-  padding: 30px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 16px;
+  font-family: 'Pretendard', sans-serif;
+  color: #222;
 }
 
-.profile-info {
+.profile-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.profile-left {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 30px;
 }
 
 .avatar {
-  margin-right: 20px;
-  background-color: #f5f7fa;
-}
-
-.info-text {
-  flex-grow: 1;
+  background-color: #f5f5f5;
+  margin-right: 16px;
 }
 
 .info-text h3 {
   margin: 0;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 600;
 }
 
-.info-text p {
-  margin: 4px 0 8px;
+.email {
+  margin-top: 4px;
+  font-size: 14px;
   color: #666;
 }
 
-.edit-profile-btn {
-  margin-left: auto;
-  align-self: flex-start;
-  height: 32px;
+.edit-btn {
+  font-weight: 500;
 }
 
-.summary-box {
+.summary-section {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 30px;
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 32px;
+  text-align: center;
 }
 
 .summary-item {
   flex: 1;
-  text-align: center;
-  padding: 16px 0;
 }
 
-.summary-item .label {
-  font-size: 14px;
-  color: #888;
+.label {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 6px;
 }
 
-.summary-item .value {
-  font-size: 20px;
-  font-weight: bold;
-  margin-top: 6px;
+.value {
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .tabs {
-  margin-top: 20px;
+  background-color: #fff;
+  border: none;
 }
 </style>

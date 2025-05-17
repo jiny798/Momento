@@ -30,4 +30,9 @@ import Content from '@/components/Content.vue'
 html {
   font-size: 16px;
 }
+
+a {
+  text-decoration: none;
+  color: inherit; /* 선택사항: 기본 색상도 유지 */
+}
 </style>
