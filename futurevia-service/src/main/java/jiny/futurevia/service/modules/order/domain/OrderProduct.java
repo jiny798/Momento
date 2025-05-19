@@ -43,11 +43,7 @@ public class OrderProduct {
         return getOrderPrice() * getCount();
     }
 
-    public void addOption(List<String> flavors) {
-        if(flavors != null && !flavors.isEmpty()) {
-            for(String flavor : flavors) {
-                option += flavor;
-            }
-        }
+    public void addOption(String options) {
+        this.option = options;
     }
 }

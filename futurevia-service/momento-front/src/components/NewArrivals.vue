@@ -126,6 +126,7 @@ const products: Product[] = [
 }
 
 .hero-image {
+  max-width: 1100px;
   width: 100%;
   max-height: 320px;
   object-fit: cover;

@@ -1,32 +1,26 @@
 <template>
-  <div class="list-header">
-    <p class="prd-count">총 <strong>x</strong>개의 상품이 있습니다.</p>
-    <!--{{ products.length }} -->
-  </div>
-
   <section>
+    <div class="category-title">
+      {{ categoryTitle }}
+    </div>
+
     <ul class="product-grid">
       <li v-for="product in state.productPage.items" :key="product.id" class="product-item">
         <div class="thumbnail">
           <a @click="goProductDetail(product.id)" style="cursor: pointer">
-            <img :src="product.images?.[0]" class="product-image" alt="" />
+            <img :src="product.images?.[0]" class="product-image" alt="상품 이미지" />
           </a>
-          <div class="icon__box">
-            <!--            <span class="wish"-->
-            <!--              ><el-icon><ShoppingCart /></el-icon-->
-            <!--            ></span>-->
-          </div>
         </div>
         <div class="description">
           <div class="name">
             <a>{{ product.title }}</a>
           </div>
-          <p class="price">{{ product.price }} 원</p>
+          <p class="price">{{ product.price.toLocaleString() }}원</p>
         </div>
       </li>
     </ul>
 
-    <div style="width: 100%; display: flex; justify-content: center">
+    <div class="pagination">
       <el-pagination
         :background="true"
         layout="prev, pager, next"
@@ -43,16 +37,14 @@
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Paging from '@/entity/data/Paging'
-import type Post from '@/entity/post/Post'
-import { container } from 'tsyringe'
-import ProductRepository from '@/repository/ProductRepository'
 import type Product from '@/entity/product/Product'
+import ProductRepository from '@/repository/ProductRepository'
+import { container } from 'tsyringe'
 
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
 const router = useRouter()
-
+const categoryTitle = ref('전체 상품') // 여기서 동적으로 변경 가능
 function goProductDetail(productId: number) {
-  console.log('productId: ' + productId)
   router.push({ name: 'product', params: { productId } })
 }
 
@@ -60,7 +52,6 @@ type StateType = {
   productPage: Paging<Product>
 }
 
-const selectedSort = ref('')
 const state = reactive<StateType>({
   productPage: new Paging<Product>(),
 })
@@ -68,7 +59,6 @@ const state = reactive<StateType>({
 function getList(page = 1) {
   PRODUCT_REPOSITORY.getList(page).then((responsePage) => {
     state.productPage = responsePage
-    console.log('productList ' + JSON.stringify(state.productPage.items[0], null, 2))
   })
 }
 
@@ -78,95 +68,74 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.category-title {
+  text-align: center;
+  font-size: 21px;
+  font-weight: 500;
+  margin-top: 50px;
+  margin-bottom: 15px;
+  color: #222;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+}
+
 ul {
   padding-left: 0;
-  margin: 0; /* 필요에 따라 */
+  margin: 0;
   list-style: none;
 }
 
 .product-grid {
-  max-width: 1200px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 40px 20px;
-
+  padding: 48px 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 2fr));
-  gap: 30px;
-}
-
-.list-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  font-size: 14px;
-  margin: 10px 20px 0 25px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 40px;
 }
 
 .product-item {
-  max-width: 295px;
-  border-radius: 6px;
+  border-radius: 12px;
   overflow: hidden;
-  background: #fff;
+  background: #ffffff;
+  box-shadow: 0 0 0 transparent;
+  transition: box-shadow 0.2s ease;
+}
+
+.product-item:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
 }
 
 .product-image {
   width: 100%;
-  display: block;
+  height: 240px;
   object-fit: cover;
-}
-
-.thumbnail {
-  position: relative;
-}
-
-.thumbnail img {
-  width: 100%;
-  display: block;
-}
-
-.icon__box {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  display: flex;
-  gap: 8px;
-}
-
-.icon__box span {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid #ccc;
-  font-size: 12px;
-  padding: 2px 6px;
-  cursor: pointer;
-  border-radius: 3px;
+  border-bottom: 1px solid #eee;
 }
 
 .description {
-  margin: 13px 0 0 0;
-  padding: 0;
-  line-height: 18px;
-  text-align: left;
-  color: #000000;
-  font-family: 'Montserrat', 'Noto Sans KR', Arial, sans-serif !important;
+  padding: 16px;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  color: #111;
 }
 
-.name {
-  font-size: 15px;
-}
-
-.sort {
-  align-content: center;
+.name a {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #111;
+  text-decoration: none;
 }
 
 .price {
-  margin: 10px 0 0 0;
-  font-weight: bold;
-  font-size: 14px;
-  color: #000;
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  color: #1e1e1e;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
+  padding: 40px 0;
 }
 </style>

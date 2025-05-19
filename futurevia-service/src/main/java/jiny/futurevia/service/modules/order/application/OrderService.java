@@ -40,14 +40,13 @@ public class OrderService {
 
         for (RequestProduct requestProduct : requestProducts) {
             Product product = productRepository.findById(requestProduct.getProductId()).orElseThrow(ProductNotFound::new);
-            List<String> flavors = requestProduct.getFlavors();
+            String option = requestProduct.getOptions();
 
             // 주문상품에 대한 정보 저장
             OrderProduct orderProduct = OrderProduct.createOrderProduct(product, product.getPrice(), requestProduct.getCount());
             // 주문상품의 맛 추가
-            if (flavors != null && !flavors.isEmpty()) {
-                orderProduct.addOption(flavors);
-            }
+            orderProduct.addOption(option);
+
             // 주문상품 추가
             orderProducts.add(orderProduct);
             // 주문 생성

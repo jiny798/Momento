@@ -38,7 +38,9 @@
             <p class="price">{{ formatPrice(item.price * item.count) }}원</p>
           </div>
         </div>
-        <el-icon @click="removeItem(item.id)" class="remove-btn"><delete /></el-icon>
+        <el-icon @click="removeItem(item.id)" class="remove-btn">
+          <delete />
+        </el-icon>
       </div>
     </section>
 
@@ -81,19 +83,16 @@
 import { reactive, ref, computed } from 'vue'
 import { container } from 'tsyringe'
 import OrderRepository from '@/repository/OrderRepository'
-import type ProductInCart from '@/entity/product/ProductInCart'
+import type ProductInCart from '@/entity/order/ProductInCart'
 import { Delete } from '@element-plus/icons-vue'
+import type RequestOrder from '@/entity/order/RequestOrder'
+import RequestProduct from '@/entity/order/RequestProduct'
 
 const ORDER_REPOSITORY = container.resolve(OrderRepository)
-
 const cartItems = reactive<ProductInCart[]>([])
-function getList() {
-  ORDER_REPOSITORY.getCart().then((responseArr) => {
-    cartItems.splice(0, cartItems.length, ...responseArr)
-  })
-}
-getList()
-
+const requestOrder = reactive<RequestOrder>({
+  requestProductList: [],
+})
 const buyer = reactive({
   name: '홍길동',
   address: '서울특별시 강남구 테헤란로 123',
@@ -101,16 +100,36 @@ const buyer = reactive({
   request: '',
 })
 
+function getList() {
+  ORDER_REPOSITORY.getCart().then((responseArr) => {
+    cartItems.splice(0, cartItems.length, ...responseArr)
+  })
+}
+
+getList()
+
 const formatPrice = (amount: number) => amount.toLocaleString()
 const totalAmount = computed(() => cartItems.reduce((sum, item) => sum + item.price * item.count, 0))
 
 function updateQuantity(item: ProductInCart) {}
+
 function removeItem(id: number) {
   const index = cartItems.findIndex((item) => item.id === id)
   if (index !== -1) cartItems.splice(index, 1)
 }
+
 function goToPayment() {
   console.log('결제 요청')
+  for (var i = 0; i < cartItems.length; i++) {
+    let req = new RequestProduct()
+    req.productId = cartItems[i].productId
+    req.count = cartItems[i].count
+    req.option = cartItems[i].option
+    requestOrder.requestProductList.push(req)
+    // console.log('req ' + JSON.stringify(req))
+  }
+  console.log('request Order ' + JSON.stringify(requestOrder.requestProductList))
+  ORDER_REPOSITORY.order(requestOrder)
 }
 
 const couponList = ref([
@@ -124,6 +143,7 @@ function applyCoupon(code: string) {
   const selected = couponList.value.find((c) => c.code === code)
   discountAmount.value = selected?.amount ?? 0
 }
+
 const finalAmount = computed(() => totalAmount.value - discountAmount.value)
 </script>
 
@@ -208,6 +228,7 @@ const finalAmount = computed(() => totalAmount.value - discountAmount.value)
   cursor: pointer;
   transition: color 0.2s;
 }
+
 .remove-btn:hover {
   color: #f56c6c;
 }
@@ -227,10 +248,12 @@ const finalAmount = computed(() => totalAmount.value - discountAmount.value)
   justify-content: space-between;
   margin-bottom: 12px;
 }
+
 .summary-row.total {
   font-size: 18px;
   font-weight: 700;
 }
+
 .discount {
   color: #f56c6c;
 }

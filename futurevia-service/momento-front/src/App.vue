@@ -35,4 +35,10 @@ a {
   text-decoration: none;
   color: inherit; /* 선택사항: 기본 색상도 유지 */
 }
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 </style>

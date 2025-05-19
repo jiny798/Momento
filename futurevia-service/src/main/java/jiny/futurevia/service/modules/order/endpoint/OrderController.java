@@ -23,6 +23,7 @@ public class OrderController {
 
     @PostMapping("/order")
     public void order(@AuthenticationPrincipal Account account, @RequestBody RequestOrder requestOrder) {
+        log.info("Order requested: {}", requestOrder);
         orderService.order(account.getId(), requestOrder);
     }
 

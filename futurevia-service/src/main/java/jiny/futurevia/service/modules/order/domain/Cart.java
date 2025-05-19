@@ -37,13 +37,8 @@ public class Cart {
         return cart;
     }
 
-    public void addOption(List<String> flavors) {
-        if (flavors != null && !flavors.isEmpty()) {
-            for (String flavor : flavors) {
-                option += flavor + ",";
-            }
-            option = option.substring(0, option.length() - 1);
-        }
+    public void addOption(String options) {
+        option = options;
     }
 
 }

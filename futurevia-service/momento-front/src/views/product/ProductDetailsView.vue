@@ -93,8 +93,8 @@ CATEGORY_REPOSITORY.getAll().then((res) => (state.category = res))
 function addCart() {
   state.requestProduct.productId = state.product.id
   state.requestProduct.count = 1
-  state.requestProduct.flavors.length = 0
-  selectedFlavors.value.forEach((flavor) => state.requestProduct.flavors.push(flavor.name))
+  state.requestProduct.option = ''
+  selectedFlavors.value.forEach((flavor) => (state.requestProduct.option += flavor))
   ORDER_REPOSITORY.addCart(state.requestProduct)
 }
 </script>

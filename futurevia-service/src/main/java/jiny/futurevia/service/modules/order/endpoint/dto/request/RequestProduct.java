@@ -12,5 +12,5 @@ import java.util.List;
 public class RequestProduct {
     private Long productId;
     private Integer count;
-    private List<String> flavors;
+    private String options;
 }

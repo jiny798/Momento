@@ -32,10 +32,10 @@ public class CartService {
         Account account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
 
         Product product = productRepository.findById(requestProduct.getProductId()).orElseThrow(ProductNotFound::new);
-        List<String> flavors = requestProduct.getFlavors();
+        String options = requestProduct.getOptions();
 
         Cart cart = Cart.create(account, product.getId(), requestProduct.getCount());
-        cart.addOption(flavors);
+        cart.addOption(options);
 
         cartRepository.save(cart);
     }
