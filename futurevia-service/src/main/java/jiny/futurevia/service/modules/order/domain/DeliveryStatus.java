@@ -1,5 +1,5 @@
 package jiny.futurevia.service.modules.order.domain;
 
 public enum DeliveryStatus {
-    CART, READY, COMP
+    CART, READY, COMP, CANCELLED;
 }

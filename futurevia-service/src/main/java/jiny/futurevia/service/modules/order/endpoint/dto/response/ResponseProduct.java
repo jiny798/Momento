@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.util.List;
 
+/*
+ * 상품 목록에 보여줄 DTO
+ */
 @Getter
 @ToString
 @Builder

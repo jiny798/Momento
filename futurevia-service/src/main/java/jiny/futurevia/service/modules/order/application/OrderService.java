@@ -11,6 +11,7 @@ import jiny.futurevia.service.modules.order.domain.Order;
 import jiny.futurevia.service.modules.order.domain.OrderProduct;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestOrder;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestProduct;
+import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseOrderProduct;
 import jiny.futurevia.service.modules.order.infra.repository.OrderRepository;
 import jiny.futurevia.service.modules.product.domain.Product;
 import jiny.futurevia.service.modules.product.infra.repository.FlavorRepository;
@@ -62,17 +63,33 @@ public class OrderService {
         return order.getId();
     }
 
-    private static Delivery generateDelivery(Account account, DeliveryStatus deliveryStatus) {
-        Delivery delivery = new Delivery();
-        delivery.setAddress(account.getAddress());
-        delivery.setStatus(deliveryStatus);
-        return delivery;
-    }
-
     @Transactional
     public void cancelOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFound::new);
         order.cancel();
     }
 
+    public List<ResponseOrderProduct> getOrderProducts(Long accountId) {
+        Account account = accountRepository.findById(accountId).orElseThrow(UserNotFound::new);
+        List<Order> orders = account.getOrders();
+        List<ResponseOrderProduct> responseOrderProducts = orders.stream()
+                        .map(order -> {
+                            return new ResponseOrderProduct(
+                                    order.getId(),
+                                    order.getOrderDate(),
+                                    order.getStatus(),
+                                    order.getDelivery().getStatus(),
+                                    order.getTotalPrice()
+                            );
+                        }).toList();
+
+        return responseOrderProducts;
+    }
+
+    private static Delivery generateDelivery(Account account, DeliveryStatus deliveryStatus) {
+        Delivery delivery = new Delivery();
+        delivery.setAddress(account.getAddress());
+        delivery.setStatus(deliveryStatus);
+        return delivery;
+    }
 }

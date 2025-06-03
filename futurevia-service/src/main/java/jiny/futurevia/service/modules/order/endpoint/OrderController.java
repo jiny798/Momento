@@ -5,6 +5,7 @@ import jiny.futurevia.service.modules.order.application.CartService;
 import jiny.futurevia.service.modules.order.application.OrderService;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestOrder;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestProduct;
+import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseOrderProduct;
 import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +29,8 @@ public class OrderController {
     }
 
     @GetMapping("/order")
-    public void showOrderList(@AuthenticationPrincipal Account account, @RequestBody RequestOrder requestOrder) {
-        // READY 상태, COMPLETE 상태 보여주기
+    public List<ResponseOrderProduct> showOrderList(@AuthenticationPrincipal Account account, @RequestBody RequestOrder requestOrder) {
+        return orderService.getOrderProducts(account.getId());
     }
 
     @PostMapping("/cart")
