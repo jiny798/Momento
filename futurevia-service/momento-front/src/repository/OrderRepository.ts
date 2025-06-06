@@ -3,6 +3,8 @@ import HttpRepository from '@/repository/HttpRepository'
 import type RequestProduct from '@/entity/order/RequestProduct'
 import ProductInCart from '@/entity/order/ProductInCart'
 import type RequestOrder from '@/entity/order/RequestOrder'
+import ResponseOrderProduct from '@/entity/order/OrderProduct'
+import OrderProduct from '@/entity/order/OrderProduct'
 
 @singleton()
 export default class OrderRepository {
@@ -30,5 +32,17 @@ export default class OrderRepository {
       path: '/api/order',
       body: request,
     })
+  }
+
+  public getOrders(startDate: Date, endDate: Date) {
+    const start = startDate.toISOString().slice(0, 10) // 'yyyy-MM-dd'
+    const end = endDate.toISOString().slice(0, 10)
+
+    return this.httpRepository.getAll<ResponseOrderProduct>(
+      {
+        path: `/api/order?startDate=${encodeURIComponent(start)}&endDate=${encodeURIComponent(end)}`,
+      },
+      ResponseOrderProduct,
+    )
   }
 }

@@ -5,8 +5,8 @@
       <div class="profile-left">
         <el-avatar :size="72" icon="UserFilled" class="avatar" />
         <div class="info-text">
-          <h3>{{ user.nickname }}</h3>
-          <p class="email">{{ user.email }}</p>
+          <h3>{{ state.user.nickname }}</h3>
+          <p class="email">{{ state.user.email }}</p>
         </div>
       </div>
       <el-button class="edit-btn" size="small" @click="goToProfileEdit">프로필 수정</el-button>
@@ -23,32 +23,132 @@
     <!-- 탭 영역 -->
     <el-tabs v-model="state.activeTab" class="tabs" stretch>
       <el-tab-pane label="구매내역" name="orders">
-        <el-table :data="state.orderList" stripe style="width: 100%">
-          <el-table-column prop="date" label="구매일자" width="160" />
-          <el-table-column prop="product" label="상품명" />
-          <el-table-column prop="price" label="금액" width="100" />
-          <el-table-column prop="status" label="상태" width="100" />
-        </el-table>
+        <!-- 날짜 필터 -->
+        <div class="date-filter">
+          <el-button v-for="(label, key) in dateRanges" :key="key" size="default" @click="filterByPresetRange(key)">
+            {{ label }}
+          </el-button>
+
+          <el-date-picker
+            v-model="selectedRange"
+            type="daterange"
+            unlink-panels
+            range-separator="~"
+            start-placeholder="시작일"
+            end-placeholder="종료일"
+            size="default"
+          />
+          <el-button type="primary" size="default" @click="onSearchByRange">조회</el-button>
+        </div>
+
+        <!-- 주문 목록 -->
+        <div v-for="(order, index) in filteredProductList" :key="index" class="order-card">
+          <div class="order-date">{{ order.getDisplayBuyDate() }}</div>
+
+          <div class="order-products">
+            <div v-for="(name, i) in order.productName" :key="i" class="product-item">
+              <img :src="order.image[i]" alt="상품 이미지" class="product-img" />
+              <div class="product-info">
+                <div class="product-name">{{ name }}</div>
+                <div class="product-count">수량: {{ order.count[i] }}개</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-footer">
+            <div>배송상태: {{ order.deliveryStatus }}</div>
+            <div>총 금액: ₩{{ order.totalPrice.toLocaleString() }}</div>
+          </div>
+        </div>
       </el-tab-pane>
 
       <el-tab-pane label="문의내역" name="inquiries">
-        <el-table :data="state.inquiryList" stripe style="width: 100%">
-          <el-table-column prop="date" label="문의일자" width="160" />
-          <el-table-column prop="subject" label="제목" />
-          <el-table-column prop="status" label="상태" width="100" />
-        </el-table>
+        <!-- 문의내역은 추후 구현 -->
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { onBeforeMount, reactive, ref } from 'vue'
+import { container } from 'tsyringe'
+import OrderRepository from '@/repository/OrderRepository'
+import UserProfile from '@/entity/user/UserProfile'
+import ResponseOrderProduct from '@/entity/order/OrderProduct'
+import ProfileRepository from '@/repository/ProfileRepository'
 
-const user = reactive({
-  email: 'user@example.com',
-  nickname: '모멘토유저',
-  grade: '일반회원',
+const ORDER_REPOSITORY = container.resolve(OrderRepository)
+const PROFILE_REPOSITORY = container.resolve(ProfileRepository)
+
+const today = new Date()
+const oneWeekAgo = new Date()
+oneWeekAgo.setDate(today.getDate() - 7)
+const selectedRange = ref<[Date, Date] | null>([today, today])
+const filteredProductList = ref<ResponseOrderProduct[]>([])
+
+const dateRanges = {
+  week: '1주일',
+  month1: '1개월',
+  month3: '3개월',
+  month6: '6개월',
+}
+
+const state = reactive({
+  user: new UserProfile(),
+  productList: [] as ResponseOrderProduct[],
+  activeTab: 'orders',
+})
+
+function getOrderList(start: Date, end: Date) {
+  ORDER_REPOSITORY.getOrders(start, end).then((orderList) => {
+    state.productList = orderList.map((item) => Object.assign(new ResponseOrderProduct(), item))
+    filteredProductList.value = [...state.productList]
+  })
+}
+
+function filterByPresetRange(type: keyof typeof dateRanges) {
+  const end = new Date()
+  let start = new Date()
+
+  switch (type) {
+    case 'day':
+      start.setDate(end.getDate() - 1)
+      break
+    case 'week':
+      start.setDate(end.getDate() - 7)
+      break
+    case 'month3':
+      start.setMonth(end.getMonth() - 3)
+      break
+    case 'month6':
+      start.setMonth(end.getMonth() - 6)
+      break
+  }
+
+  selectedRange.value = [start, end]
+  applyDateFilter(start, end)
+}
+
+function onSearchByRange() {
+  if (selectedRange.value) {
+    applyDateFilter(selectedRange.value[0], selectedRange.value[1])
+  }
+}
+
+function filterByCustomRange([start, end]: [Date, Date]) {
+  applyDateFilter(start, end)
+}
+
+function applyDateFilter(start: Date, end: Date) {
+  filteredProductList.value = state.productList.filter((item) => {
+    const orderDate = new Date(item.purchaseDate)
+    return orderDate >= start && orderDate <= end
+  })
+}
+
+onBeforeMount(() => {
+  state.user = PROFILE_REPOSITORY.getProfile() || new UserProfile()
+  getOrderList(oneWeekAgo, today)
 })
 
 const summary = reactive({
@@ -56,18 +156,6 @@ const summary = reactive({
   coupons: 2,
   points: '5,000P',
   reviews: 1,
-})
-
-const state = reactive({
-  activeTab: 'orders',
-  orderList: [
-    { date: '2024-04-01', product: '유기농 젤라또 3종', price: '12,000원', status: '배송완료' },
-    { date: '2024-04-15', product: '레몬 젤라또', price: '8,000원', status: '배송중' },
-  ],
-  inquiryList: [
-    { date: '2024-04-05', subject: '배송 언제 오나요?', status: '답변완료' },
-    { date: '2024-04-17', subject: '상품 교환 가능할까요?', status: '처리중' },
-  ],
 })
 
 function goToProfileEdit() {
@@ -150,5 +238,69 @@ function keyLabel(key: string) {
 .tabs {
   background-color: #fff;
   border: none;
+}
+
+.date-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.order-card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  background-color: #fff;
+}
+
+.order-date {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 12px;
+}
+
+.order-products {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+}
+
+.product-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 12px;
+  border: 1px solid #eee;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.product-count {
+  font-size: 14px;
+  color: #888;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-top: 16px;
+  color: #555;
 }
 </style>
