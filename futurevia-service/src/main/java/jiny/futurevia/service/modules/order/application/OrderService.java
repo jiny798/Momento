@@ -91,7 +91,6 @@ public class OrderService {
                                     .map(product -> product.getImageUrls().get(0))
                                     .toList();
 
-
                             List<Long> productIds = products.stream()
                                     .map(Product::getId)
                                     .toList();

@@ -45,4 +45,13 @@ export default class OrderRepository {
       ResponseOrderProduct,
     )
   }
+
+  public cancel() {
+    return this.httpRepository.getAll<ResponseOrderProduct>(
+      {
+        path: `/api/`,
+      },
+      ResponseOrderProduct,
+    )
+  }
 }

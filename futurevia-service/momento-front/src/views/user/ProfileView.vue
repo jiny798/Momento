@@ -58,6 +58,14 @@
           <div class="order-footer">
             <div>배송상태: {{ order.deliveryStatus }}</div>
             <div>총 금액: ₩{{ order.totalPrice.toLocaleString() }}</div>
+            <el-button
+              v-if="order.deliveryStatus === 'READY'"
+              type="danger"
+              size="small"
+              @click="cancelOrder(order.productId)"
+            >
+              주문 취소
+            </el-button>
           </div>
         </div>
       </el-tab-pane>
@@ -83,7 +91,7 @@ const PROFILE_REPOSITORY = container.resolve(ProfileRepository)
 const today = new Date()
 const oneWeekAgo = new Date()
 oneWeekAgo.setDate(today.getDate() - 7)
-const selectedRange = ref<[Date, Date] | null>([today, today])
+const selectedRange = ref<[Date, Date] | null>([oneWeekAgo, today])
 const filteredProductList = ref<ResponseOrderProduct[]>([])
 
 const dateRanges = {
@@ -106,16 +114,21 @@ function getOrderList(start: Date, end: Date) {
   })
 }
 
+function cancelOrder(productId: number[]) {
+  console.log('주문 취소 요청:', productId)
+  alert('주문이 취소되었습니다.')
+}
+
 function filterByPresetRange(type: keyof typeof dateRanges) {
   const end = new Date()
   let start = new Date()
 
   switch (type) {
-    case 'day':
-      start.setDate(end.getDate() - 1)
-      break
     case 'week':
       start.setDate(end.getDate() - 7)
+      break
+    case 'month1':
+      start.setMonth(end.getMonth() - 1)
       break
     case 'month3':
       start.setMonth(end.getMonth() - 3)
@@ -126,24 +139,14 @@ function filterByPresetRange(type: keyof typeof dateRanges) {
   }
 
   selectedRange.value = [start, end]
-  applyDateFilter(start, end)
+  getOrderList(start, end)
 }
 
 function onSearchByRange() {
   if (selectedRange.value) {
-    applyDateFilter(selectedRange.value[0], selectedRange.value[1])
+    const [start, end] = selectedRange.value
+    getOrderList(start, end)
   }
-}
-
-function filterByCustomRange([start, end]: [Date, Date]) {
-  applyDateFilter(start, end)
-}
-
-function applyDateFilter(start: Date, end: Date) {
-  filteredProductList.value = state.productList.filter((item) => {
-    const orderDate = new Date(item.purchaseDate)
-    return orderDate >= start && orderDate <= end
-  })
 }
 
 onBeforeMount(() => {
@@ -299,8 +302,16 @@ function keyLabel(key: string) {
 .order-footer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 14px;
   margin-top: 16px;
   color: #555;
+}
+
+.more-toggle {
+  font-size: 14px;
+  color: #007bff;
+  cursor: pointer;
+  margin-top: 8px;
 }
 </style>

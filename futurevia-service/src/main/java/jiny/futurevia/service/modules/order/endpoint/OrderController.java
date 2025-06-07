@@ -39,6 +39,11 @@ public class OrderController {
         return orderService.getOrderProducts(account.getId(), new OrderDate(startDate, endDate));
     }
 
+    @PostMapping("/order/cancel")
+    public void cancel(@AuthenticationPrincipal Account account, @RequestBody RequestOrder requestOrder) {
+        orderService.cancelOrder(requestOrder.getOrderId());
+    }
+
     @PostMapping("/cart")
     public void addCart(@AuthenticationPrincipal Account account, @RequestBody RequestProduct requestProduct) {
         log.info("add cart {}", requestProduct);

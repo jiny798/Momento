@@ -10,5 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestOrder {
-    List<RequestProduct> requestProductList;
+    private Long orderId;
+    private List<RequestProduct> requestProductList;
 }
