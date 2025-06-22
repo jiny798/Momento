@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import jiny.futurevia.service.modules.account.domain.entity.AccountRole;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,33 +25,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class LoginService {
-	/*** Authenticate ***/
+    /*** Authenticate ***/
 //	private final AuthenticationManager authenticationManager;
-	private final HttpSessionSecurityContextRepository sessionContextRepository = new HttpSessionSecurityContextRepository();
-	private final AccountService accountService;
+    private final HttpSessionSecurityContextRepository sessionContextRepository = new HttpSessionSecurityContextRepository();
+    private final AccountService accountService;
 
-	@Transactional
-	public void login(Account loginAccount, HttpServletRequest request, HttpServletResponse response) {
-		log.info("[LoginService] login");
-		Set<Role> set = loginAccount.getUserRoles();
-		Collection<GrantedAuthority> authorities = new ArrayList<>();
-		for (Role role : set) {
-			System.out.println("role : " + role.getRoleName());
-			authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
-		}
+    @Transactional
+    public void login(Account loginAccount, HttpServletRequest request, HttpServletResponse response) {
+        log.debug("[login] account :  {} ", loginAccount);
+        Set<AccountRole> roleSet = loginAccount.getAccountRoles();
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        for (AccountRole accountRole : roleSet) {
+            log.debug("[login] role : {} ", accountRole.getRole().getRoleName());
+            authorities.add(new SimpleGrantedAuthority(accountRole.getRole().getRoleName()));
+        }
 
-		UsernamePasswordAuthenticationToken authenticatedToken = new UsernamePasswordAuthenticationToken(
-			accountService.loadUserByUsername(loginAccount.getEmail()),
-			null,
-			authorities);
+        UsernamePasswordAuthenticationToken authenticatedToken = new UsernamePasswordAuthenticationToken(
+                accountService.loadUserByUsername(loginAccount.getEmail()),
+                null,
+                authorities);
 
-		SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().createEmptyContext();
-		securityContext.setAuthentication(authenticatedToken);
+        SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().createEmptyContext();
+        securityContext.setAuthentication(authenticatedToken);
 
-		// Save in ThreadLocal
-		SecurityContextHolder.getContextHolderStrategy().setContext(securityContext);
-		// Save in Session
-		sessionContextRepository.saveContext(securityContext, request, response);
+        // Save in ThreadLocal
+        SecurityContextHolder.getContextHolderStrategy().setContext(securityContext);
+        // Save in Session
+        sessionContextRepository.saveContext(securityContext, request, response);
 
-	}
+    }
 }

@@ -3,10 +3,9 @@ package jiny.futurevia.service.modules.product.endpoint;
 
 import jakarta.validation.Valid;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
-import jiny.futurevia.service.modules.account.support.CurrentUser;
 import jiny.futurevia.service.modules.product.application.ImageService;
 import jiny.futurevia.service.modules.product.application.ProductService;
-import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductCreate;
+import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduct;
 import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductSearch;
 import jiny.futurevia.service.modules.product.endpoint.dto.response.PagingResponse;
 import jiny.futurevia.service.modules.product.endpoint.dto.response.ProductResponse;
@@ -16,8 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RequestMapping("/api")
@@ -34,9 +31,9 @@ public class ProductController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/products")
-    public void post(@AuthenticationPrincipal Account account, @RequestBody @Valid ProductCreate productCreate) throws Exception {
-        log.info("ProductCreate : {}", productCreate);
-        productService.write(account.getId(), productCreate);
+    public void post(@AuthenticationPrincipal Account account, @RequestBody @Valid RequestProduct requestProduct) throws Exception {
+        log.info("RequestProduct : {}", requestProduct);
+//        productService.write(account.getId(), requestProduct);
     }
 
     /*

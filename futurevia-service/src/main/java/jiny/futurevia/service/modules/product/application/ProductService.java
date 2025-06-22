@@ -5,7 +5,7 @@ import jiny.futurevia.service.modules.account.infra.repository.AccountRepository
 import jiny.futurevia.service.modules.exception.type.ProductNotFound;
 import jiny.futurevia.service.modules.exception.type.UserNotFound;
 import jiny.futurevia.service.modules.product.domain.Product;
-import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductCreate;
+import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduct;
 import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductSearch;
 import jiny.futurevia.service.modules.product.endpoint.dto.response.PagingResponse;
 import jiny.futurevia.service.modules.product.endpoint.dto.response.ProductResponse;
@@ -24,12 +24,12 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final AccountRepository accountRepository;
 
-    public void write(Long userId, ProductCreate productCreate) {
+    public void createProduct(Long userId, RequestProduct requestProduct) {
         var user = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
 
-        Product product = Product.from(productCreate);
+//        Product product = Product.create(requestProduct);
 
-        productRepository.save(product);
+//        productRepository.save(product);
     }
 
     public ProductResponse get(Long id) {

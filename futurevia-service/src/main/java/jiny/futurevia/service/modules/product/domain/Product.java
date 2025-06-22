@@ -1,68 +1,77 @@
 package jiny.futurevia.service.modules.product.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
-import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductCreate;
+import jiny.futurevia.service.modules.common.AuditingEntity;
+import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduct;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class Product {
+public class Product extends AuditingEntity {
     @Id
+    @Column(name = "product_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn
-    Account account;
+    private String name;
 
-    @NotBlank
-    @Size(min = 1, max = 255, message = "최소 1자 이상 입력주세요")
-    private String title;
+    @Lob
+    private String description;
 
-    @NotNull
     private Long price;
 
-    private Integer optionCount;
+    private Long stock;
 
-    @NotNull
-    @Lob
-    private String details;
+    @ManyToOne(fetch = FetchType.LAZY)
+    Account account;
 
-    private List<String> imageUrls = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "flavor_select_count")
+    private Integer flavorSelectCount;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductImages> productImages = new ArrayList<>();
 
     private boolean active;
 
-    @ManyToOne
-    private Category category;
-
-
-    public static Product from(ProductCreate productCreate) {
+    public static Product create(String name,
+                                 String description,
+                                 Long price,
+                                 Long stock,
+                                 List<String> imageUrls,
+                                 Account account,
+                                 Category category,
+                                 Integer flavorSelectCount
+    ) {
         Product product = new Product();
-        product.title = productCreate.getTitle();
-        product.price = productCreate.getPrice();
-        product.details = productCreate.getDetails();
-        product.imageUrls = productCreate.getImageUrls();
-        product.createdAt = LocalDateTime.now();
+        product.name = name;
+        product.description = description;
+        product.price = price;
+        product.stock = stock;
+        product.addImages(imageUrls);
+        product.account = account;
+        product.category = category;
+        product.flavorSelectCount = flavorSelectCount;
         product.active = true;
-        product.optionCount = productCreate.getOptionCount();
+
         return product;
     }
 
-
+    private void addImages(List<String> images) {
+        for (String imageUrl : images) {
+            ProductImages productImages = ProductImages.of(this, imageUrl);
+            this.productImages.add(productImages);
+        }
+    }
 
 
 }

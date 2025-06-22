@@ -1,7 +1,7 @@
 package jiny.futurevia.service.modules.order.infra.repository;
 
 import jiny.futurevia.service.modules.account.domain.entity.Account;
-import jiny.futurevia.service.modules.order.domain.Cart;
+import jiny.futurevia.service.modules.cart.domain.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

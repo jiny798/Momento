@@ -22,5 +22,5 @@ public class Delivery {
     private Address address;
 
     @Enumerated(EnumType.STRING)
-    private DeliveryStatus status; //ENUM : READY(준비), COMP(배송)
+    private DeliveryStatus status;
 }

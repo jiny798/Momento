@@ -74,45 +74,46 @@ public class OrderService {
     }
 
     public List<ResponseOrderProduct> getOrderProducts(Long accountId, OrderDate orderDate) {
-        Account account = accountRepository.findById(accountId).orElseThrow(UserNotFound::new);
-        LocalDateTime start = orderDate.getStartDate().atStartOfDay();
-        LocalDateTime end = orderDate.getEndDate().atTime(23, 59, 59);
+//        Account account = accountRepository.findById(accountId).orElseThrow(UserNotFound::new);
+//        LocalDateTime start = orderDate.getStartDate().atStartOfDay();
+//        LocalDateTime end = orderDate.getEndDate().atTime(23, 59, 59);
+//
+//        List<Order> orders = orderRepository.findByAccountIdAndOrderDateBetween(accountId, start, end);
+//        List<ResponseOrderProduct> responseOrderProducts = orders.stream()
+//                        .map(order -> {
+//                            List<Product> products = new ArrayList<>();
+//                            List<Integer> counts = new ArrayList<>();
+//                            for(OrderProduct orderProduct : order.getOrderProducts()){
+//                                products.add(orderProduct.getProduct());
+//                                counts.add(orderProduct.getCount());
+//                            }
+//                            List<String> productImages = products.stream()
+//                                    .map(product -> product.getImageUrls().get(0))
+//                                    .toList();
+//
+//                            List<Long> productIds = products.stream()
+//                                    .map(Product::getId)
+//                                    .toList();
+//
+//                            List<String> productName = products.stream()
+//                                    .map(Product::getTitle)
+//                                    .toList();
+//
+//                            // 이미지 카운트
+//                            return new ResponseOrderProduct(
+//                                    productImages,
+//                                    counts,
+//                                    productIds,
+//                                    productName,
+//                                    order.getOrderDate(),
+//                                    order.getStatus(),
+//                                    order.getDelivery().getStatus(),
+//                                    order.getTotalPrice()
+//                            );
+//                        }).toList();
 
-        List<Order> orders = orderRepository.findByAccountIdAndOrderDateBetween(accountId, start, end);
-        List<ResponseOrderProduct> responseOrderProducts = orders.stream()
-                        .map(order -> {
-                            List<Product> products = new ArrayList<>();
-                            List<Integer> counts = new ArrayList<>();
-                            for(OrderProduct orderProduct : order.getOrderProducts()){
-                                products.add(orderProduct.getProduct());
-                                counts.add(orderProduct.getCount());
-                            }
-                            List<String> productImages = products.stream()
-                                    .map(product -> product.getImageUrls().get(0))
-                                    .toList();
-
-                            List<Long> productIds = products.stream()
-                                    .map(Product::getId)
-                                    .toList();
-
-                            List<String> productName = products.stream()
-                                    .map(Product::getTitle)
-                                    .toList();
-
-                            // 이미지 카운트
-                            return new ResponseOrderProduct(
-                                    productImages,
-                                    counts,
-                                    productIds,
-                                    productName,
-                                    order.getOrderDate(),
-                                    order.getStatus(),
-                                    order.getDelivery().getStatus(),
-                                    order.getTotalPrice()
-                            );
-                        }).toList();
-
-        return responseOrderProducts;
+//        return responseOrderProducts;
+        return null;
     }
 
     private static Delivery generateDelivery(Account account, DeliveryStatus deliveryStatus) {

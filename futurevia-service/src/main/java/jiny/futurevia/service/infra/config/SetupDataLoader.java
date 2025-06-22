@@ -28,24 +28,16 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     private void setupData() {
-        Role role = roleRepository.findByRoleName(ROLE_USER);
-
+        Role role = roleRepository.findByRoleName(ROLE_USER).orElseGet(() -> null);
         if (role != null) {
             return;
         }
 
         Role userRole = Role.builder()
                 .roleName("ROLE_USER")
-                .roleDesc("사용자")
-                .build();
-
-        Role adminRole = Role.builder()
-                .roleName("ROLE_ADMIN")
-                .roleDesc("관리자")
                 .build();
 
         roleRepository.save(userRole);
-        roleRepository.save(adminRole);
     }
 
 }

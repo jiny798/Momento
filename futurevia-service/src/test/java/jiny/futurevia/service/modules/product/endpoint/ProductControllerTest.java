@@ -1,10 +1,9 @@
 package jiny.futurevia.service.modules.product.endpoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jiny.futurevia.service.modules.security.WithAccount;
+import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduct;
 import jiny.futurevia.service.modules.product.application.ImageService;
 import jiny.futurevia.service.modules.product.domain.Product;
-import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductCreate;
 import jiny.futurevia.service.modules.product.infra.repository.ProductRepository;
 import jiny.futurevia.service.modules.security.WithAdmin;
 import org.junit.jupiter.api.AfterEach;
@@ -16,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.InputStream;
@@ -60,12 +58,12 @@ class ProductControllerTest {
     @DisplayName("상품 등록: 정상작동")
     public void createPost() throws Exception {
         // given
-        ProductCreate productCreate = ProductCreate.builder()
+        RequestProduct requestProduct = RequestProduct.builder()
                 .title("제목입니다")
                 .price(1000L)
                 .details("상품설명")
                 .build();
-        String json = mapper.writeValueAsString(productCreate);
+        String json = mapper.writeValueAsString(requestProduct);
 
         //when
         mockMvc.perform(post("/api/products")
@@ -88,12 +86,12 @@ class ProductControllerTest {
     @DisplayName("상품 등록: 제목 누락")
     public void createPostFailByTitle() throws Exception {
         // given
-        ProductCreate productCreate = ProductCreate.builder()
+        RequestProduct requestProduct = RequestProduct.builder()
                 .title("")
                 .price(1000L)
                 .details("상품설명")
                 .build();
-        String json = mapper.writeValueAsString(productCreate);
+        String json = mapper.writeValueAsString(requestProduct);
 
         //when
         mockMvc.perform(post("/api/products")

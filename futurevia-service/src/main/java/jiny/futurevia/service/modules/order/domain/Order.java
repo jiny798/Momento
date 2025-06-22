@@ -2,6 +2,7 @@ package jiny.futurevia.service.modules.order.domain;
 
 import jakarta.persistence.*;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
+import jiny.futurevia.service.modules.order.exception.OrderCancelException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,7 +37,7 @@ public class Order {
     private LocalDateTime orderDate;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus status; // 주문 상태
+    private OrderStatus status;
 
     public void setAccount(Account account) {
         this.account = account;
@@ -66,14 +67,14 @@ public class Order {
     }
 
     public void cancel() {
-        if (delivery.getStatus() == DeliveryStatus.COMP) {
-            throw new IllegalStateException("이미 배송완료된 상품은 취소가 불가능합니다.");
+        if (delivery.getStatus() == DeliveryStatus.COMPLETED) {
+            throw new OrderCancelException("이미 배송완료된 상품은 취소가 불가능합니다.");
         }
         if (delivery.getStatus() == DeliveryStatus.CANCELLED) {
-            throw new IllegalStateException("이미 취소 처리된 상품입니다");
+            throw new OrderCancelException("이미 취소 처리된 상품입니다");
         }
         if (delivery.getStatus() == DeliveryStatus.DELIVERING) {
-            throw new IllegalStateException("배송중인 상품은 취소가 불가능합니다.");
+            throw new OrderCancelException("배송중인 상품은 취소가 불가능합니다.");
         }
 
         this.setStatus(OrderStatus.CANCEL);
