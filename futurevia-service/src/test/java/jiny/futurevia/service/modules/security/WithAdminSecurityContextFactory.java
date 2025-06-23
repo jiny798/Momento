@@ -37,7 +37,7 @@ public class WithAdminSecurityContextFactory implements WithSecurityContextFacto
                 signUpForm.setNickname(nickname);
                 signUpForm.setEmail(nickname + "@jiny.com");
                 signUpForm.setPassword("jiny1234");
-                accountService.signUpAdmin(signUpForm);
+//                accountService.signUpAdmin(signUpForm);
                 accountContext = (AccountContext) accountService.loadUserByUsername(nickname);
             }
 

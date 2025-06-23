@@ -2,6 +2,7 @@ package jiny.futurevia.service.modules.account.domain.entity;
 
 import jakarta.persistence.*;
 
+import jiny.futurevia.service.modules.account.exception.InvalidAccountException;
 import jiny.futurevia.service.modules.common.AuditingEntity;
 import jiny.futurevia.service.modules.order.domain.Address;
 import jiny.futurevia.service.modules.order.domain.Order;
@@ -12,6 +13,8 @@ import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Getter
@@ -20,6 +23,11 @@ import java.util.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Account extends AuditingEntity {
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-z0-9._-]+@[a-z]+[.]+[a-z]{2,3}$");
+    private static final int MAX_NICKNAME_LENGTH = 100;
+    private static final int MAX_PASSWORD_LENGTH = 100;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,19 +62,51 @@ public class Account extends AuditingEntity {
     @OneToMany(mappedBy = "account")
     private Set<AccountRole> accountRoles = new HashSet<>();
 
-    public static Account from(String email, String nickname, String password, Set<Role> roles) {
+    public static Account from(final String email,
+                               final String nickname,
+                               final String password,
+                               final Set<Role> roles) {
         Account account = new Account();
+        account.validateMember(email, nickname, password, roles);
+
         account.email = email;
         account.nickname = nickname;
         account.password = password;
 
-        for(Role role : roles) {
+        for (Role role : roles) {
             AccountRole accountRole = AccountRole.createOrderProduct(role);
             accountRole.setAccount(account);
             account.accountRoles.add(accountRole);
         }
 
         return account;
+    }
+
+    private void validateMember(final String email,
+                                final String nickname,
+                                final String password,
+                                final Set<Role> roles) {
+        Matcher matcher = EMAIL_PATTERN.matcher(email);
+        if (!matcher.matches()) {
+            throw new InvalidAccountException("이메일 형식이 올바르지 않습니다.");
+        }
+
+        if (nickname.isEmpty() || nickname.length() > MAX_NICKNAME_LENGTH) {
+            throw new InvalidAccountException(String.format("이름은 1자 이상 %d이하여야 합니다.", MAX_NICKNAME_LENGTH));
+        }
+
+        if (password.length() < 8) {
+            throw new InvalidAccountException(String.format("패스워드는 8자 이상 이여야 합니다.", MAX_PASSWORD_LENGTH));
+        }
+
+        for (Role role : roles) {
+            AccountRole accountRole = AccountRole.createOrderProduct(role);
+            if (accountRole.getRole().getRoleName().equals("ROLE_USER")) {
+                return;
+            }
+        }
+        throw new InvalidAccountException("사용자 권한이 존재하지 않습니다");
+
     }
 
     public void updatePassword(String newPassword) {
@@ -86,13 +126,10 @@ public class Account extends AuditingEntity {
         this.isValid = true;
     }
 
-    public boolean isValid(String token) {
+    public boolean isValidEmailToken(String token) {
         return this.emailToken.equals(token);
     }
 
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
 
     @Override
     public boolean equals(Object o) {

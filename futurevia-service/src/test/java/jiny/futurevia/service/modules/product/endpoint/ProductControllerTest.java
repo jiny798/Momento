@@ -77,7 +77,7 @@ class ProductControllerTest {
         //then
         assertEquals(1L, productRepository.count());
         Product post = productRepository.findAll().get(0);
-        assertEquals("제목입니다", post.getTitle());
+        assertEquals("제목입니다", post.getName());
 
     }
 
