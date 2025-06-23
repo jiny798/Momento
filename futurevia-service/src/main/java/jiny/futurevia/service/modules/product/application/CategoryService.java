@@ -29,7 +29,7 @@ public class CategoryService {
         if (category != null) {
             throw new IllegalArgumentException("Category already exists");
         }
-        category = Category.createCategory(name);
+//        category = Category.createCategory(name);
         categoryRepository.save(category);
     }
 
