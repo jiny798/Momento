@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.common.AuditingEntity;
 import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduct;
+import jiny.futurevia.service.modules.product.exception.InvalidProductException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,21 +14,22 @@ import java.util.List;
 
 @Getter
 @Entity
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends AuditingEntity {
     @Id
     @Column(name = "product_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
-    @Lob
-    private String description;
-
+    @Column(nullable = false)
     private Long price;
 
-    private Long stock;
+    @Lob
+    @Column(nullable = false)
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     Account account;
@@ -41,22 +43,22 @@ public class Product extends AuditingEntity {
     @OneToMany(mappedBy = "product")
     private List<ProductImages> productImages = new ArrayList<>();
 
+    @Column(nullable = false)
     private boolean active;
 
-    public static Product create(String name,
-                                 String description,
-                                 Long price,
-                                 Long stock,
-                                 List<String> imageUrls,
-                                 Account account,
-                                 Category category,
-                                 Integer flavorSelectCount
+    public static Product create(final String name,
+                                 final String description,
+                                 final Long price,
+                                 final List<String> imageUrls,
+                                 final Account account,
+                                 final Category category,
+                                 final Integer flavorSelectCount
     ) {
         Product product = new Product();
+        product.validateProduct(name, description, price);
         product.name = name;
         product.description = description;
         product.price = price;
-        product.stock = stock;
         product.addImages(imageUrls);
         product.account = account;
         product.category = category;
@@ -64,6 +66,18 @@ public class Product extends AuditingEntity {
         product.active = true;
 
         return product;
+    }
+
+    private void validateProduct(String name, String description, Long price) {
+        if (name == null || name.isBlank()) {
+            throw new InvalidProductException("상품 이름은 필수입니다.");
+        }
+        if (description == null || description.isBlank()) {
+            throw new InvalidProductException("상품 설명은 필수입니다.");
+        }
+        if (price == null || price <= 0) {
+            throw new InvalidProductException("상품 가격은 0보다 커야 합니다.");
+        }
     }
 
     private void addImages(List<String> images) {
