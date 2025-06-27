@@ -1,4 +1,4 @@
-package jiny.futurevia.service.modules.common;
+package jiny.futurevia.service.modules.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,15 +13,16 @@ import java.time.LocalDateTime;
 @Getter
 public class AuditingEntity {
     @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdDate;
+    @Column(updatable = false, name = "created_at")
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime updated_at;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @PrePersist
     public void onPrePersist() {
-        this.createdDate = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 
 }

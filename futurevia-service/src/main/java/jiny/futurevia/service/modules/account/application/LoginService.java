@@ -25,11 +25,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class LoginService {
-    /*** Authenticate ***/
-//	private final AuthenticationManager authenticationManager;
     private final HttpSessionSecurityContextRepository sessionContextRepository = new HttpSessionSecurityContextRepository();
     private final AccountService accountService;
 
+    /*
+     * 회원 가입 후 자동 로그인 용도 (세션에 인증 정보 저장)
+     */
     @Transactional
     public void login(Account loginAccount, HttpServletRequest request, HttpServletResponse response) {
         log.debug("[login] account :  {} ", loginAccount);

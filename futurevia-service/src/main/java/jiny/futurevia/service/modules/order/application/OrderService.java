@@ -2,9 +2,10 @@ package jiny.futurevia.service.modules.order.application;
 
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
-import jiny.futurevia.service.modules.exception.type.OrderNotFound;
-import jiny.futurevia.service.modules.exception.type.ProductNotFound;
-import jiny.futurevia.service.modules.exception.type.UserNotFound;
+import jiny.futurevia.service.modules.order.exception.OrderFailException;
+import jiny.futurevia.service.modules.order.exception.OrderNotFound;
+import jiny.futurevia.service.modules.product.exception.ProductNotFound;
+import jiny.futurevia.service.modules.account.exception.UserNotFound;
 import jiny.futurevia.service.modules.order.domain.Delivery;
 import jiny.futurevia.service.modules.order.domain.DeliveryStatus;
 import jiny.futurevia.service.modules.order.domain.Order;
@@ -21,11 +22,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,28 +37,25 @@ public class OrderService {
     public Long order(Long userId, RequestOrder requestOrders) {
         List<RequestProduct> requestProducts = requestOrders.getRequestProductList();
         Account account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
-        List<OrderProduct> orderProducts = new ArrayList<>();
+
         Order order = null;
+        List<OrderProduct> orderProducts = new ArrayList<>();
         Delivery delivery = generateDelivery(account, DeliveryStatus.READY);
 
         for (RequestProduct requestProduct : requestProducts) {
             Product product = productRepository.findById(requestProduct.getProductId()).orElseThrow(ProductNotFound::new);
-            String option = requestProduct.getOptions();
+            String optionForProduct = requestProduct.getOptions();
 
-            // 주문상품에 대한 정보 저장
             OrderProduct orderProduct = OrderProduct.createOrderProduct(product, product.getPrice(), requestProduct.getCount());
-            // 주문상품의 맛 추가
-            orderProduct.addOption(option);
-
-            // 주문상품 추가
+            orderProduct.addOption(optionForProduct);
             orderProducts.add(orderProduct);
-            // 주문 생성
+
             order = Order.createOrder(account, delivery, orderProducts);
 
         }
 
         if (order == null) {
-            throw new RuntimeException("주문에 실패하였습니다");
+            throw new OrderFailException();
         }
 
         orderRepository.save(order);

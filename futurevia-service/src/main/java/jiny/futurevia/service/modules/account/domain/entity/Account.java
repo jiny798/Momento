@@ -3,7 +3,7 @@ package jiny.futurevia.service.modules.account.domain.entity;
 import jakarta.persistence.*;
 
 import jiny.futurevia.service.modules.account.exception.InvalidAccountException;
-import jiny.futurevia.service.modules.common.AuditingEntity;
+import jiny.futurevia.service.modules.common.entity.AuditingEntity;
 import jiny.futurevia.service.modules.order.domain.Address;
 import jiny.futurevia.service.modules.order.domain.Order;
 import jiny.futurevia.service.modules.product.domain.Product;

@@ -1,4 +1,4 @@
-package jiny.futurevia.service.modules.exception.type;
+package jiny.futurevia.service.modules.common.exception;
 
 public abstract class CommonException extends RuntimeException {
     public CommonException(String message) {

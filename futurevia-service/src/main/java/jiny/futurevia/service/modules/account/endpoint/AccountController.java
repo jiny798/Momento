@@ -11,6 +11,7 @@ import jiny.futurevia.service.modules.account.endpoint.dto.UserResponse;
 import jiny.futurevia.service.modules.account.endpoint.validator.SignUpFormValidator;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.modules.account.support.CurrentUser;
+import jiny.futurevia.service.modules.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class AccountController {
+    private final String ERROR_ALREADY_LOGOUT_STATUS = "VALIDATE_ERROR";
 
     @Qualifier("userDetailsService")
     private final AccountService accountService;
@@ -47,27 +51,28 @@ public class AccountController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Void> signUpSubmit(@Valid @RequestBody SignUpForm signUpForm, Errors errors, HttpServletRequest request,
-                                               HttpServletResponse response) {
+    public ApiResponse<Void> signUpSubmit(@Valid @RequestBody SignUpForm signUpForm, Errors errors, HttpServletRequest request,
+                                          HttpServletResponse response) {
         Account account = accountService.signUp(signUpForm);
-        return ResponseEntity.ok().build();
+        return ApiResponse.success();
     }
 
     @GetMapping
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
+    public ApiResponse<Void> logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null){
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
+        return ApiResponse.success();
     }
 
     @GetMapping("/users/me")
-    public ResponseEntity<UserResponse> getMe(@AuthenticationPrincipal Account account) {
+    public ApiResponse<UserResponse> getMe(@AuthenticationPrincipal Account account) {
         if (account == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new AuthenticationCredentialsNotFoundException("Login required");
         }
         UserResponse userResponse = accountService.getUserProfile(account.getId());
-        return ResponseEntity.ok().body(userResponse);
+        return ApiResponse.success(userResponse);
     }
 
 }

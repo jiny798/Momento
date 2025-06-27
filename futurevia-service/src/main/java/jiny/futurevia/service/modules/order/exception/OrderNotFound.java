@@ -1,4 +1,6 @@
-package jiny.futurevia.service.modules.exception.type;
+package jiny.futurevia.service.modules.order.exception;
+
+import jiny.futurevia.service.modules.common.exception.CommonException;
 
 public class OrderNotFound extends CommonException {
 

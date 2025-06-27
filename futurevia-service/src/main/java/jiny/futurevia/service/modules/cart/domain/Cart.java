@@ -2,6 +2,7 @@ package jiny.futurevia.service.modules.cart.domain;
 
 import jakarta.persistence.*;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
+import jiny.futurevia.service.modules.common.entity.AuditingEntity;
 import jiny.futurevia.service.modules.product.domain.Product;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class Cart {
+public class Cart extends AuditingEntity {
     @Id
     @GeneratedValue
     @Column(name = "cart_id")

@@ -18,8 +18,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
-@RequestMapping("/api")
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
@@ -27,7 +27,7 @@ public class OrderController {
 
     @PostMapping("/order")
     public void order(@AuthenticationPrincipal Account account, @RequestBody RequestOrder requestOrder) {
-        log.info("Order requested: {}", requestOrder);
+        log.debug("Order requested: {}", requestOrder);
         orderService.order(account.getId(), requestOrder);
     }
 

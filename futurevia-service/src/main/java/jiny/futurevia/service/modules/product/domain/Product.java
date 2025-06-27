@@ -2,8 +2,7 @@ package jiny.futurevia.service.modules.product.domain;
 
 import jakarta.persistence.*;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
-import jiny.futurevia.service.modules.common.AuditingEntity;
-import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduct;
+import jiny.futurevia.service.modules.common.entity.AuditingEntity;
 import jiny.futurevia.service.modules.product.exception.InvalidProductException;
 import lombok.AccessLevel;
 import lombok.Getter;

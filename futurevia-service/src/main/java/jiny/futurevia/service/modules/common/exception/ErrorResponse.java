@@ -1,7 +1,6 @@
-package jiny.futurevia.service.modules.exception.advice;
+package jiny.futurevia.service.modules.common.exception;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 

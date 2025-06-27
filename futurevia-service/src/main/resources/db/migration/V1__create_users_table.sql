@@ -39,9 +39,9 @@ CREATE TABLE role
 CREATE TABLE cart
 (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    account_id BIGINT  NOT NULL COMMENT '회원 고유 번호',
-    product_id BIGINT  NOT NULL COMMENT '상품 고유 번호',
-    quantity   INT     NOT NULL COMMENT '수량',
+    account_id BIGINT       NOT NULL COMMENT '회원 고유 번호',
+    product_id BIGINT       NOT NULL COMMENT '상품 고유 번호',
+    quantity   INT          NOT NULL COMMENT '수량',
     options    VARCHAR(255) NOT NULL COMMENT '추가 내용 및 옵션 (맛 종류 등)',
     created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
     updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
@@ -52,8 +52,8 @@ CREATE TABLE orders
     id          BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '주문 고유 번호',
     account_id  BIGINT NOT NULL COMMENT '회원 고유 번호',
     delivery_id BIGINT NOT NULL COMMENT '배송 고유 번호',
-    orderDate   DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
-    status      VARCHAR(20) DEFAULT 'ORDER'
+    orderDate   DATETIME(6)               DEFAULT CURRENT_TIMESTAMP(6),
+    status      ENUM ( 'ORDER', 'CANCEL') DEFAULT 'READY' COMMENT '배송 상태'
 );
 
 CREATE TABLE delivery
@@ -63,7 +63,7 @@ CREATE TABLE delivery
     city       VARCHAR(255) COMMENT '도시 주소',
     street     VARCHAR(255) COMMENT '도로명 주소',
     zipcode    VARCHAR(50) COMMENT '우편 번호',
-    status     VARCHAR(20) DEFAULT 'READY'
+    status     ENUM ('READY', 'DELIVERING', 'COMPLETED', 'CANCELLED') DEFAULT 'READY' COMMENT '배송 상태'
 );
 
 CREATE TABLE order_product
@@ -73,21 +73,20 @@ CREATE TABLE order_product
     product_id  BIGINT         NOT NULL COMMENT '상품 고유 번호',
     order_price DECIMAL(10, 2) NOT NULL COMMENT '주문 시점의 상품 가격',
     quantity    INT            NOT NULL COMMENT '주문 수량',
-    options     VARCHAR(255)        NOT NULL COMMENT '추가 내용 및 옵션 (맛 종류 등)'
-
+    options     VARCHAR(255)   NOT NULL COMMENT '추가 내용 및 옵션 (맛 종류 등)'
 );
 
 
 CREATE TABLE product
 (
     product_id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name                VARCHAR(255)   NOT NULL,
-    description         TEXT,
-    price               DECIMAL(10, 2) NOT NULL,
-    stock               INT            NOT NULL DEFAULT 0,
+    name                VARCHAR(255)   NOT NULL COMMENT '상품명',
+    description         TEXT COMMENT '상품 상세',
+    price               DECIMAL(10, 2) NOT NULL COMMENT '가격',
+    stock               INT            NOT NULL DEFAULT 0 COMMENT '재고',
     account_id          BIGINT         NOT NULL COMMENT '회원 고유 번호',
     category_id         BIGINT COMMENT '카테고리 고유 번호',
-    flavor_select_count INT            NOT NULL DEFAULT 0,
+    flavor_select_count INT            NOT NULL DEFAULT 0 COMMENT '맛 선택 개수',
     active              bool           NOT NULL,
     created_at          DATETIME                DEFAULT CURRENT_TIMESTAMP,
     updated_at          DATETIME                DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -97,7 +96,7 @@ CREATE TABLE product_images
 (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
     product_id BIGINT DEFAULT NULL COMMENT '상품 고유 번호',
-    image_url  TEXT
+    image_url  TEXT COMMENT '이미지 경로'
 );
 
 CREATE TABLE category

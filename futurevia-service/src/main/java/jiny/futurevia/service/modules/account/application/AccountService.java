@@ -11,7 +11,7 @@ import jiny.futurevia.service.modules.account.infra.repository.RoleRepository;
 import jiny.futurevia.service.infra.config.AppProperties;
 import jiny.futurevia.service.infra.mail.EmailMessage;
 import jiny.futurevia.service.infra.mail.EmailService;
-import jiny.futurevia.service.modules.exception.type.UserNotFound;
+import jiny.futurevia.service.modules.account.exception.UserNotFound;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;

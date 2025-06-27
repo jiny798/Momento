@@ -1,6 +1,6 @@
 package jiny.futurevia.service.modules.product.exception;
 
-import jiny.futurevia.service.modules.exception.type.CommonException;
+import jiny.futurevia.service.modules.common.exception.CommonException;
 
 public class InvalidProductException extends CommonException {
     public InvalidProductException(String message) {

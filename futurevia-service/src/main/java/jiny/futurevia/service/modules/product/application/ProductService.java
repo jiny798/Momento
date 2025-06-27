@@ -2,8 +2,8 @@ package jiny.futurevia.service.modules.product.application;
 
 
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
-import jiny.futurevia.service.modules.exception.type.ProductNotFound;
-import jiny.futurevia.service.modules.exception.type.UserNotFound;
+import jiny.futurevia.service.modules.product.exception.ProductNotFound;
+import jiny.futurevia.service.modules.account.exception.UserNotFound;
 import jiny.futurevia.service.modules.product.domain.Product;
 import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduct;
 import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductSearch;
