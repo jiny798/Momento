@@ -1,6 +1,7 @@
 package jiny.futurevia.service.modules.product.endpoint;
 
 import jakarta.validation.Valid;
+import jiny.futurevia.service.modules.common.response.ApiResponse;
 import jiny.futurevia.service.modules.product.application.FlavorService;
 import jiny.futurevia.service.modules.product.infra.repository.FlavorRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +22,19 @@ public class FlavorController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/flavors")
-    public ResponseEntity<Void> createFlavor(@RequestBody @Valid FlavorRequest request) throws Exception {
+    public ApiResponse<Void> createFlavor(@RequestBody @Valid FlavorRequest request) throws Exception {
         flavorService.save(request.name);
-        return ResponseEntity.ok().build();
+        return ApiResponse.success();
     }
 
     @GetMapping("/flavors")
-    public ResponseEntity<List<FlavorResponse>> getFlavors() {
-        return ResponseEntity.ok(flavorService.findAll());
+    public ApiResponse<List<FlavorResponse>> getFlavors() {
+        return ApiResponse.success(flavorService.findAll());
     }
 
-    public record FlavorRequest(String name) {}
-    public record FlavorResponse(String name) {}
+    public record FlavorRequest(String name) {
+    }
+
+    public record FlavorResponse(String name) {
+    }
 }

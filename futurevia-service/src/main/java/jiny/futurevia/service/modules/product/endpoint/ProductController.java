@@ -3,6 +3,7 @@ package jiny.futurevia.service.modules.product.endpoint;
 
 import jakarta.validation.Valid;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
+import jiny.futurevia.service.modules.common.response.ApiResponse;
 import jiny.futurevia.service.modules.product.application.ImageService;
 import jiny.futurevia.service.modules.product.application.ProductService;
 import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduct;
@@ -31,9 +32,10 @@ public class ProductController {
      */
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/products")
-    public void post(@AuthenticationPrincipal Account account, @RequestBody @Valid RequestProduct requestProduct) throws Exception {
+    public ApiResponse<Void> post(@AuthenticationPrincipal Account account, @RequestBody @Valid RequestProduct requestProduct) throws Exception {
         log.info("RequestProduct : {}", requestProduct);
 //        productService.write(account.getId(), requestProduct);
+        return ApiResponse.success();
     }
 
     /*

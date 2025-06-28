@@ -1,6 +1,7 @@
 package jiny.futurevia.service.modules.product.endpoint;
 
 import jakarta.validation.Valid;
+import jiny.futurevia.service.modules.common.response.ApiResponse;
 import jiny.futurevia.service.modules.product.application.CategoryService;
 import jiny.futurevia.service.modules.product.application.FlavorService;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,15 @@ public class CategoryController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/category")
-    public ResponseEntity<Void> createCategory(@RequestBody @Valid CategoryRequest request) throws Exception {
+    public ApiResponse<Void> createCategory(@RequestBody @Valid CategoryRequest request) throws Exception {
         categoryService.save(request.name);
-        return ResponseEntity.ok().build();
+        return ApiResponse.success();
     }
 
     @GetMapping("/category")
-    public ResponseEntity<List<CategoryResponse>> getCategories() {
-        return ResponseEntity.ok(categoryService.findAll());
+    public ApiResponse<List<CategoryResponse>> getCategories() {
+        List<CategoryResponse> categoryResponseList = categoryService.findAll();
+        return ApiResponse.success(categoryResponseList);
     }
 
     public record CategoryRequest(String name) {}
