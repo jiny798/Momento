@@ -29,7 +29,7 @@ public class OrderController {
     @PostMapping("/order")
     public ApiResponse<Void> order(@AuthenticationPrincipal Account account, @RequestBody RequestOrder requestOrder) {
         log.debug("Order requested: {}", requestOrder);
-        orderService.order(account.getId(), requestOrder);
+        orderService.orderProduct(account.getId(), requestOrder);
         return ApiResponse.success();
     }
 

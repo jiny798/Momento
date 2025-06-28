@@ -34,7 +34,7 @@ public class OrderService {
     private final FlavorRepository flavorRepository;
 
     @Transactional
-    public Long order(Long userId, RequestOrder requestOrders) {
+    public Long orderProduct(Long userId, RequestOrder requestOrders) {
         List<RequestProduct> requestProducts = requestOrders.getRequestProductList();
         Account account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
 

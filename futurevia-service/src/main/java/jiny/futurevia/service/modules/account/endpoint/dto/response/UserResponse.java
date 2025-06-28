@@ -1,4 +1,4 @@
-package jiny.futurevia.service.modules.account.endpoint.dto;
+package jiny.futurevia.service.modules.account.endpoint.dto.response;
 
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import lombok.Getter;

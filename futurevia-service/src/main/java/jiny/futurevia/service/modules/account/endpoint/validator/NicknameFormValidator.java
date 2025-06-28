@@ -1,7 +1,7 @@
 package jiny.futurevia.service.modules.account.endpoint.validator;
 
 import jiny.futurevia.service.modules.account.domain.entity.Account;
-import jiny.futurevia.service.modules.account.endpoint.dto.NicknameForm;
+import jiny.futurevia.service.modules.account.endpoint.dto.request.NicknameForm;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

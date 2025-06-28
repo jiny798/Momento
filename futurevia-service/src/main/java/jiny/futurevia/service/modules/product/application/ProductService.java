@@ -2,6 +2,7 @@ package jiny.futurevia.service.modules.product.application;
 
 
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
+import jiny.futurevia.service.modules.product.exception.CategoryNotFound;
 import jiny.futurevia.service.modules.product.exception.ProductNotFound;
 import jiny.futurevia.service.modules.account.exception.UserNotFound;
 import jiny.futurevia.service.modules.product.domain.Product;
@@ -9,6 +10,7 @@ import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduc
 import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductSearch;
 import jiny.futurevia.service.modules.product.endpoint.dto.response.PagingResponse;
 import jiny.futurevia.service.modules.product.endpoint.dto.response.ProductResponse;
+import jiny.futurevia.service.modules.product.infra.repository.CategoryRepository;
 import jiny.futurevia.service.modules.product.infra.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +25,23 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final AccountRepository accountRepository;
+    private final CategoryRepository categoryRepository;
 
-    public void createProduct(Long userId, RequestProduct requestProduct) {
-        var user = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
+    public void saveProduct(Long userId, RequestProduct requestProduct) {
+        var account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
+        var category = categoryRepository.findById(requestProduct.getCategoryId()).orElseThrow(CategoryNotFound::new);
 
-//        Product product = Product.create(requestProduct);
+        Product product = Product.create(
+                requestProduct.getName(),
+                requestProduct.getDescription(),
+                requestProduct.getPrice(),
+                requestProduct.getProductImages(),
+                requestProduct.getFlavorSelectCount(),
+                account,
+                category
+        );
 
-//        productRepository.save(product);
+        productRepository.save(product);
     }
 
     public ProductResponse get(Long id) {

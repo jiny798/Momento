@@ -1,6 +1,6 @@
 package jiny.futurevia.service.modules.account.endpoint.validator;
 
-import jiny.futurevia.service.modules.account.endpoint.dto.PasswordForm;
+import jiny.futurevia.service.modules.account.endpoint.dto.request.PasswordForm;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 

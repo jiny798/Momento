@@ -3,7 +3,7 @@ package jiny.futurevia.service.modules.security;
 import jiny.futurevia.service.infra.security.token.RestAuthenticationToken;
 import jiny.futurevia.service.modules.account.application.AccountService;
 import jiny.futurevia.service.modules.account.domain.dto.AccountContext;
-import jiny.futurevia.service.modules.account.endpoint.dto.SignUpForm;
+import jiny.futurevia.service.modules.account.endpoint.dto.request.SignUpForm;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

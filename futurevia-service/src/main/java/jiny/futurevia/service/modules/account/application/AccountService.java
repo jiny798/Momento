@@ -3,8 +3,9 @@ package jiny.futurevia.service.modules.account.application;
 import jiny.futurevia.service.modules.account.domain.dto.AccountContext;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.domain.entity.Role;
-import jiny.futurevia.service.modules.account.endpoint.dto.SignUpForm;
-import jiny.futurevia.service.modules.account.endpoint.dto.UserResponse;
+import jiny.futurevia.service.modules.account.endpoint.dto.request.SignUpForm;
+import jiny.futurevia.service.modules.account.endpoint.dto.response.UserResponse;
+import jiny.futurevia.service.modules.account.exception.DuplicateEmailException;
 import jiny.futurevia.service.modules.account.exception.RoleNotFound;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.modules.account.infra.repository.RoleRepository;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -64,7 +66,12 @@ public class AccountService implements UserDetailsService {
         return new AccountContext(account, authorities);
     }
 
-    public Account signUp(SignUpForm signUpForm) {
+    public UserResponse signUp(SignUpForm signUpForm) {
+
+        if (accountRepository.findByEmail(signUpForm.getEmail()).isPresent()) {
+            throw new DuplicateEmailException();
+        }
+
         Role role = roleRepository.findByRoleName("ROLE_USER").orElseThrow(RoleNotFound::new);
         Set<Role> roles = new HashSet<>();
         roles.add(role);
@@ -76,7 +83,7 @@ public class AccountService implements UserDetailsService {
         );
         account.generateToken();
 
-        return accountRepository.save(account);
+        return new UserResponse(account);
     }
 
     public void sendVerificationEmail(Account newAccount) {

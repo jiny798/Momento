@@ -18,19 +18,22 @@ public class RequestProduct {
 
     @NotBlank(message = "최소 1자 이상 입력주세요")
     @Size(min = 1, max = 255, message = "최소 1자 이상 입력주세요")
-    private String title;
+    private String name;
 
     @NotNull
     private Long price;
 
-    private Long category;
+    @NotNull
+    private Integer stock;
 
-    private Integer optionCount;
+    private Long categoryId;
+
+    private Integer flavorSelectCount;
 
     @NotNull
     @Lob
-    private String details;
+    private String description;
 
-    private List<String> imageUrls;
+    private List<String> productImages;
 
 }

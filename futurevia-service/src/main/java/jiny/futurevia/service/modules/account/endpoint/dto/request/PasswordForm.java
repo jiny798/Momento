@@ -1,6 +1,5 @@
-package jiny.futurevia.service.modules.account.endpoint.dto;
+package jiny.futurevia.service.modules.account.endpoint.dto.request;
 
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;

@@ -33,8 +33,8 @@ public class ProductController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/products")
     public ApiResponse<Void> post(@AuthenticationPrincipal Account account, @RequestBody @Valid RequestProduct requestProduct) throws Exception {
-        log.info("RequestProduct : {}", requestProduct);
-//        productService.write(account.getId(), requestProduct);
+        log.debug("RequestProduct : {}", requestProduct);
+        productService.saveProduct(account.getId(), requestProduct);
         return ApiResponse.success();
     }
 

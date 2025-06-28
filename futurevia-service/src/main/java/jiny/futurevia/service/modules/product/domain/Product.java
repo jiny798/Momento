@@ -26,6 +26,9 @@ public class Product extends AuditingEntity {
     @Column(nullable = false)
     private Long price;
 
+    @Column(nullable = false)
+    private Integer stock;
+
     @Lob
     @Column(nullable = false)
     private String description;
@@ -49,9 +52,9 @@ public class Product extends AuditingEntity {
                                  final String description,
                                  final Long price,
                                  final List<String> imageUrls,
+                                 final Integer flavorSelectCount,
                                  final Account account,
-                                 final Category category,
-                                 final Integer flavorSelectCount
+                                 final Category category
     ) {
         Product product = new Product();
         product.validateProduct(name, description, price);

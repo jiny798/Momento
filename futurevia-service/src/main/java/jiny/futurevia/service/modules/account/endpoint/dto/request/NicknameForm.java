@@ -1,4 +1,4 @@
-package jiny.futurevia.service.modules.account.endpoint.dto;
+package jiny.futurevia.service.modules.account.endpoint.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

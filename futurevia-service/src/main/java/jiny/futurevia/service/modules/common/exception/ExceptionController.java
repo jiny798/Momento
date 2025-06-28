@@ -42,6 +42,7 @@ public class ExceptionController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> serverException(Exception ex) {
+        // TODO : 서버 에러 알림 기능 추가
         return ApiResponse.serverError(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()), ex.getMessage());
     }
 
