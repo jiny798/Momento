@@ -2,17 +2,15 @@ package jiny.futurevia.service.modules.order.application;
 
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
+import jiny.futurevia.service.modules.order.domain.*;
+import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderPeriodRequest;
 import jiny.futurevia.service.modules.order.exception.OrderFailException;
 import jiny.futurevia.service.modules.order.exception.OrderNotFound;
+import jiny.futurevia.service.modules.product.exception.InsufficientStockException;
 import jiny.futurevia.service.modules.product.exception.ProductNotFound;
 import jiny.futurevia.service.modules.account.exception.UserNotFound;
-import jiny.futurevia.service.modules.order.domain.Delivery;
-import jiny.futurevia.service.modules.order.domain.DeliveryStatus;
-import jiny.futurevia.service.modules.order.domain.Order;
-import jiny.futurevia.service.modules.order.domain.OrderProduct;
-import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderDate;
-import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestOrder;
-import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestProduct;
+import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderRequest;
+import jiny.futurevia.service.modules.order.endpoint.dto.request.ProductDto;
 import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseOrderProduct;
 import jiny.futurevia.service.modules.order.infra.repository.OrderRepository;
 import jiny.futurevia.service.modules.product.domain.Product;
@@ -34,24 +32,33 @@ public class OrderService {
     private final FlavorRepository flavorRepository;
 
     @Transactional
-    public Long orderProduct(Long userId, RequestOrder requestOrders) {
-        List<RequestProduct> requestProducts = requestOrders.getRequestProductList();
+    public Long orderProduct(Long userId, OrderRequest ordersRequest) {
+        List<ProductDto> productDtos = ordersRequest.getProductDtoList();
         Account account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
+        Address address = new Address(ordersRequest.getAddressDto().getPostalCode(),
+                ordersRequest.getAddressDto().getAddress(),
+                ordersRequest.getAddressDto().getDetailAddress());
+        Delivery delivery = generateDelivery(account, DeliveryStatus.READY, address);
+
 
         Order order = null;
         List<OrderProduct> orderProducts = new ArrayList<>();
-        Delivery delivery = generateDelivery(account, DeliveryStatus.READY);
+        for (ProductDto productDto : productDtos) {
+            Product product = productRepository.findById(productDto.getProductId()).orElseThrow(ProductNotFound::new);
 
-        for (RequestProduct requestProduct : requestProducts) {
-            Product product = productRepository.findById(requestProduct.getProductId()).orElseThrow(ProductNotFound::new);
-            String optionForProduct = requestProduct.getOptions();
+            if (product.getStock() < productDto.getCount()) {
+                throw new InsufficientStockException(product.getName() + " 상품은 현재 품절입니다.");
+            }
+            product.decreaseStock(productDto.getCount());
 
-            OrderProduct orderProduct = OrderProduct.createOrderProduct(product, product.getPrice(), requestProduct.getCount());
-            orderProduct.addOption(optionForProduct);
+            OrderProduct orderProduct = OrderProduct.createOrderProduct(
+                    product,
+                    product.getPrice(),
+                    productDto.getCount(),
+                    productDto.getOption());
             orderProducts.add(orderProduct);
 
             order = Order.createOrder(account, delivery, orderProducts);
-
         }
 
         if (order == null) {
@@ -68,10 +75,10 @@ public class OrderService {
         order.cancel();
     }
 
-    public List<ResponseOrderProduct> getOrderProducts(Long accountId, OrderDate orderDate) {
+    public List<ResponseOrderProduct> getOrderProducts(Long accountId, OrderPeriodRequest orderPeriodRequest) {
 //        Account account = accountRepository.findById(accountId).orElseThrow(UserNotFound::new);
-//        LocalDateTime start = orderDate.getStartDate().atStartOfDay();
-//        LocalDateTime end = orderDate.getEndDate().atTime(23, 59, 59);
+//        LocalDateTime start = orderDateDto.getStartDate().atStartOfDay();
+//        LocalDateTime end = orderDateDto.getEndDate().atTime(23, 59, 59);
 //
 //        List<Order> orders = orderRepository.findByAccountIdAndOrderDateBetween(accountId, start, end);
 //        List<ResponseOrderProduct> responseOrderProducts = orders.stream()
@@ -111,9 +118,9 @@ public class OrderService {
         return null;
     }
 
-    private static Delivery generateDelivery(Account account, DeliveryStatus deliveryStatus) {
+    private static Delivery generateDelivery(Account account, DeliveryStatus deliveryStatus, Address address) {
         Delivery delivery = new Delivery();
-        delivery.setAddress(account.getAddress());
+        delivery.setAddress(address);
         delivery.setStatus(deliveryStatus);
         return delivery;
     }

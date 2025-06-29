@@ -7,6 +7,7 @@ import jiny.futurevia.service.modules.product.exception.InvalidProductException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +34,11 @@ public class Product extends AuditingEntity {
     @Column(nullable = false)
     private String description;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     Account account;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
@@ -89,5 +92,8 @@ public class Product extends AuditingEntity {
         }
     }
 
+    public void decreaseStock(int quantity) {
+        this.stock -= quantity;
+    }
 
 }

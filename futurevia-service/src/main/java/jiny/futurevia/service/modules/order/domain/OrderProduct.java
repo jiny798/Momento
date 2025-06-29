@@ -34,11 +34,12 @@ public class OrderProduct {
 
     private String option;
 
-    public static OrderProduct createOrderProduct(Product product, Long orderPrice, int quantity) {
+    public static OrderProduct createOrderProduct(Product product, Long orderPrice, int quantity, String option) {
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setProduct(product);
         orderProduct.setQuantity(quantity);
         orderProduct.setOrderPrice(orderPrice);
+        orderProduct.setOption(option);
         return orderProduct;
     }
 
@@ -46,7 +47,4 @@ public class OrderProduct {
         return getOrderPrice() * getQuantity();
     }
 
-    public void addOption(String options) {
-        this.option = options;
-    }
 }
