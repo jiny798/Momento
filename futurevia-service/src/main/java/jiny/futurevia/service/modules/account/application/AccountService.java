@@ -3,7 +3,7 @@ package jiny.futurevia.service.modules.account.application;
 import jiny.futurevia.service.modules.account.domain.dto.AccountContext;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.domain.entity.Role;
-import jiny.futurevia.service.modules.account.endpoint.dto.request.SignUpForm;
+import jiny.futurevia.service.modules.account.endpoint.dto.request.CreateAccountRequest;
 import jiny.futurevia.service.modules.account.endpoint.dto.response.UserResponse;
 import jiny.futurevia.service.modules.account.exception.DuplicateEmailException;
 import jiny.futurevia.service.modules.account.exception.RoleNotFound;
@@ -13,6 +13,7 @@ import jiny.futurevia.service.infra.config.AppProperties;
 import jiny.futurevia.service.infra.mail.EmailMessage;
 import jiny.futurevia.service.infra.mail.EmailService;
 import jiny.futurevia.service.modules.account.exception.UserNotFound;
+import jiny.futurevia.service.modules.account.support.AccountMapper;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +36,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 @Service("userDetailsService")
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
     private final RoleRepository roleRepository;
+    private final AccountMapper accountMapper;
 
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
@@ -51,9 +53,9 @@ public class AccountService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        log.info("[loadUserByUsername]");
-        Account account = Optional.ofNullable(accountRepository.findByEmail(email))
-                .orElse(accountRepository.findByNickname(email));
+        Account account = accountRepository.findByEmail(email)
+                .orElseGet(() -> accountRepository.findByNickname(email).orElse(null));
+
         if (account == null) {
             throw new UsernameNotFoundException("No user found with email: " + email);
         }
@@ -66,22 +68,16 @@ public class AccountService implements UserDetailsService {
         return new AccountContext(account, authorities);
     }
 
-    public UserResponse signUp(SignUpForm signUpForm) {
-
-        if (accountRepository.findByEmail(signUpForm.getEmail()).isPresent()) {
+    public UserResponse signUp(CreateAccountRequest request) {
+        if (accountRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new DuplicateEmailException();
         }
 
         Role role = roleRepository.findByRoleName("ROLE_USER").orElseThrow(RoleNotFound::new);
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        Account account = Account.from(signUpForm.getEmail(),
-                signUpForm.getNickname(),
-                passwordEncoder.encode(signUpForm.getPassword()),
-                roles
-        );
-        account.generateToken();
+        Account account = accountMapper.toAccount(request, role);
+        accountRepository.save(account);
 
         return new UserResponse(account);
     }
@@ -104,8 +100,9 @@ public class AccountService implements UserDetailsService {
                 .build());
     }
 
+    @Transactional(readOnly = true)
     public Account findAccountByEmail(String email) {
-        return accountRepository.findByEmail(email);
+        return accountRepository.findByEmail(email).orElseThrow(UserNotFound::new);
     }
 
 
@@ -137,15 +134,10 @@ public class AccountService implements UserDetailsService {
                 .build());
     }
 
-    public Account getAccountBy(String nickname) {
-        return Optional.ofNullable(accountRepository.findByNickname(nickname))
-                .orElseThrow(() -> new IllegalArgumentException(nickname + "에 해당하는 사용자가 없습니다."));
-    }
-
+    @Transactional(readOnly = true)
     public UserResponse getUserProfile(Long id) {
-
         Account account = accountRepository.findById(id)
                 .orElseThrow(UserNotFound::new);
-        return new UserResponse(account);
+        return accountMapper.toDto(account);
     }
 }

@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import jiny.futurevia.service.modules.account.application.AccountService;
 import jiny.futurevia.service.modules.account.application.LoginService;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
-import jiny.futurevia.service.modules.account.endpoint.dto.request.SignUpForm;
+import jiny.futurevia.service.modules.account.endpoint.dto.request.CreateAccountRequest;
 import jiny.futurevia.service.modules.account.endpoint.dto.response.UserResponse;
 import jiny.futurevia.service.modules.account.endpoint.validator.SignUpFormValidator;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
@@ -44,9 +44,9 @@ public class AccountController {
     }
 
     @PostMapping("/sign-up")
-    public ApiResponse<UserResponse> signUpSubmit(@Valid @RequestBody SignUpForm signUpForm, Errors errors, HttpServletRequest request,
-                                          HttpServletResponse response) {
-        UserResponse userResponse = accountService.signUp(signUpForm);
+    public ApiResponse<UserResponse> signUpSubmit(@Valid @RequestBody CreateAccountRequest createAccountRequest, Errors errors, HttpServletRequest request,
+                                                  HttpServletResponse response) {
+        UserResponse userResponse = accountService.signUp(createAccountRequest);
         return ApiResponse.success(userResponse);
     }
 

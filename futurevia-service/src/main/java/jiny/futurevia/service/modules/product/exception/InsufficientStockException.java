@@ -10,6 +10,10 @@ public class InsufficientStockException extends CommonException {
         super(MESSAGE);
     }
 
+    public InsufficientStockException(String message) {
+        super(message);
+    }
+
     @Override
     public int getStatusCode() {
         return 404;

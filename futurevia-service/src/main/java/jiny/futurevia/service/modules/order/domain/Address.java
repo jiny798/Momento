@@ -6,16 +6,17 @@ import lombok.Getter;
 @Embeddable
 @Getter
 public class Address {
-    private String city;
-    private String street;
-    private String zipcode;
+    private String postalCode;
+    private String address;
+    private String detailAddress;
 
-    protected Address() {
+    public Address(final String postalCode, final String address, final String detailAddress) {
+        this.postalCode = postalCode;
+        this.address = address;
+        this.detailAddress = detailAddress;
     }
 
-    public Address(String city, String street, String zipcode) {
-        this.city = city;
-        this.street = street;
-        this.zipcode = zipcode;
+    protected Address() {
+
     }
 }

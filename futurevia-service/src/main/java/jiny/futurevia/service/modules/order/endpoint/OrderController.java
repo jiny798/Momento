@@ -4,9 +4,9 @@ import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.common.response.ApiResponse;
 import jiny.futurevia.service.modules.order.application.CartService;
 import jiny.futurevia.service.modules.order.application.OrderService;
-import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderDate;
-import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestOrder;
-import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestProduct;
+import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderDateDto;
+import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderRequest;
+import jiny.futurevia.service.modules.order.endpoint.dto.request.ProductDto;
 import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseOrderProduct;
 import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseProduct;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +27,9 @@ public class OrderController {
     private final CartService cartService;
 
     @PostMapping("/order")
-    public ApiResponse<Void> order(@AuthenticationPrincipal Account account, @RequestBody RequestOrder requestOrder) {
-        log.debug("Order requested: {}", requestOrder);
-        orderService.orderProduct(account.getId(), requestOrder);
+    public ApiResponse<Void> order(@AuthenticationPrincipal Account account, @RequestBody OrderRequest orderRequest) {
+        log.debug("Order requested: {}", orderRequest);
+        orderService.orderProduct(account.getId(), orderRequest);
         return ApiResponse.success();
     }
 
@@ -37,20 +37,20 @@ public class OrderController {
     public ApiResponse<List<ResponseOrderProduct>> showOrderList(@AuthenticationPrincipal Account account,
                                                                  @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                                                  @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        List<ResponseOrderProduct> responseOrderProductList = orderService.getOrderProducts(account.getId(), new OrderDate(startDate, endDate));
+        List<ResponseOrderProduct> responseOrderProductList = orderService.getOrderProducts(account.getId(), new OrderDateDto(startDate, endDate));
         return ApiResponse.success(responseOrderProductList);
     }
 
     @PostMapping("/order/cancel")
-    public ApiResponse<Void> cancel(@AuthenticationPrincipal Account account, @RequestBody RequestOrder requestOrder) {
-        orderService.cancelOrder(requestOrder.getOrderId());
+    public ApiResponse<Void> cancel(@AuthenticationPrincipal Account account, @RequestBody OrderRequest orderRequest) {
+        orderService.cancelOrder(orderRequest.getOrderId());
         return ApiResponse.success();
     }
 
     @PostMapping("/cart")
-    public ApiResponse<Void> addCart(@AuthenticationPrincipal Account account, @RequestBody RequestProduct requestProduct) {
-        log.info("add cart {}", requestProduct);
-        cartService.addCart(account.getId(), requestProduct);
+    public ApiResponse<Void> addCart(@AuthenticationPrincipal Account account, @RequestBody ProductDto productDto) {
+        log.info("add cart {}", productDto);
+        cartService.addCart(account.getId(), productDto);
         return ApiResponse.success();
     }
 

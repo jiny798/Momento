@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Data
 @NoArgsConstructor
-public class PasswordForm {
+public class UpdatePasswordRequest {
     @Length(min = 8, max = 50)
     private String newPassword;
     @Length(min = 8, max = 50)

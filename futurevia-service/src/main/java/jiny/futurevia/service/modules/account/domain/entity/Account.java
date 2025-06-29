@@ -63,19 +63,19 @@ public class Account extends AuditingEntity {
     public static Account from(final String email,
                                final String nickname,
                                final String password,
-                               final Set<Role> roles) {
+                               final Role role) {
         Account account = new Account();
-        account.validateMember(email, nickname, password, roles);
+        account.validateMember(email, nickname, password, role);
 
         account.email = email;
         account.nickname = nickname;
         account.password = password;
 
-        for (Role role : roles) {
-            AccountRole accountRole = AccountRole.createOrderProduct(role);
-            accountRole.setAccount(account);
-            account.accountRoles.add(accountRole);
-        }
+
+        AccountRole accountRole = AccountRole.createAccountRole(role);
+        accountRole.setAccount(account);
+        account.accountRoles.add(accountRole);
+
 
         return account;
     }
@@ -83,7 +83,7 @@ public class Account extends AuditingEntity {
     private void validateMember(final String email,
                                 final String nickname,
                                 final String password,
-                                final Set<Role> roles) {
+                                final Role role) {
         Matcher matcher = EMAIL_PATTERN.matcher(email);
         if (!matcher.matches()) {
             throw new InvalidAccountException("이메일 형식이 올바르지 않습니다.");
@@ -97,12 +97,11 @@ public class Account extends AuditingEntity {
             throw new InvalidAccountException(String.format("패스워드는 8자 이상 이여야 합니다.", MAX_PASSWORD_LENGTH));
         }
 
-        for (Role role : roles) {
-            AccountRole accountRole = AccountRole.createOrderProduct(role);
-            if (accountRole.getRole().getRoleName().equals("ROLE_USER")) {
-                return;
-            }
+
+        if (role.getRoleName().equals("ROLE_USER")) {
+            return;
         }
+
         throw new InvalidAccountException("사용자 권한이 존재하지 않습니다");
 
     }
@@ -126,6 +125,10 @@ public class Account extends AuditingEntity {
 
     public boolean isValidEmailToken(String token) {
         return this.emailToken.equals(token);
+    }
+
+    public void addRole(Role role) {
+        accountRoles.add(AccountRole.createAccountRole(role));
     }
 
 

@@ -2,16 +2,17 @@ package jiny.futurevia.service.modules.product.application;
 
 
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
+import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduct;
 import jiny.futurevia.service.modules.product.exception.CategoryNotFound;
 import jiny.futurevia.service.modules.product.exception.ProductNotFound;
 import jiny.futurevia.service.modules.account.exception.UserNotFound;
 import jiny.futurevia.service.modules.product.domain.Product;
-import jiny.futurevia.service.modules.product.endpoint.dto.request.RequestProduct;
 import jiny.futurevia.service.modules.product.endpoint.dto.request.ProductSearch;
 import jiny.futurevia.service.modules.product.endpoint.dto.response.PagingResponse;
 import jiny.futurevia.service.modules.product.endpoint.dto.response.ProductResponse;
 import jiny.futurevia.service.modules.product.infra.repository.CategoryRepository;
 import jiny.futurevia.service.modules.product.infra.repository.ProductRepository;
+import jiny.futurevia.service.modules.product.support.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,20 +27,15 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductMapper productMapper;
 
     public void saveProduct(Long userId, RequestProduct requestProduct) {
         var account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
         var category = categoryRepository.findById(requestProduct.getCategoryId()).orElseThrow(CategoryNotFound::new);
 
-        Product product = Product.create(
-                requestProduct.getName(),
-                requestProduct.getDescription(),
-                requestProduct.getPrice(),
-                requestProduct.getProductImages(),
-                requestProduct.getFlavorSelectCount(),
-                account,
-                category
-        );
+        Product product = productMapper.toEntity(requestProduct);
+        product.setAccount(account);
+        product.setCategory(category);
 
         productRepository.save(product);
     }

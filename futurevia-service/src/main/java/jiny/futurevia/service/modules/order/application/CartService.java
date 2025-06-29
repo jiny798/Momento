@@ -2,10 +2,10 @@ package jiny.futurevia.service.modules.order.application;
 
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
+import jiny.futurevia.service.modules.order.endpoint.dto.request.ProductDto;
 import jiny.futurevia.service.modules.product.exception.ProductNotFound;
 import jiny.futurevia.service.modules.account.exception.UserNotFound;
 import jiny.futurevia.service.modules.cart.domain.Cart;
-import jiny.futurevia.service.modules.order.endpoint.dto.request.RequestProduct;
 import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseProduct;
 import jiny.futurevia.service.modules.order.infra.repository.CartRepository;
 import jiny.futurevia.service.modules.product.domain.Product;
@@ -27,13 +27,13 @@ public class CartService {
 
 
     @Transactional
-    public void addCart(Long userId, RequestProduct requestProduct) {
+    public void addCart(Long userId, ProductDto productDto) {
         Account account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
 
-        Product product = productRepository.findById(requestProduct.getProductId()).orElseThrow(ProductNotFound::new);
-        String options = requestProduct.getOptions();
+        Product product = productRepository.findById(productDto.getProductId()).orElseThrow(ProductNotFound::new);
+        String options = productDto.getOptions();
 
-//        Cart cart = Cart.create(account, product.getId(), requestProduct.getCount());
+//        Cart cart = Cart.create(account, product.getId(), productDto.getCount());
 //        cart.addOption(options);
 
 //        cartRepository.save(cart);

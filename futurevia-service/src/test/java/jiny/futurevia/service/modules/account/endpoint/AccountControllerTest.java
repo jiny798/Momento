@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jiny.futurevia.service.modules.account.application.AccountService;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 
-import jiny.futurevia.service.modules.account.endpoint.dto.request.SignUpForm;
+import jiny.futurevia.service.modules.account.endpoint.dto.request.CreateAccountRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,11 +52,11 @@ class AccountControllerTest {
 	@DisplayName("회원 가입 : 정상처리")
 	void signUpSubmitWithError() throws Exception {
         // given
-        SignUpForm signUpForm = new SignUpForm();
-        signUpForm.setNickname("nickname2");
-        signUpForm.setEmail("email2@test.test");
-        signUpForm.setPassword("password2");
-        String signUpData = mapper.writeValueAsString(signUpForm);
+        CreateAccountRequest createAccountRequest = new CreateAccountRequest();
+        createAccountRequest.setNickname("nickname2");
+        createAccountRequest.setEmail("email2@test.test");
+        createAccountRequest.setPassword("password2");
+        String signUpData = mapper.writeValueAsString(createAccountRequest);
 
         // when
 		mockMvc.perform(post("/api/sign-up")
@@ -67,9 +67,9 @@ class AccountControllerTest {
 
         //then
         assertEquals(1, accountRepository.count());
-        Account account = accountRepository.findByEmail(signUpForm.getEmail());
-        assertEquals(account.getNickname(), signUpForm.getNickname());
-        assertEquals(account.getEmail(), signUpForm.getEmail());
+        Account account = accountRepository.findByEmail(createAccountRequest.getEmail());
+        assertEquals(account.getNickname(), createAccountRequest.getNickname());
+        assertEquals(account.getEmail(), createAccountRequest.getEmail());
 
 	}
 

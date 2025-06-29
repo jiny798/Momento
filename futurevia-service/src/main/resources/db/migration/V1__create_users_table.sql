@@ -52,7 +52,7 @@ CREATE TABLE orders
     id          BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '주문 고유 번호',
     account_id  BIGINT NOT NULL COMMENT '회원 고유 번호',
     delivery_id BIGINT NOT NULL COMMENT '배송 고유 번호',
-    orderDate   DATETIME(6)               DEFAULT CURRENT_TIMESTAMP(6),
+    orderDateDto   DATETIME(6)               DEFAULT CURRENT_TIMESTAMP(6),
     status      ENUM ( 'ORDER', 'CANCEL') DEFAULT 'READY' COMMENT '배송 상태'
 );
 

@@ -3,7 +3,7 @@ package jiny.futurevia.service.modules.security;
 import jiny.futurevia.service.infra.security.token.RestAuthenticationToken;
 import jiny.futurevia.service.modules.account.application.AccountService;
 import jiny.futurevia.service.modules.account.domain.dto.AccountContext;
-import jiny.futurevia.service.modules.account.endpoint.dto.request.SignUpForm;
+import jiny.futurevia.service.modules.account.endpoint.dto.request.CreateAccountRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,11 +33,11 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
             try{
                 accountContext = (AccountContext) accountService.loadUserByUsername(nickname);
             }catch (UsernameNotFoundException exception){
-                SignUpForm signUpForm = new SignUpForm();
-                signUpForm.setNickname(nickname);
-                signUpForm.setEmail(nickname + "@jiny.com");
-                signUpForm.setPassword("jiny1234");
-                accountService.signUp(signUpForm);
+                CreateAccountRequest createAccountRequest = new CreateAccountRequest();
+                createAccountRequest.setNickname(nickname);
+                createAccountRequest.setEmail(nickname + "@jiny.com");
+                createAccountRequest.setPassword("jiny1234");
+                accountService.signUp(createAccountRequest);
                 accountContext = (AccountContext) accountService.loadUserByUsername(nickname);
             }
 

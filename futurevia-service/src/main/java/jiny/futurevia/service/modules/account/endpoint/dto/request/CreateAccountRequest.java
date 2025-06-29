@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 
 
 @Data
-public class SignUpForm {
+public class CreateAccountRequest {
     @NotBlank(message = "닉네임은 필수입니다")
     @Length(min = 3, max = 20)
     @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-z0-9_-]{3,20}$", message = "닉네임은 3자 이상 20자까지 가능합니다")
