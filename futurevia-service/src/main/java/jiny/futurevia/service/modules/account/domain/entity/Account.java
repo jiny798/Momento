@@ -70,12 +70,8 @@ public class Account extends AuditingEntity {
         account.email = email;
         account.nickname = nickname;
         account.password = password;
-
-
-        AccountRole accountRole = AccountRole.createAccountRole(role);
-        accountRole.setAccount(account);
-        account.accountRoles.add(accountRole);
-
+        AccountRole accountRole = AccountRole.from(role);
+        account.addAccountRole(accountRole);
 
         return account;
     }
@@ -127,10 +123,10 @@ public class Account extends AuditingEntity {
         return this.emailToken.equals(token);
     }
 
-    public void addRole(Role role) {
-        accountRoles.add(AccountRole.createAccountRole(role));
+    public void addAccountRole(AccountRole accountRole) {
+        accountRole.setAccount(this);
+        this.accountRoles.add(accountRole);
     }
-
 
     @Override
     public boolean equals(Object o) {

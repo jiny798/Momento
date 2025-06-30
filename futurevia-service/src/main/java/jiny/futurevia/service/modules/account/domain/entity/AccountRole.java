@@ -26,7 +26,7 @@ public class AccountRole {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Role role;
 
-    public static AccountRole createAccountRole(Role role) {
+    public static AccountRole from(Role role) {
         AccountRole accountRole = new AccountRole();
         accountRole.role = role;
         return accountRole;
