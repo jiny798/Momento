@@ -2,7 +2,7 @@ package jiny.futurevia.service.modules.order.endpoint;
 
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.common.response.ApiResponse;
-import jiny.futurevia.service.modules.order.application.CartService;
+import jiny.futurevia.service.modules.cart.application.CartService;
 import jiny.futurevia.service.modules.order.application.OrderService;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderDateDto;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderRequest;
@@ -45,19 +45,6 @@ public class OrderController {
     public ApiResponse<Void> cancel(@AuthenticationPrincipal Account account, @RequestBody OrderRequest orderRequest) {
         orderService.cancelOrder(orderRequest.getOrderId());
         return ApiResponse.success();
-    }
-
-    @PostMapping("/cart")
-    public ApiResponse<Void> addCart(@AuthenticationPrincipal Account account, @RequestBody ProductDto productDto) {
-        log.info("add cart {}", productDto);
-        cartService.addCart(account.getId(), productDto);
-        return ApiResponse.success();
-    }
-
-    @GetMapping("/cart")
-    public ApiResponse<List<ResponseProduct>> showCartList(@AuthenticationPrincipal Account account) {
-        List<ResponseProduct> responseProductList = cartService.getCartList(account.getId());
-        return ApiResponse.success(responseProductList);
     }
 
 }

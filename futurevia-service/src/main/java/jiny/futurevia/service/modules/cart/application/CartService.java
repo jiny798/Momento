@@ -1,7 +1,9 @@
-package jiny.futurevia.service.modules.order.application;
+package jiny.futurevia.service.modules.cart.application;
 
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
+import jiny.futurevia.service.modules.cart.endpoint.dto.response.CartResponse;
+import jiny.futurevia.service.modules.cart.support.CartMapper;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.ProductDto;
 import jiny.futurevia.service.modules.product.exception.ProductNotFound;
 import jiny.futurevia.service.modules.account.exception.UserNotFound;
@@ -24,37 +26,21 @@ public class CartService {
     private final AccountRepository accountRepository;
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
-
+    private final CartMapper cartMapper;
 
     @Transactional
     public void addCart(Long userId, ProductDto productDto) {
         Account account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
-
         Product product = productRepository.findById(productDto.getProductId()).orElseThrow(ProductNotFound::new);
-        String options = productDto.getOptions();
 
-//        Cart cart = Cart.create(account, product.getId(), productDto.getCount());
-//        cart.addOption(options);
-
-//        cartRepository.save(cart);
+        Cart cart = Cart.from(account, product, productDto.getOrderCount() ,  productDto.getOptions());
+        cartRepository.save(cart);
     }
 
-    public List<ResponseProduct> getCartList(Long userId) {
+    public List<CartResponse> getCartList(Long userId) {
         Account account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
-        List<ResponseProduct> cartList = new ArrayList<>();
         List<Cart> carts = cartRepository.findByAccount(account);
-//        for (Cart cart : carts) {
-//            Product product = productRepository.findById(cart.getProductId()).orElseThrow(ProductNotFound::new);
-//            ResponseProduct responseProduct = ResponseProduct.builder()
-//                    .productId(product.getId())
-//                    .productName(product.getTitle())
-//                    .image(!product.getImageUrls().isEmpty() ? product.getImageUrls().get(0) : null)
-//                    .price(product.getPrice())
-//                    .count(cart.getCount())
-//                    .option(cart.getOption())
-//                    .build();
-//            cartList.add(responseProduct);
-//        }
-        return cartList;
+
+        return cartMapper.toDtoList(carts);
     }
 }

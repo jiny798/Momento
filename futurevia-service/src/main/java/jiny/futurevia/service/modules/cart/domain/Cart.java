@@ -31,7 +31,7 @@ public class Cart extends AuditingEntity {
 
     private String options;
 
-    public static Cart create(Account account, Product product, Integer quantity, String options) {
+    public static Cart from(Account account, Product product, Integer quantity, String options) {
         Cart cart = new Cart();
         cart.setAccount(account);
         cart.setProduct(product);
