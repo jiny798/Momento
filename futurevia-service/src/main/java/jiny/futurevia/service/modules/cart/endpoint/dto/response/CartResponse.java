@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class CartResponse {
+    private Long id;
     private String name;
     private Long price;
     private Integer quantity;

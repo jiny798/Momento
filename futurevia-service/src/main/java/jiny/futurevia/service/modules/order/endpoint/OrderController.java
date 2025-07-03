@@ -4,7 +4,7 @@ import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.common.response.ApiResponse;
 import jiny.futurevia.service.modules.cart.application.CartService;
 import jiny.futurevia.service.modules.order.application.OrderService;
-import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderDateDto;
+import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderPeriodRequest;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderRequest;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.ProductDto;
 import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseOrderProduct;
@@ -37,11 +37,11 @@ public class OrderController {
     public ApiResponse<List<ResponseOrderProduct>> showOrderList(@AuthenticationPrincipal Account account,
                                                                  @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                                                  @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        List<ResponseOrderProduct> responseOrderProductList = orderService.getOrderProducts(account.getId(), new OrderDateDto(startDate, endDate));
+        List<ResponseOrderProduct> responseOrderProductList = orderService.getOrderProducts(account.getId(), new OrderPeriodRequest(startDate, endDate));
         return ApiResponse.success(responseOrderProductList);
     }
 
-    @PostMapping("/order/cancel")
+    @DeleteMapping("/order")
     public ApiResponse<Void> cancel(@AuthenticationPrincipal Account account, @RequestBody OrderRequest orderRequest) {
         orderService.cancelOrder(orderRequest.getOrderId());
         return ApiResponse.success();

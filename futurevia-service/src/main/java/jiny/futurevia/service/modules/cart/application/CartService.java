@@ -3,6 +3,7 @@ package jiny.futurevia.service.modules.cart.application;
 import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.modules.cart.endpoint.dto.response.CartResponse;
+import jiny.futurevia.service.modules.cart.exception.CartNotFound;
 import jiny.futurevia.service.modules.cart.support.CartMapper;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.ProductDto;
 import jiny.futurevia.service.modules.product.exception.ProductNotFound;
@@ -33,7 +34,7 @@ public class CartService {
         Account account = accountRepository.findById(userId).orElseThrow(UserNotFound::new);
         Product product = productRepository.findById(productDto.getProductId()).orElseThrow(ProductNotFound::new);
 
-        Cart cart = Cart.from(account, product, productDto.getOrderCount() ,  productDto.getOptions());
+        Cart cart = Cart.from(account, product, productDto.getOrderCount(), productDto.getOptions());
         cartRepository.save(cart);
     }
 
@@ -42,5 +43,10 @@ public class CartService {
         List<Cart> carts = cartRepository.findByAccount(account);
 
         return cartMapper.toDtoList(carts);
+    }
+
+    public void deleteCart(Long userId, Long cartId) {
+        Cart cart = cartRepository.findById(cartId).orElseThrow(CartNotFound::new);
+        cartRepository.delete(cart);
     }
 }

@@ -32,8 +32,14 @@ public class CartController {
     }
 
     @GetMapping("/cart")
-    public ApiResponse<List<CartResponse>> showCartList(@AuthenticationPrincipal Account account) {
+    public ApiResponse<List<CartResponse>> getCartList(@AuthenticationPrincipal Account account) {
         List<CartResponse> responseProductList = cartService.getCartList(account.getId());
         return ApiResponse.success(responseProductList);
+    }
+
+    @DeleteMapping("/cart")
+    public ApiResponse<Void> deleteCart(@AuthenticationPrincipal Account account, @RequestBody CartRequest cartRequest) {
+        cartService.deleteCart(account.getId(), cartRequest.getId());
+        return ApiResponse.success();
     }
 }

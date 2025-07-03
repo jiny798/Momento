@@ -1,7 +1,13 @@
 package jiny.futurevia.service.modules.cart.endpoint.dto.request;
 
-@Getter
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.Getter;
+
+@Data
 public class CartRequest {
+
+    private  Long id;
 
     @NotNull
     private Long accountId;
@@ -10,7 +16,6 @@ public class CartRequest {
     private Long productId;
 
     @NotNull
-    @Min(1)
     private Integer quantity;
 
     private String options;
