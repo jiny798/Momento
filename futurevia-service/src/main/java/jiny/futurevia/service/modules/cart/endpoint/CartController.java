@@ -7,7 +7,6 @@ import jiny.futurevia.service.modules.cart.endpoint.dto.request.CartRequest;
 import jiny.futurevia.service.modules.cart.endpoint.dto.response.CartResponse;
 import jiny.futurevia.service.modules.common.response.ApiResponse;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.ProductDto;
-import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

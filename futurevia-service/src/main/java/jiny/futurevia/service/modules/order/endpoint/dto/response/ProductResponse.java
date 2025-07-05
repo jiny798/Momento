@@ -2,8 +2,6 @@ package jiny.futurevia.service.modules.order.endpoint.dto.response;
 
 import lombok.*;
 
-import java.util.List;
-
 /*
  * 상품 목록에 보여줄 DTO
  */
@@ -12,7 +10,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseProduct {
+public class ProductResponse {
     private Long productId;
     private String image;
     private String productName;

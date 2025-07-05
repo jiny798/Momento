@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,10 +84,10 @@ public class Order {
     }
 
     /** 전체 주문 가격 조회 */
-    public int getTotalPrice() {
-        int totalPrice = 0;
+    public BigDecimal getTotalPrice() {
+        BigDecimal totalPrice = new BigDecimal("0");
         for (OrderProduct orderProduct : orderProducts) {
-            totalPrice += orderProduct.getTotalPrice();
+            totalPrice = totalPrice.add(orderProduct.getSubTotalPrice());
         }
         return totalPrice;
     }

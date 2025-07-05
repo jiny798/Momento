@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class Product extends AuditingEntity {
     private String name;
 
     @Column(nullable = false)
-    private Long price;
+    private BigDecimal price;
 
     @Column(nullable = false)
     private Integer stock;
@@ -53,7 +54,7 @@ public class Product extends AuditingEntity {
 
     public static Product create(final String name,
                                  final String description,
-                                 final Long price,
+                                 final BigDecimal price,
                                  final List<String> imageUrls,
                                  final Integer flavorSelectCount,
                                  final Account account,
@@ -73,14 +74,14 @@ public class Product extends AuditingEntity {
         return product;
     }
 
-    private void validateProduct(String name, String description, Long price) {
+    private void validateProduct(String name, String description, BigDecimal price) {
         if (name == null || name.isBlank()) {
             throw new InvalidProductException("상품 이름은 필수입니다.");
         }
         if (description == null || description.isBlank()) {
             throw new InvalidProductException("상품 설명은 필수입니다.");
         }
-        if (price == null || price <= 0) {
+        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidProductException("상품 가격은 0보다 커야 합니다.");
         }
     }

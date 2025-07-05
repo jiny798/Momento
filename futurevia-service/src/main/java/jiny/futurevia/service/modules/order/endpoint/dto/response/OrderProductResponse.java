@@ -2,7 +2,6 @@ package jiny.futurevia.service.modules.order.endpoint.dto.response;
 
 
 import jiny.futurevia.service.modules.order.domain.DeliveryStatus;
-import jiny.futurevia.service.modules.order.domain.DeliveryStatus;
 import jiny.futurevia.service.modules.order.domain.OrderStatus;
 import lombok.*;
 
@@ -17,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseOrderProduct {
+public class OrderProductResponse {
     private List<String> image;
     private List<Integer> count;
     private List<Long> productId; // 주문 하나에 여러 상품 가능

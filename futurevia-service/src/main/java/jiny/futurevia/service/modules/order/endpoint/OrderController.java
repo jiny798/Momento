@@ -6,9 +6,7 @@ import jiny.futurevia.service.modules.cart.application.CartService;
 import jiny.futurevia.service.modules.order.application.OrderService;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderPeriodRequest;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderRequest;
-import jiny.futurevia.service.modules.order.endpoint.dto.request.ProductDto;
-import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseOrderProduct;
-import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseProduct;
+import jiny.futurevia.service.modules.order.endpoint.dto.response.OrderProductResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,11 +32,11 @@ public class OrderController {
     }
 
     @GetMapping("/order")
-    public ApiResponse<List<ResponseOrderProduct>> showOrderList(@AuthenticationPrincipal Account account,
+    public ApiResponse<List<OrderProductResponse>> showOrderList(@AuthenticationPrincipal Account account,
                                                                  @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                                                  @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        List<ResponseOrderProduct> responseOrderProductList = orderService.getOrderProducts(account.getId(), new OrderPeriodRequest(startDate, endDate));
-        return ApiResponse.success(responseOrderProductList);
+        List<OrderProductResponse> orderProductResponseList = orderService.getOrderProducts(account.getId(), new OrderPeriodRequest(startDate, endDate));
+        return ApiResponse.success(orderProductResponseList);
     }
 
     @DeleteMapping("/order")

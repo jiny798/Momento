@@ -3,9 +3,11 @@ package jiny.futurevia.service.modules.product.endpoint.dto.request;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -21,7 +23,8 @@ public class RequestProduct {
     private String name;
 
     @NotNull
-    private Long price;
+    @Positive // 값을 양수로만 제한
+    BigDecimal price;
 
     @NotNull
     private Integer stock;

@@ -9,7 +9,6 @@ import jiny.futurevia.service.modules.order.endpoint.dto.request.ProductDto;
 import jiny.futurevia.service.modules.product.exception.ProductNotFound;
 import jiny.futurevia.service.modules.account.exception.UserNotFound;
 import jiny.futurevia.service.modules.cart.domain.Cart;
-import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseProduct;
 import jiny.futurevia.service.modules.order.infra.repository.CartRepository;
 import jiny.futurevia.service.modules.product.domain.Product;
 import jiny.futurevia.service.modules.product.infra.repository.ProductRepository;
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

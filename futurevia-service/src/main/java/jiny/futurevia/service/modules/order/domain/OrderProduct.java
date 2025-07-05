@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -28,13 +29,13 @@ public class OrderProduct {
     private Product product;
 
     @Column(name = "order_price")
-    private Long orderPrice; //주문 가격
+    private BigDecimal orderPrice; //주문 가격
 
     private int quantity;
 
     private String option;
 
-    public static OrderProduct createOrderProduct(Product product, Long orderPrice, int quantity, String option) {
+    public static OrderProduct createOrderProduct(Product product, BigDecimal orderPrice, int quantity, String option) {
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setProduct(product);
         orderProduct.setQuantity(quantity);
@@ -43,8 +44,8 @@ public class OrderProduct {
         return orderProduct;
     }
 
-    public Long getTotalPrice() {
-        return getOrderPrice() * getQuantity();
+    public BigDecimal getSubTotalPrice() {
+        return getOrderPrice().multiply(new BigDecimal(getQuantity()));
     }
 
 }

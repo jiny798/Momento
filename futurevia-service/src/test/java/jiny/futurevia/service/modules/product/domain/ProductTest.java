@@ -8,6 +8,7 @@ import jiny.futurevia.service.modules.product.exception.InvalidProductException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ class ProductTest {
     private static final String VALID_EMAIL = "test@example.com";
     private static final String VALID_NICKNAME = "테스터";
     private static final String VALID_PASSWORD = "abcde123!";
-    private static final Set<Role> VALID_ROLES = Set.of(new Role(1L, "ROLE_USER"));
+    private static final Role VALID_ROLES = new Role(1L, "ROLE_USER");
 
     @Test
     @DisplayName("상품 이름이 null이거나 공백이면 예외를 던진다.")
@@ -31,11 +32,12 @@ class ProductTest {
         assertThatThrownBy(() -> Product.create(
                 blankName,
                 "상세설명",
-                1000L,
+                new BigDecimal("1000"),
                 List.of(),
+                1,
                 account,
-                new Category(),
-                1))
+                new Category()
+        ))
                 .isInstanceOf(InvalidProductException.class)
                 .hasMessageContaining("상품 이름은 필수입니다.");
     }
@@ -48,13 +50,14 @@ class ProductTest {
         Category category = Category.create("TEST CATEGORY");
 
         assertThatThrownBy(() -> Product.create(
-                "젤라또",
-                null,
-                1000L,
-                List.of(),
-                account,
-                category,
-                1)
+                        "젤라또",
+                        null,
+                        new BigDecimal(1000),
+                        List.of(),
+                        1,
+                        account,
+                        category
+                )
         )
                 .isInstanceOf(InvalidProductException.class)
                 .hasMessageContaining("상품 설명은 필수입니다.");
@@ -67,13 +70,14 @@ class ProductTest {
         Category category = Category.create("TEST CATEGORY");
 
         assertThatThrownBy(() -> Product.create(
-                "젤라또",
-                "맛있어요",
-                0L,
-                List.of(),
-                account,
-                category,
-                1)
+                        "젤라또",
+                        "맛있어요",
+                        new BigDecimal(1000),
+                        List.of(),
+                        1,
+                        account,
+                        category
+                )
         )
                 .isInstanceOf(InvalidProductException.class)
                 .hasMessageContaining("상품 가격은 0보다 커야 합니다.");

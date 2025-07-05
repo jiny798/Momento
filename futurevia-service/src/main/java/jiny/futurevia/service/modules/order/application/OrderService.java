@@ -4,14 +4,13 @@ import jiny.futurevia.service.modules.account.domain.entity.Account;
 import jiny.futurevia.service.modules.account.infra.repository.AccountRepository;
 import jiny.futurevia.service.modules.order.domain.*;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderPeriodRequest;
-import jiny.futurevia.service.modules.order.exception.OrderFailException;
+import jiny.futurevia.service.modules.order.endpoint.dto.response.OrderProductResponse;
 import jiny.futurevia.service.modules.order.exception.OrderNotFound;
 import jiny.futurevia.service.modules.product.exception.InsufficientStockException;
 import jiny.futurevia.service.modules.product.exception.ProductNotFound;
 import jiny.futurevia.service.modules.account.exception.UserNotFound;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.OrderRequest;
 import jiny.futurevia.service.modules.order.endpoint.dto.request.ProductDto;
-import jiny.futurevia.service.modules.order.endpoint.dto.response.ResponseOrderProduct;
 import jiny.futurevia.service.modules.order.infra.repository.OrderRepository;
 import jiny.futurevia.service.modules.product.domain.Product;
 import jiny.futurevia.service.modules.product.infra.repository.FlavorRepository;
@@ -43,29 +42,27 @@ public class OrderService {
 
         Order order = null;
         List<OrderProduct> orderProducts = new ArrayList<>();
+
         for (ProductDto productDto : productDtos) {
             Product product = productRepository.findById(productDto.getProductId()).orElseThrow(ProductNotFound::new);
 
-            if (product.getStock() < productDto.getCount()) {
+            if (product.getStock() < productDto.getOrderCount()) {
                 throw new InsufficientStockException(product.getName() + " 상품은 현재 품절입니다.");
             }
-            product.decreaseStock(productDto.getCount());
+            product.decreaseStock(productDto.getOrderCount());
 
             OrderProduct orderProduct = OrderProduct.createOrderProduct(
                     product,
                     product.getPrice(),
-                    productDto.getCount(),
-                    productDto.getOption());
+                    productDto.getOrderCount(),
+                    productDto.getOptions());
             orderProducts.add(orderProduct);
 
-            order = Order.createOrder(account, delivery, orderProducts);
         }
 
-        if (order == null) {
-            throw new OrderFailException();
-        }
-
+        order = Order.createOrder(account, delivery, orderProducts);
         orderRepository.save(order);
+
         return order.getId();
     }
 
@@ -75,13 +72,13 @@ public class OrderService {
         order.cancel();
     }
 
-    public List<ResponseOrderProduct> getOrderProducts(Long accountId, OrderPeriodRequest orderPeriodRequest) {
+    public List<OrderProductResponse> getOrderProducts(Long accountId, OrderPeriodRequest orderPeriodRequest) {
 //        Account account = accountRepository.findById(accountId).orElseThrow(UserNotFound::new);
 //        LocalDateTime start = orderDateDto.getStartDate().atStartOfDay();
 //        LocalDateTime end = orderDateDto.getEndDate().atTime(23, 59, 59);
 //
 //        List<Order> orders = orderRepository.findByAccountIdAndOrderDateBetween(accountId, start, end);
-//        List<ResponseOrderProduct> responseOrderProducts = orders.stream()
+//        List<OrderProductResponse> responseOrderProducts = orders.stream()
 //                        .map(order -> {
 //                            List<Product> products = new ArrayList<>();
 //                            List<Integer> counts = new ArrayList<>();
@@ -102,7 +99,7 @@ public class OrderService {
 //                                    .toList();
 //
 //                            // 이미지 카운트
-//                            return new ResponseOrderProduct(
+//                            return new OrderProductResponse(
 //                                    productImages,
 //                                    counts,
 //                                    productIds,
